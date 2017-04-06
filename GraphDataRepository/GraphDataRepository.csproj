@@ -73,6 +73,10 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="TestData\RDF\animals.rdf" />
+    <None Include="TestData\RDF\proposal.rdf" />
+    <None Include="TestData\RDF\ril_1.rdf" />
+    <None Include="TestData\RDF\sleepinggiant.rdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MyEntityContext.tt">
@@ -83,5 +87,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
