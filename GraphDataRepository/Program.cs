@@ -82,7 +82,6 @@ namespace GraphDataRepository
             foreach (var graphUri in store.UnderlyingStore.ListGraphs())
             {
                 var z = store.Graphs.FirstOrDefault(g => g.BaseUri == graphUri);
-               
             }
 
             //IGraph g = new Graph();
@@ -94,16 +93,33 @@ namespace GraphDataRepository
             //{
             //    Console.WriteLine(triple.Predicate);
             //}
+            Console.WriteLine("KUNIEC");
+            Console.ReadLine();
         }
 
         private static void TestGraph()
         {
-            Graph g = new Graph();
-            FileLoader.Load(g, @"..\..\TestData\RDF\sleepinggiant.rdf");
+            var dataGraph = new Graph();
+            FileLoader.Load(dataGraph, @"..\..\TestData\RDF\foaf_example.rdf");
 
-            foreach (var triple in g.Triples)
+            var schemaGraph = new Graph();
+            FileLoader.Load(schemaGraph, @"..\..\TestData\Schemas\foaf_20140114.rdf");
+
+            var subjectList = schemaGraph.Triples.Select(triple => triple.Subject.ToString()).Distinct().ToList();
+
+            var wrongPredicates = new List<string>();
+            foreach (var triple in dataGraph.Triples)
             {
-                Console.WriteLine($"{triple.Predicate.ToString()} {triple.Subject.ToString()} {triple.Object.ToString()}");
+                var predicate = triple.Predicate.ToString();
+                if (!subjectList.Contains(predicate) && !wrongPredicates.Contains(predicate))
+                {
+                    wrongPredicates.Add(predicate);
+                }
+            }
+
+            foreach (var predicate in wrongPredicates)
+            {
+                Console.WriteLine(predicate);
             }
         }
 

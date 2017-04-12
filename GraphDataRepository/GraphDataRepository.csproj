@@ -74,9 +74,11 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="TestData\RDF\animals.rdf" />
+    <None Include="TestData\RDF\foaf_example.rdf" />
     <None Include="TestData\RDF\proposal.rdf" />
     <None Include="TestData\RDF\ril_1.rdf" />
     <None Include="TestData\RDF\sleepinggiant.rdf" />
+    <None Include="TestData\Schemas\foaf_20140114.rdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MyEntityContext.tt">
