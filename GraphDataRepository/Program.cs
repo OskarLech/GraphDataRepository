@@ -22,16 +22,21 @@ namespace GraphDataRepository
     {
         static void Main(string[] args)
         {
+            Playground();
+        }
 
-            TestGraph();
+        private static void Playground()
+        {
+            //TestGraph();
 
             /********************************/
             /***********BRIGHTSTAR**********/
             /********************************/
 
-            var client = BrightstarService.GetClient("Type=rest;endpoint=http://localhost:8090/brightstar;");
+            var client = BrightstarService.GetClient("Type=rest;endpoint=http://192.168.1.112:8090/brightstar;");
             string storeName = "Store_" + Guid.NewGuid();
             client.CreateStore(storeName);
+
 
             var addTriples = new StringBuilder();
             addTriples.AppendLine(
@@ -64,7 +69,6 @@ namespace GraphDataRepository
 
             SparqlConnector connect = new SparqlConnector(new Uri($"http://localhost:8090/brightstar/{storeName}//SPARQL"));
             PersistentTripleStore store = new PersistentTripleStore(connect);
-
             Object results = store.ExecuteQuery(query);//TODO: search in !default graph
             if (results is SparqlResultSet)
             {
@@ -77,7 +81,7 @@ namespace GraphDataRepository
 
             }
 
-           var y = store.UnderlyingStore.ListGraphs();
+            var y = store.UnderlyingStore.ListGraphs();
 
             foreach (var graphUri in store.UnderlyingStore.ListGraphs())
             {
