@@ -14,9 +14,6 @@ using System.Linq;
 using BrightstarDB.Client;
 using BrightstarDB.EntityFramework;
 
-using System.Threading;
-using VDS.RDF;
-using Vocab;
 
 namespace GraphDataRepository 
 {
@@ -39,10 +36,6 @@ namespace GraphDataRepository
         public static void InitializeEntityMappingStore()
         {
     		var provider = new ReflectionMappingProvider();
-    		provider.AddMappingsForType(EntityMappingStore.Instance, typeof(GraphDataRepository.IActor));
-    		EntityMappingStore.Instance.SetImplMapping<GraphDataRepository.IActor, GraphDataRepository.Actor>();
-    		provider.AddMappingsForType(EntityMappingStore.Instance, typeof(GraphDataRepository.IFilm));
-    		EntityMappingStore.Instance.SetImplMapping<GraphDataRepository.IFilm, GraphDataRepository.Film>();
     	}
     	
     	/// <summary>
@@ -108,83 +101,13 @@ namespace GraphDataRepository
     	
     	private void InitializeContext() 
     	{
-    		Actors = 	new BrightstarEntitySet<GraphDataRepository.IActor>(this);
-    		Films = 	new BrightstarEntitySet<GraphDataRepository.IFilm>(this);
-    	}
-    	
-    	public IEntitySet<GraphDataRepository.IActor> Actors
-    	{
-    		get; private set;
-    	}
-    	
-    	public IEntitySet<GraphDataRepository.IFilm> Films
-    	{
-    		get; private set;
     	}
     	
         public IEntitySet<T> EntitySet<T>() where T : class {
             var itemType = typeof(T);
-            if (typeof(T).Equals(typeof(GraphDataRepository.IActor))) {
-                return (IEntitySet<T>)this.Actors;
-            }
-            if (typeof(T).Equals(typeof(GraphDataRepository.IFilm))) {
-                return (IEntitySet<T>)this.Films;
-            }
             throw new InvalidOperationException(typeof(T).FullName + " is not a recognized entity interface type.");
         }
     
         } // end class MyEntityContext
         
-}
-namespace GraphDataRepository 
-{
-    
-    public partial class Actor : BrightstarEntityObject, IActor 
-    {
-    	public Actor(BrightstarEntityContext context, BrightstarDB.Client.IDataObject dataObject) : base(context, dataObject) { }
-        public Actor(BrightstarEntityContext context) : base(context, typeof(Actor)) { }
-    	public Actor() : base() { }
-    	#region Implementation of GraphDataRepository.IActor
-    
-    	public System.String Name
-    	{
-            		get { return GetRelatedProperty<System.String>("Name"); }
-            		set { SetRelatedProperty("Name", value); }
-    	}
-    
-    	public System.DateTime DateOfBirth
-    	{
-            		get { return GetRelatedProperty<System.DateTime>("DateOfBirth"); }
-            		set { SetRelatedProperty("DateOfBirth", value); }
-    	}
-    	public System.Collections.Generic.ICollection<GraphDataRepository.IFilm> Films
-    	{
-    		get { return GetRelatedObjects<GraphDataRepository.IFilm>("Films"); }
-    		set { if (value == null) throw new ArgumentNullException("value"); SetRelatedObjects("Films", value); }
-    								}
-    	#endregion
-    }
-}
-namespace GraphDataRepository 
-{
-    
-    public partial class Film : BrightstarEntityObject, IFilm 
-    {
-    	public Film(BrightstarEntityContext context, BrightstarDB.Client.IDataObject dataObject) : base(context, dataObject) { }
-        public Film(BrightstarEntityContext context) : base(context, typeof(Film)) { }
-    	public Film() : base() { }
-    	#region Implementation of GraphDataRepository.IFilm
-    
-    	public System.String Name
-    	{
-            		get { return GetRelatedProperty<System.String>("Name"); }
-            		set { SetRelatedProperty("Name", value); }
-    	}
-    	public System.Collections.Generic.ICollection<GraphDataRepository.IActor> Actors
-    	{
-    		get { return GetRelatedObjects<GraphDataRepository.IActor>("Actors"); }
-    		set { if (value == null) throw new ArgumentNullException("value"); SetRelatedObjects("Actors", value); }
-    								}
-    	#endregion
-    }
 }
