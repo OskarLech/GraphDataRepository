@@ -1,6 +1,6 @@
 ﻿namespace GraphDataRepository.Server
 {
-    internal interface IServerClient
+    internal interface ITriplestoreClient
     {
     }
 }
