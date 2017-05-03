@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphDataRepository", "Grap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{B2AD8D50-DAD2-410C-8061-6B9DB6B97543}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{3A130A3B-D854-4EA1-A040-D6E489733016}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "..\Tests\Tests.csproj", "{3A130A3B-D854-4EA1-A040-D6E489733016}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

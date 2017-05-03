@@ -62,7 +62,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GraphDataRepository.csproj">
+    <ProjectReference Include="..\GraphDataRepository\GraphDataRepository.csproj">
       <Project>{2f19d730-3334-4769-9685-e6bc2f49e099}</Project>
       <Name>GraphDataRepository</Name>
     </ProjectReference>
