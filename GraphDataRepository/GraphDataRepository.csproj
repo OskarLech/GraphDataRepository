@@ -40,6 +40,10 @@
     <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -48,6 +52,10 @@
     </Reference>
     <Reference Include="Remotion.Linq, Version=1.13.122.1, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>packages\BrightstarDBLibs.1.13.3\lib\net45\Remotion.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap, Version=4.4.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\StructureMap.4.4.5\lib\net45\StructureMap.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -62,6 +70,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Disposable.cs" />
     <Compile Include="MyEntityContext.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -70,7 +79,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\BrightstarDb\BrightstarClient.cs" />
-    <Compile Include="Server\IServerClient.cs" />
+    <Compile Include="Server\ITriplestoreClient.cs" />
+    <Compile Include="Utilities\StructureMap\MainRegistry.cs" />
+    <Compile Include="Utilities\StructureMap\ObjectFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -92,8 +103,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Common\" />
-    <Folder Include="Extensions\" />
     <Folder Include="Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

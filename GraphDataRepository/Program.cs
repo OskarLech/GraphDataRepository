@@ -5,19 +5,45 @@ using System.Text;
 using System.Xml.Linq;
 using BrightstarDB;
 using BrightstarDB.Client;
+using GraphDataRepository.Utilities.StructureMap;
+using log4net;
+using log4net.Config;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Storage;
-using Vocab;
 
 namespace GraphDataRepository
 {
     class Program
     {
+        private static ILog _log;
+        private static readonly List<IDisposable> Disposables = new List<IDisposable>();
+
         static void Main(string[] args)
         {
-            Playground();
+            Initialize();
+
+            /*************/
+            //Playground();
+            /*************/
+
+            Console.WriteLine("Press Enter to stop the program");
+            Console.ReadLine();
+
+            _log.Info("Terminating the program");
+            Disposables.ForEach(d => d.Dispose());
+            _log.Info("Program terminated succesfully");
+        }
+
+        private static void Initialize()
+        {
+            //structure map
+            ObjectFactory.Init();
+
+            //log4net
+            XmlConfigurator.Configure();
+            _log = ObjectFactory.Container.GetInstance<ILog>();
         }
 
         private static void Playground()
