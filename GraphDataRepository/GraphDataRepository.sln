@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphDataRepository", "Grap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{B2AD8D50-DAD2-410C-8061-6B9DB6B97543}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{3A130A3B-D854-4EA1-A040-D6E489733016}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B2AD8D50-DAD2-410C-8061-6B9DB6B97543}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2AD8D50-DAD2-410C-8061-6B9DB6B97543}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2AD8D50-DAD2-410C-8061-6B9DB6B97543}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A130A3B-D854-4EA1-A040-D6E489733016}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A130A3B-D854-4EA1-A040-D6E489733016}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A130A3B-D854-4EA1-A040-D6E489733016}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A130A3B-D854-4EA1-A040-D6E489733016}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
