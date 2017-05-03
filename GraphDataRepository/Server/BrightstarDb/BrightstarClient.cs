@@ -1,6 +1,17 @@
-﻿namespace GraphDataRepository.Server.BrightstarDb
+﻿using GraphDataRepository.Common;
+using log4net;
+
+namespace GraphDataRepository.Server.BrightstarDb
 {
-    internal class BrightstarClient : IServerClient
+    internal class BrightstarClient : Disposable, ITriplestoreClient
     {
+        public BrightstarClient(ILog log) : base(log)
+        {
+        }
+
+        protected override void OnDispose(bool disposing)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
