@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using BrightstarDB;
 using BrightstarDB.Client;
+using Common;
 using GraphDataRepository.Utilities.StructureMap;
 using log4net;
 using log4net.Config;
@@ -38,9 +40,6 @@ namespace GraphDataRepository
 
         private static void Initialize()
         {
-            //structure map
-            ObjectFactory.Init();
-
             //log4net
             XmlConfigurator.Configure();
             _log = ObjectFactory.Container.GetInstance<ILog>();

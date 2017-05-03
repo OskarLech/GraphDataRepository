@@ -8,10 +8,5 @@ namespace GraphDataRepository.Utilities.StructureMap
         {
             x.AddRegistry(new MainRegistry());
         });
-
-        public static void Init()
-        {
-            // will init container automatically
-        }
     }
 }

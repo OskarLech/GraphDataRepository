@@ -1,9 +1,9 @@
 ﻿using System;
 using log4net;
 
-namespace GraphDataRepository.Common
+namespace Common
 {
-    internal abstract class Disposable : IDisposable
+    public abstract class Disposable : IDisposable
     {
         private bool _disposed;
         protected ILog Log { get; private set; }

@@ -1,4 +1,4 @@
-﻿using GraphDataRepository.Common;
+﻿using Common;
 using log4net;
 
 namespace GraphDataRepository.Server.BrightstarDb

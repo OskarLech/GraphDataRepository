@@ -8,8 +8,9 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>GraphDataRepository</RootNamespace>
     <AssemblyName>GraphDataRepository</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -70,7 +71,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Disposable.cs" />
     <Compile Include="MyEntityContext.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -86,12 +86,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="TestData\RDF\animals.rdf" />
-    <None Include="TestData\RDF\foaf_example.rdf" />
-    <None Include="TestData\RDF\proposal.rdf" />
-    <None Include="TestData\RDF\ril_1.rdf" />
-    <None Include="TestData\RDF\sleepinggiant.rdf" />
-    <None Include="TestData\Schemas\foaf_20140114.rdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MyEntityContext.tt">
@@ -103,7 +97,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Tests\" />
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{b2ad8d50-dad2-410c-8061-6b9db6b97543}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
