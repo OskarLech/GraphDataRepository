@@ -78,6 +78,7 @@ namespace GraphDataRepository.Server
         {
             try
             {
+                call.Start();
                 return await call;
             }
             catch (WebException)
