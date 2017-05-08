@@ -88,12 +88,12 @@ namespace GraphDataRepository.Server.BrightstarDb
                 }
 
                 return true;
-            }));
+            }, CancellationTokenSource.Token));
         }
 
         public override async Task<IEnumerable<string>> ListGraphs(string dataset)
         {
-            return await ClientCall(new Task<IEnumerable<string>>(() => _brightstarClient.ListNamedGraphs(dataset) ?? new List<string>()));
+            return await ClientCall(new Task<IEnumerable<string>>(() => _brightstarClient.ListNamedGraphs(dataset) ?? new List<string>(), CancellationTokenSource.Token));
         }
         #endregion
 

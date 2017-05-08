@@ -16,7 +16,7 @@ using VDS.RDF.Storage;
 
 namespace GraphDataRepository
 {
-    class Program
+    internal class Program
     {
         private static ILog _log;
         private static readonly List<IDisposable> Disposables = new List<IDisposable>();
