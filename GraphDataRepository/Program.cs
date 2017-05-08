@@ -26,7 +26,7 @@ namespace GraphDataRepository
             Initialize();
 
             /*************/
-            Playground2();
+            BrightstarClientCli();
             /*************/
 
             Console.WriteLine("Press Enter to stop the program");
@@ -37,7 +37,7 @@ namespace GraphDataRepository
             _log.Info("Program terminated succesfully");
         }
 
-        private static async void Playground2()
+        private static async void BrightstarClientCli()
         {
             var triplestoreClient = ObjectFactory.Container
                 .With("endpoint").EqualTo("http://192.168.0.111:8090/brightstar")

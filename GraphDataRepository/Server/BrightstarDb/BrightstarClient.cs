@@ -11,6 +11,7 @@ namespace GraphDataRepository.Server.BrightstarDb
     /// </summary>
     internal class BrightstarClient : TriplestoreClient, IBrightstarClient
     {
+        //TODO add some authentication mechanisms
         private IBrightstarService _brightstarClient;
 
         #region public methods

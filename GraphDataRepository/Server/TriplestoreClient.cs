@@ -35,7 +35,7 @@ namespace GraphDataRepository.Server
         public abstract Task<bool> UpdateGraph(string dataset, string graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd);
         public abstract Task<IEnumerable<string>> ListGraphs(string dataset);
 
-        public async Task<bool> DeleteGraph(string dataset, string graphUri)
+        public virtual async Task<bool> DeleteGraph(string dataset, string graphUri)
         {
             return await ClientCall(new Task<bool>(() =>
             {
@@ -50,7 +50,7 @@ namespace GraphDataRepository.Server
             }));
         }
 
-        public async Task<IGraph> ReadGraph(string dataset, string graphUri)
+        public virtual async Task<IGraph> ReadGraph(string dataset, string graphUri)
         {
             return await ClientCall(new Task<IGraph>(() =>
             {
@@ -64,7 +64,7 @@ namespace GraphDataRepository.Server
             }));
         }
 
-        public async Task<SparqlResultSet> RunSparqlQuery(IEnumerable<string> graphUris, string query)
+        public virtual async Task<SparqlResultSet> RunSparqlQuery(IEnumerable<string> graphUris, string query)
         {
             return await ClientCall(new Task<SparqlResultSet>(() =>
             {
