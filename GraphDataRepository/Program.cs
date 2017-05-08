@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using BrightstarDB;
 using BrightstarDB.Client;
-using Common;
+using GraphDataRepository.Server.BrightstarDb;
 using GraphDataRepository.Utilities.StructureMap;
 using log4net;
 using log4net.Config;
@@ -27,7 +26,7 @@ namespace GraphDataRepository
             Initialize();
 
             /*************/
-            //Playground();
+            Playground2();
             /*************/
 
             Console.WriteLine("Press Enter to stop the program");
@@ -36,6 +35,17 @@ namespace GraphDataRepository
             _log.Info("Terminating the program");
             Disposables.ForEach(d => d.Dispose());
             _log.Info("Program terminated succesfully");
+        }
+
+        private static async void Playground2()
+        {
+            var triplestoreClient = ObjectFactory.Container
+                .With("endpoint").EqualTo("http://192.168.0.111:8090/brightstar")
+                .GetInstance<IBrightstarClient>();
+
+            Disposables.Add(triplestoreClient);
+
+            var x = await triplestoreClient.CreateDataset("dupa");
         }
 
         private static void Initialize()
@@ -52,11 +62,10 @@ namespace GraphDataRepository
             /********************************/
             /***********BRIGHTSTAR**********/
             /********************************/
-
-            var client = BrightstarService.GetClient("Type=rest;endpoint=http://192.168.1.112:8090/brightstar;");
+            
+            var client = BrightstarService.GetClient("Type=rest;endpoint=http://192.168.0.111:8090/brightstar;");
             string storeName = "Store_" + Guid.NewGuid();
             client.CreateStore(storeName);
-
 
             var addTriples = new StringBuilder();
             addTriples.AppendLine(
@@ -87,8 +96,11 @@ namespace GraphDataRepository
             /************DOTNETRDF***********/
             /********************************/
 
-            SparqlConnector connect = new SparqlConnector(new Uri($"http://192.168.1.112:8090/brightstar/{storeName}//SPARQL"));
+            SparqlConnector connect = new SparqlConnector(new Uri($"http://192.168.0.111:8090/brightstar/{storeName}//SPARQL"));
             PersistentTripleStore store = new PersistentTripleStore(connect);
+            var aliceGraph = new Graph();
+            connect.LoadGraph(aliceGraph, "http://example.org/graphs/alice");
+
             Object results = store.ExecuteQuery(query);//TODO: search in !default graph
             if (results is SparqlResultSet)
             {

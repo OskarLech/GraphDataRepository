@@ -79,6 +79,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\BrightstarDb\BrightstarClient.cs" />
+    <Compile Include="Server\BrightstarDb\IBrightstarClient.cs" />
     <Compile Include="Server\ITriplestoreClient.cs" />
     <Compile Include="Utilities\StructureMap\MainRegistry.cs" />
     <Compile Include="Utilities\StructureMap\ObjectFactory.cs" />

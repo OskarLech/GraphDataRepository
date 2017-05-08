@@ -1,5 +1,4 @@
-﻿using GraphDataRepository.Server;
-using GraphDataRepository.Utilities.StructureMap;
+﻿using GraphDataRepository.Utilities.StructureMap;
 using log4net;
 using log4net.Config;
 using NUnit.Framework;
@@ -8,7 +7,7 @@ using Rhino.Mocks;
 namespace Tests
 {
     [TestFixture]
-    internal class BrightstarClientTests : ITriplestoreClient
+    internal class BrightstarClientTests //TODO : ITriplestoreClient
     {
         private readonly MockRepository _mock = new MockRepository();
 
