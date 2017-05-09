@@ -73,12 +73,10 @@ namespace GraphDataRepository.Server
             }));
         }
 
-        //TODO add timeout logic
         protected async Task<T> ClientCall<T>(Task<T> call)
         {
             try
             {
-                call.Start();
                 return await call;
             }
             catch (WebException)

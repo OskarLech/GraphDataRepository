@@ -11,6 +11,7 @@ namespace GraphDataRepository.Server.BrightstarDb
     /// </summary>
     internal class BrightstarClient : TriplestoreClient, IBrightstarClient
     {
+
         //TODO add some authentication mechanisms
         private IBrightstarService _brightstarClient;
 
@@ -18,11 +19,12 @@ namespace GraphDataRepository.Server.BrightstarDb
         public BrightstarClient(ILog log, string endpoint) : base(log, endpoint)
         {
             _brightstarClient = BrightstarService.GetClient($"Type=rest;endpoint={endpoint};");
+
         }
 
         public override async Task<bool> CreateDataset(string name)
         {
-            return await ClientCall(new Task<bool>(() =>
+            return await ClientCall(Task.Run(() =>
             {
                 if (!_brightstarClient.DoesStoreExist(name))
                 {
@@ -37,7 +39,7 @@ namespace GraphDataRepository.Server.BrightstarDb
 
         public override async Task<bool> DeleteDataset(string name)
         {
-            return await ClientCall(new Task<bool>(() =>
+            return await ClientCall(Task.Run(() =>
             {
                 if (_brightstarClient.DoesStoreExist(name))
                 {
@@ -52,7 +54,7 @@ namespace GraphDataRepository.Server.BrightstarDb
 
         public override async Task<IEnumerable<string>> ListDatasets()
         {
-            return await ClientCall(new Task<IEnumerable<string>>(() =>
+            return await ClientCall(Task.Run(() =>
             {
                 var datasetList = _brightstarClient.ListStores() ?? new List<string>();
                 return datasetList;
@@ -61,7 +63,7 @@ namespace GraphDataRepository.Server.BrightstarDb
 
         public override async Task<bool> UpdateGraph(string dataset, string graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)
         {
-            return await ClientCall(new Task<bool>(() =>
+            return await ClientCall(Task.Run(() =>
             {
                 var deletePatterns = new StringBuilder();
                 foreach (var triple in triplesToRemove)
@@ -94,7 +96,7 @@ namespace GraphDataRepository.Server.BrightstarDb
 
         public override async Task<IEnumerable<string>> ListGraphs(string dataset)
         {
-            return await ClientCall(new Task<IEnumerable<string>>(() => _brightstarClient.ListNamedGraphs(dataset) ?? new List<string>(), CancellationTokenSource.Token));
+            return await ClientCall(Task.Run(() => _brightstarClient.ListNamedGraphs(dataset) ?? new List<string>(), CancellationTokenSource.Token));
         }
         #endregion
 
