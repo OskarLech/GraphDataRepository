@@ -11,7 +11,6 @@ namespace GraphDataRepository.Server.BrightstarDb
     /// </summary>
     internal class BrightstarClient : TriplestoreClient, IBrightstarClient
     {
-
         //TODO add some authentication mechanisms
         private IBrightstarService _brightstarClient;
 
@@ -118,8 +117,6 @@ namespace GraphDataRepository.Server.BrightstarDb
             CancellationTokenSource.Dispose();
             HttpClient.Dispose();
             _brightstarClient = null;
-
-            Log.Debug($"{GetType().Name} disposed");
         }
     }
 }

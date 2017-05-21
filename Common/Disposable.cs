@@ -6,7 +6,7 @@ namespace Common
     public abstract class Disposable : IDisposable
     {
         private bool _disposed;
-        protected ILog Log { get; private set; }
+        protected ILog Log { get; }
         protected Disposable(ILog log)
         {
             Log = log;
@@ -26,7 +26,9 @@ namespace Common
 
         public void Dispose()
         {
+            Log.Debug($"Disposing {GetType().Name}...");
             Dispose(true);
+            Log.Debug($"{GetType().Name} disposed");
             GC.SuppressFinalize(this);
         }
 
