@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using log4net;
 
@@ -9,7 +11,20 @@ namespace Common
     {
         public static string GetDetails(this Exception e)
         {
-            return $"{e.GetType().Name}: {e.Message}, ST:{e.StackTrace}" + (e.InnerException != null ? "\n\nInner Exception: " + e.InnerException.GetDetails() : "");
+            var details = $"{e.GetType().Name}: {e.Message}, Stack trace:{e.StackTrace}" + (e.InnerException != null ? "\n\nInner Exception: " + e.InnerException.GetDetails() : "");
+
+            var webEx = e as WebException;
+            if (webEx != null)
+            {
+                details += $"\nWebException details:\n\nResponse: {webEx.Response}, Status: {webEx.Status}";
+                var responseStream = webEx.Response.GetResponseStream();
+                if (responseStream != null)
+                {
+                    details += $", Reponse: {new StreamReader(responseStream).ReadToEnd()}";
+                }
+            }
+
+            return details;
         }
 
         public static void WaitAndLog(this Task task, int seconds, string msg)
