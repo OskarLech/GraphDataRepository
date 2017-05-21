@@ -18,6 +18,6 @@ namespace GraphDataRepository.Server
         Task<bool> UpdateGraph(string dataset, string graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd);
         Task<IGraph> ReadGraph(string dataset, string graphUri);
         Task<IEnumerable<Uri>> ListGraphs(string dataset);
-        Task<SparqlResultSet> RunSparqlQuery(string dataset, string query);
+        Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query);
     }
 }

@@ -21,7 +21,7 @@ namespace GraphDataRepository.Server
         protected readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
         protected readonly HttpClient HttpClient = new HttpClient
         {
-            Timeout = TimeSpan.FromSeconds(5) //TODO add settings
+            Timeout = TimeSpan.FromSeconds(5)
         };
 
         protected TriplestoreClient(ILog log, string endpoint) : base(log)
@@ -78,11 +78,12 @@ namespace GraphDataRepository.Server
             }, CancellationTokenSource.Token));
         }
 
-        public async Task<SparqlResultSet> RunSparqlQuery(string dataset, string query) //TODO: test
+        public async Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query)
         {
             return await ClientCall(Task.Run(() =>
             {
-                using (var connector = new SparqlConnector(new Uri($"{EndpointUri}/{dataset}/SPARQL")))
+                var endpoint = new SparqlRemoteEndpoint(new Uri($"{EndpointUri}/{dataset}/SPARQL"), graphs);
+                using (var connector = new SparqlConnector(endpoint))
                 {
                     using (var store = new PersistentTripleStore(connector))
                     {

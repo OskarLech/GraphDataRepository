@@ -147,7 +147,13 @@ namespace GraphDataRepository
                         dataset = Console.ReadLine();
                         Console.WriteLine("query:");
                         var query = Console.ReadLine();
-                        var resultSet = await triplestoreClient.RunSparqlQuery(dataset, query);
+                        var graphs = new List<Uri>
+                        {
+                            new Uri("http://example.org/graph1"),
+                            new Uri("http://example.org/graph2")
+                        };
+
+                        var resultSet = await triplestoreClient.RunSparqlQuery(dataset, graphs, query);
                         foreach (VDS.RDF.Query.SparqlResult result in resultSet)
                         {
                             Console.WriteLine(result.ToString());
