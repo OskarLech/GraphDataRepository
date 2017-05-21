@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -18,6 +19,7 @@ namespace GraphDataRepository.Server
     public abstract class TriplestoreClient : Disposable, ITriplestoreClient
     {
         protected readonly string EndpointUri;
+        protected readonly List<Task> CallTasks = new List<Task>();
         protected readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
         protected readonly HttpClient HttpClient = new HttpClient
         {
@@ -95,6 +97,17 @@ namespace GraphDataRepository.Server
 
         protected async Task<T> ClientCall<T>(Task<T> call)
         {
+            lock (CallTasks)
+            {
+                var finishedTasks = CallTasks.Where(t => t.IsCompleted || t.IsFaulted || t.IsCanceled).ToArray();
+                foreach (var finishedTask in finishedTasks)
+                {
+                    CallTasks.Remove(finishedTask);
+                }
+
+                CallTasks.Add(call);
+            }
+
             try
             {
                 return await call;
@@ -113,6 +126,25 @@ namespace GraphDataRepository.Server
                 Log.Error($"Request to {EndpointUri} failed: {e.GetDetails()}");
                 return default(T);
             }
+        }
+
+        protected override void OnDispose(bool disposing)
+        {
+            CancellationTokenSource.Cancel();
+
+            Task[] tasksToWait;
+            lock (CallTasks)
+            {
+                tasksToWait = CallTasks.ToArray();
+            }
+
+            if (!Task.WaitAll(tasksToWait, TimeSpan.FromSeconds(10)))
+            {
+                Log.Error("Client call tasks did not finish in specified time");
+            }
+
+            CancellationTokenSource.Dispose();
+            HttpClient.Dispose();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using BrightstarDB.Client;
@@ -110,13 +111,5 @@ namespace GraphDataRepository.Server.BrightstarDb
             }, CancellationTokenSource.Token));
         }
         #endregion
-
-        protected override void OnDispose(bool disposing)
-        {
-            CancellationTokenSource.Cancel();
-            CancellationTokenSource.Dispose();
-            HttpClient.Dispose();
-            _brightstarClient = null;
-        }
     }
 }
