@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 using BrightstarDB;
 using BrightstarDB.Client;
@@ -29,6 +30,9 @@ namespace GraphDataRepository
             BrightstarClientCli();
             /*************/
 
+            var mre = new ManualResetEvent(false);
+            mre.WaitOne();
+
             Console.WriteLine("Press Enter to stop the program");
             Console.ReadLine();
 
@@ -45,7 +49,114 @@ namespace GraphDataRepository
 
             Disposables.Add(triplestoreClient);
 
-            var x = await triplestoreClient.CreateDataset("dupa");
+            while (true)
+            {
+                Console.WriteLine("\n\nESC - exit");
+                Console.WriteLine("F1 - Create dataset");
+                Console.WriteLine("C - Delete dataset");
+                Console.WriteLine("F3 - List datasets");
+                Console.WriteLine("F4 - Delete graph");
+                Console.WriteLine("F5 - Update graph");
+                Console.WriteLine("F6 - Read graph");
+                Console.WriteLine("F7 - List graphs");
+                Console.WriteLine("F8 - Run SPARQL query\n\n");
+
+                string dataset;
+                string graph;
+                var key = Console.ReadKey();
+                switch (key.Key)
+                {
+                    case ConsoleKey.F1:
+                        Console.WriteLine("dataset name:");
+                        dataset = Console.ReadLine();
+                        if (await triplestoreClient.CreateDataset(dataset))
+                        {
+                            Console.WriteLine("success");
+                        }
+                        break;
+
+                    case ConsoleKey.C:
+                        Console.WriteLine("dataset name:");
+                        dataset = Console.ReadLine();
+                        if (await triplestoreClient.DeleteDataset(dataset))
+                        {
+                            Console.WriteLine("success");
+                        }
+                        break;
+
+                    case ConsoleKey.F3:
+                        foreach (var ds in await triplestoreClient.ListDatasets())
+                        {
+                            Console.WriteLine(ds);
+                        }
+                        break;
+
+                    case ConsoleKey.F4:
+                        Console.WriteLine("dataset name:");
+                        dataset = Console.ReadLine();
+                        Console.WriteLine("graph URI:");
+                        graph = Console.ReadLine();
+                        if (await triplestoreClient.DeleteGraph(dataset, graph))
+                        {
+                            Console.WriteLine("success");
+                        }
+                        break;
+
+                    case ConsoleKey.F5: //update graph
+                        Console.WriteLine("dataset name:");
+                        dataset = Console.ReadLine();
+                        Console.WriteLine("graph URI:");
+                        graph = Console.ReadLine();
+
+                        var triplesToRemove = new List<string>();
+                        var triplesToAdd = new List<string>();
+
+                        triplesToRemove.Add("<xhttp://www.w3.org/2001/sw/RDFCore/ntriples/> <xhttp://www.w3.org/1999/02/22-rdf-syntax-ns#type> <xhttp://xmlns.com/foaf/0.1/Document>");
+                        triplesToRemove.Add("<xhttp://www.w3.org/2001/sw/RDFCore/ntriples/> <xhttp://www.w3.org/1999/02/22-rdf-syntax-ns#type> <xhttp://xmlns.com/foaf/0.1/Document>");
+                        triplesToRemove.Add("<xhttp://www.w3.org/2001/sw/RDFCore/ntriples/> <xhttp://www.w3.org/1999/02/22-rdf-syntax-ns#type> <xhttp://xmlns.com/foaf/0.1/Document>");
+                        triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
+                        triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
+                        triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
+
+                        if (await triplestoreClient.UpdateGraph(dataset, graph, triplesToRemove, triplesToAdd))
+                        {
+                            Console.WriteLine("success");
+                        }
+                        break;
+
+                    case ConsoleKey.F6:
+                        Console.WriteLine("dataset name:");
+                        dataset = Console.ReadLine();
+                        Console.WriteLine("graph URI:");
+                        graph = Console.ReadLine();
+
+                        var dnrGraph = await triplestoreClient.ReadGraph(dataset, graph);
+                        break;
+
+                    case ConsoleKey.F7:
+                        Console.WriteLine("dataset name:");
+                        dataset = Console.ReadLine();
+                        foreach (var g in await triplestoreClient.ListGraphs(dataset))
+                        {
+                            Console.WriteLine(g);
+                        }
+                        break;
+
+                    case ConsoleKey.F8:
+                        Console.WriteLine("dataset name:");
+                        dataset = Console.ReadLine();
+                        Console.WriteLine("query:");
+                        var query = Console.ReadLine();
+                        var resultSet = await triplestoreClient.RunSparqlQuery(dataset, query);
+                        foreach (VDS.RDF.Query.SparqlResult result in resultSet)
+                        {
+                            Console.WriteLine(result.ToString());
+                        }
+                        break;
+                }
+
+                if (key.Key == ConsoleKey.Escape) break;
+            }
         }
 
         private static void Initialize()

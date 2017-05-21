@@ -33,13 +33,26 @@ namespace GraphDataRepository.Server
         public abstract Task<bool> DeleteDataset(string name);
         public abstract Task<IEnumerable<string>> ListDatasets();
         public abstract Task<bool> UpdateGraph(string dataset, string graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd);
-        public abstract Task<IEnumerable<string>> ListGraphs(string dataset);
 
-        public virtual async Task<bool> DeleteGraph(string dataset, string graphUri)
+        public async Task<IEnumerable<Uri>> ListGraphs(string dataset)
         {
-            return await ClientCall(new Task<bool>(() =>
+            return await ClientCall(Task.Run(() =>
             {
-                var response = HttpClient.DeleteAsync($"{EndpointUri}/{dataset}/{graphUri}", CancellationTokenSource.Token).Result;
+                using (var connector = new SparqlConnector(new Uri($"{EndpointUri}/{dataset}/SPARQL")))
+                {
+                    using (var store = new PersistentTripleStore(connector))
+                    {
+                        return store.UnderlyingStore.ListGraphs();
+                    }
+                }
+            }, CancellationTokenSource.Token));
+        }
+
+        public async Task<bool> DeleteGraph(string dataset, string graphUri)
+        {
+            return await ClientCall(Task.Run(() =>
+            {
+                var response = HttpClient.DeleteAsync($"{EndpointUri}/{dataset}/graphs?graph={graphUri}", CancellationTokenSource.Token).Result;
                 if (!response.IsSuccessStatusCode)
                 {
                     Log.Debug($"Error {response.StatusCode} while sending HTTP request to {EndpointUri}: {response.Content}");
@@ -47,30 +60,36 @@ namespace GraphDataRepository.Server
                 }
 
                 return true;
-            }));
+            }, CancellationTokenSource.Token));
         }
 
-        public virtual async Task<IGraph> ReadGraph(string dataset, string graphUri)
+        public async Task<IGraph> ReadGraph(string dataset, string graphUri)
         {
-            return await ClientCall(new Task<IGraph>(() =>
+            return await ClientCall(Task.Run(() =>
             {
-                var resultGraph = new Graph();
-                using (var connector = new SparqlConnector(new Uri($"{EndpointUri}/{dataset}//SPARQL")))
+                Graph resultGraph;
+                using (var connector = new SparqlConnector(new Uri($"{EndpointUri}/{dataset}/SPARQL")))
                 {
-                    connector.Timeout = 5000; //5s
+                    resultGraph = new Graph();
                     connector.LoadGraph(resultGraph, graphUri);
-                    return resultGraph;
                 }
-            }));
+
+                return resultGraph;
+            }, CancellationTokenSource.Token));
         }
 
-        public virtual async Task<SparqlResultSet> RunSparqlQuery(IEnumerable<string> graphUris, string query)
+        public async Task<SparqlResultSet> RunSparqlQuery(string dataset, string query) //TODO: test
         {
-            return await ClientCall(new Task<SparqlResultSet>(() =>
+            return await ClientCall(Task.Run(() =>
             {
-                var endpoint = new SparqlRemoteEndpoint(new Uri(EndpointUri), graphUris);
-                return endpoint.QueryWithResultSet(query);
-            }));
+                using (var connector = new SparqlConnector(new Uri($"{EndpointUri}/{dataset}/SPARQL")))
+                {
+                    using (var store = new PersistentTripleStore(connector))
+                    {
+                        return store.ExecuteQuery(query) as SparqlResultSet;
+                    }
+                }
+            }, CancellationTokenSource.Token));
         }
 
         protected async Task<T> ClientCall<T>(Task<T> call)
@@ -79,9 +98,9 @@ namespace GraphDataRepository.Server
             {
                 return await call;
             }
-            catch (WebException)
+            catch (WebException webEx)
             {
-                Log.Debug($"Request to {EndpointUri} failed due to the connection error");
+                Log.Debug($"{webEx.GetDetails()}");
                 return default(T);
             }
             catch (TaskCanceledException)

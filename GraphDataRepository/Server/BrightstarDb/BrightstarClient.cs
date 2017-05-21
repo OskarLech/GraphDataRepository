@@ -19,13 +19,18 @@ namespace GraphDataRepository.Server.BrightstarDb
         public BrightstarClient(ILog log, string endpoint) : base(log, endpoint)
         {
             _brightstarClient = BrightstarService.GetClient($"Type=rest;endpoint={endpoint};");
-
         }
 
         public override async Task<bool> CreateDataset(string name)
         {
             return await ClientCall(Task.Run(() =>
             {
+                if (string.IsNullOrEmpty(name))
+                {
+                    Log.Debug("Dataset name cannot be empty");
+                    return false;
+                }
+
                 if (!_brightstarClient.DoesStoreExist(name))
                 {
                     _brightstarClient.CreateStore(name);
@@ -41,6 +46,12 @@ namespace GraphDataRepository.Server.BrightstarDb
         {
             return await ClientCall(Task.Run(() =>
             {
+                if (string.IsNullOrEmpty(name))
+                {
+                    Log.Debug("Dataset name cannot be empty");
+                    return false;
+                }
+
                 if (_brightstarClient.DoesStoreExist(name))
                 {
                     _brightstarClient.DeleteStore(name);
@@ -65,16 +76,22 @@ namespace GraphDataRepository.Server.BrightstarDb
         {
             return await ClientCall(Task.Run(() =>
             {
+                if (string.IsNullOrEmpty(dataset) || string.IsNullOrEmpty(graphUri))
+                {
+                    Log.Debug("Dataset and graph URI cannot be empty");
+                    return false;
+                }
+
                 var deletePatterns = new StringBuilder();
                 foreach (var triple in triplesToRemove)
                 {
-                    deletePatterns.AppendLine($"{triple} {graphUri} .");
+                    deletePatterns.AppendLine($"{triple} <{graphUri}> .");
                 }
 
                 var insertData = new StringBuilder();
                 foreach (var triple in triplesToAdd)
                 {
-                    insertData.AppendLine($"{triple} {graphUri} .");
+                    insertData.AppendLine($"{triple} <{graphUri}> .");
                 }
 
                 var transactionData = new UpdateTransactionData
@@ -93,11 +110,6 @@ namespace GraphDataRepository.Server.BrightstarDb
                 return true;
             }, CancellationTokenSource.Token));
         }
-
-        public override async Task<IEnumerable<string>> ListGraphs(string dataset)
-        {
-            return await ClientCall(Task.Run(() => _brightstarClient.ListNamedGraphs(dataset) ?? new List<string>(), CancellationTokenSource.Token));
-        }
         #endregion
 
         protected override void OnDispose(bool disposing)
@@ -107,7 +119,7 @@ namespace GraphDataRepository.Server.BrightstarDb
             HttpClient.Dispose();
             _brightstarClient = null;
 
-            Log.Debug("BrightstarClient disposed");
+            Log.Debug($"{GetType().Name} disposed");
         }
     }
 }
