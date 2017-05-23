@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using BrightstarDB;
 using BrightstarDB.Client;
@@ -27,8 +28,10 @@ namespace GraphDataRepository
             Initialize();
 
             /*************/
-            BrightstarClientCli();
+            //BrightstarClientCli();
             /*************/
+
+            TestGraph();
 
             var mre = new ManualResetEvent(false);
             mre.WaitOne();
@@ -40,6 +43,38 @@ namespace GraphDataRepository
             Disposables.ForEach(d => d.Dispose());
             _log.Info("Program terminated succesfully");
         }
+
+        //private static void Test()
+        //{
+        //    var parallelOptions = new ParallelOptions
+        //    {
+        //        CancellationToken = _cancellationTokenSource.Token,
+        //        MaxDegreeOfParallelism = Environment.ProcessorCount
+        //    };
+
+        //    var graphList = new List<IGraph>();
+        //    var loopResult = Parallel.ForEach(graphUris, parallelOptions, async (graphUri, state) =>
+        //    {
+        //        var graph = await _triplestoreClient.ReadGraph(dataset, graphUri);
+        //        if (graph == null)
+        //        {
+        //            state.Break();
+        //        }
+
+        //        lock (graphList)
+        //        {
+        //            graphList.Add(graph);
+        //        }
+        //    });
+
+        //    if (!loopResult.IsCompleted && loopResult.LowestBreakIteration.HasValue)
+        //    {
+        //        Log.Warn("One or more graphs failed to load");
+        //        return null;
+        //    }
+
+        //    return CheckGraphs(graphList, parameters);
+        //}
 
         private static async void BrightstarClientCli()
         {
@@ -96,7 +131,7 @@ namespace GraphDataRepository
                         dataset = Console.ReadLine();
                         Console.WriteLine("graph URI:");
                         graph = Console.ReadLine();
-                        if (await triplestoreClient.DeleteGraph(dataset, graph))
+                        if (await triplestoreClient.DeleteGraph(dataset, new Uri(graph)))
                         {
                             Console.WriteLine("success");
                         }
@@ -118,7 +153,7 @@ namespace GraphDataRepository
                         triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
                         triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
 
-                        if (await triplestoreClient.UpdateGraph(dataset, graph, triplesToRemove, triplesToAdd))
+                        if (await triplestoreClient.UpdateGraph(dataset, new Uri(graph), triplesToRemove, triplesToAdd))
                         {
                             Console.WriteLine("success");
                         }
@@ -130,7 +165,7 @@ namespace GraphDataRepository
                         Console.WriteLine("graph URI:");
                         graph = Console.ReadLine();
 
-                        var dnrGraph = await triplestoreClient.ReadGraph(dataset, graph);
+                        var dnrGraph = await triplestoreClient.ReadGraph(dataset, new Uri(graph));
                         break;
 
                     case ConsoleKey.F7:
@@ -253,12 +288,17 @@ namespace GraphDataRepository
         private static void TestGraph()
         {
             var dataGraph = new Graph();
-            FileLoader.Load(dataGraph, @"..\..\TestData\RDF\foaf_example.rdf");
+            FileLoader.Load(dataGraph, @"..\..\..\Common\TestData\RDF\foaf_example.rdf");
 
             var schemaGraph = new Graph();
-            FileLoader.Load(schemaGraph, @"..\..\TestData\Schemas\foaf_20140114.rdf");
+            FileLoader.Load(schemaGraph, @"..\..\..\Common\TestData\Schemas\foaf_20140114.rdf");
 
             var subjectList = schemaGraph.Triples.Select(triple => triple.Subject.ToString()).Distinct().ToList();
+
+            foreach (var triple in schemaGraph.Triples)
+            {
+                Console.WriteLine($"{triple.Subject} {triple.Predicate} {triple.Object}");
+            }
 
             var wrongPredicates = new List<string>();
             foreach (var triple in dataGraph.Triples)

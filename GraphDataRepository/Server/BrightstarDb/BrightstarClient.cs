@@ -13,7 +13,7 @@ namespace GraphDataRepository.Server.BrightstarDb
     internal class BrightstarClient : TriplestoreClient, IBrightstarClient
     {
         //TODO add some authentication mechanisms
-        private IBrightstarService _brightstarClient;
+        private readonly IBrightstarService _brightstarClient;
 
         #region public methods
         public BrightstarClient(ILog log, string endpoint) : base(log, endpoint)
@@ -72,11 +72,11 @@ namespace GraphDataRepository.Server.BrightstarDb
             }, CancellationTokenSource.Token));
         }
 
-        public override async Task<bool> UpdateGraph(string dataset, string graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)
+        public override async Task<bool> UpdateGraph(string dataset, Uri graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)
         {
             return await ClientCall(Task.Run(() =>
             {
-                if (string.IsNullOrEmpty(dataset) || string.IsNullOrEmpty(graphUri))
+                if (string.IsNullOrEmpty(dataset) || string.IsNullOrEmpty(graphUri.ToString()))
                 {
                     Log.Debug("Dataset and graph URI cannot be empty");
                     return false;

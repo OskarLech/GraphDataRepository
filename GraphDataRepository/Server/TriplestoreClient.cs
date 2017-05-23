@@ -34,7 +34,7 @@ namespace GraphDataRepository.Server
         public abstract Task<bool> CreateDataset(string name);
         public abstract Task<bool> DeleteDataset(string name);
         public abstract Task<IEnumerable<string>> ListDatasets();
-        public abstract Task<bool> UpdateGraph(string dataset, string graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd);
+        public abstract Task<bool> UpdateGraph(string dataset, Uri graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd);
 
         public async Task<IEnumerable<Uri>> ListGraphs(string dataset)
         {
@@ -50,7 +50,7 @@ namespace GraphDataRepository.Server
             }, CancellationTokenSource.Token));
         }
 
-        public async Task<bool> DeleteGraph(string dataset, string graphUri)
+        public async Task<bool> DeleteGraph(string dataset, Uri graphUri)
         {
             return await ClientCall(Task.Run(() =>
             {
@@ -65,7 +65,7 @@ namespace GraphDataRepository.Server
             }, CancellationTokenSource.Token));
         }
 
-        public async Task<IGraph> ReadGraph(string dataset, string graphUri)
+        public async Task<IGraph> ReadGraph(string dataset, Uri graphUri)
         {
             return await ClientCall(Task.Run(() =>
             {

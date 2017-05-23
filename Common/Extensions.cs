@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -56,6 +57,11 @@ namespace Common
                     throw;
                 }
             }
+        }
+
+        public static IEnumerable<T> SingleItemAsEnumerable<T>(this T item)
+        {
+            yield return item;
         }
     }
 }
