@@ -79,6 +79,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QualityChecks\IQualityCheck.cs" />
+    <Compile Include="QualityChecks\KnowledgeBaseCheck\KnowledgeBaseCheck.cs" />
     <Compile Include="QualityChecks\QualityCheck.cs" />
     <Compile Include="QualityChecks\QualityCheckReport.cs" />
     <Compile Include="QualityChecks\VocabularyCheck\VocabularyCheck.cs" />

@@ -7,6 +7,9 @@ using VDS.RDF.Parsing;
 
 namespace GraphDataRepository.QualityChecks.VocabularyCheck
 {
+    /// <summary>
+    /// Checks if predicates used in triples are defined in vocabularies.
+    /// </summary>
     public class VocabularyCheck : QualityCheck
     {
         private readonly Dictionary<Uri, IEnumerable<string>> _vocabulariesByUri = new Dictionary<Uri, IEnumerable<string>>(); //TODO: temp for POC 
@@ -28,6 +31,8 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
         {
             var predicateList = _vocabulariesByUri[new Uri("http://xmlns.com/foaf/spec/")].ToList();//TODO: make list from all vocabs passed in parameters
             var wrongPredicates = new List<string>();
+
+            //TODO parallel foreaches
             foreach (var graph in graphs)
             {
                 foreach (var triple in graph.Triples)
@@ -45,7 +50,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
                 Console.WriteLine(predicate);
             }
 
-            return new QualityCheckReport();
+            return new QualityCheckReport(); //TODO
         }
 
         public override QualityCheckReport CheckData(IEnumerable<string> triples, IEnumerable<IGraph> graphs = null, IEnumerable<string> parameters = null)

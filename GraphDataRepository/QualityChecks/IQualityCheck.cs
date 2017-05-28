@@ -10,5 +10,6 @@ namespace GraphDataRepository.QualityChecks
         void FixErrors(QualityCheckReport qualityCheckReport, string dataset, IEnumerable<int> errorsToFix);
         IEnumerable<string> ListParameters();
         bool ImportParameters(IEnumerable<object> parameters);
+        void CancelCheck();
     }
 }
