@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Common;
 using VDS.RDF;
+using static Serilog.Log;
 
 namespace GraphDataRepository.QualityChecks
 {
@@ -24,9 +25,19 @@ namespace GraphDataRepository.QualityChecks
         public abstract void FixErrors(QualityCheckReport qualityCheckReport, string dataset, IEnumerable<int> errorsToFix);
         public abstract bool ImportParameters(IEnumerable<object> parameters);
 
-        protected IEnumerable<T> ParseParameters<T> (T type, IEnumerable<object> parameters)
+        protected IEnumerable<T> ParseParameters<T> (IEnumerable<object> parameters)
         {
-            return parameters.Select(StaticMethods.ConvertTo<T>).ToList();
+            try
+            {
+                return typeof(T).IsAssignableFrom(typeof(IConvertible)) 
+                    ? parameters.Select(StaticMethods.ConvertTo<T>).ToList() 
+                    : parameters.Select(parameter => (T) parameter).ToList();
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Cannot parse parameters of type {typeof(T)}: {e.GetDetails()}");
+                return null;
+            }
         }
 
         public void CancelCheck()
