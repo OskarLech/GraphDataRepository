@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using VDS.RDF;
 using static Serilog.Log;
 
 namespace Common
@@ -58,9 +58,9 @@ namespace Common
             }
         }
 
-        public static IEnumerable<T> SingleItemAsEnumerable<T>(this T item)
+        public static string PrettyPrint(this Triple triple)
         {
-            yield return item;
+            return $"{triple.Subject} {triple.Predicate} {triple.Object}";
         }
     }
 }

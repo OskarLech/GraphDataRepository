@@ -20,8 +20,8 @@ namespace GraphDataRepository.QualityChecks
             CancellationTokenSource = new CancellationTokenSource();
         }
 
-        public abstract QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters = null);
-        public abstract QualityCheckReport CheckData(IEnumerable<string> triples, IEnumerable<IGraph> graphs = null, IEnumerable<object> parameters = null);
+        public abstract QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters);
+        public abstract QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters, IEnumerable<IGraph> graphs = null);
         public abstract void FixErrors(QualityCheckReport qualityCheckReport, string dataset, IEnumerable<int> errorsToFix);
         public abstract bool ImportParameters(IEnumerable<object> parameters);
 
@@ -47,15 +47,22 @@ namespace GraphDataRepository.QualityChecks
             CancellationTokenSource = new CancellationTokenSource();
         }
 
-        public IEnumerable<string> ListParameters()
+        public IEnumerable<string> GetParameters()
         {
             //from DB
             throw new NotImplementedException();
         }
 
-        protected QualityCheckReport GenerateQualityCheckReport()
+        protected bool AreParametersSupported(IEnumerable<object> parameters)
         {
-            throw new NotImplementedException();
+            if (parameters == null || !parameters.Any())
+            {
+                Logger.Error($"Cannot run {GetType().Name} quality check with no parameters");
+                return false;
+            }
+
+            //TODO
+            return true;
         }
     }
 }

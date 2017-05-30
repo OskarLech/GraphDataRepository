@@ -8,9 +8,9 @@ namespace GraphDataRepository.QualityChecks
     /// </summary>
     public class QualityCheckReport
     {
-        public bool QualityCheckPassed { get; set; } = true;
+        public bool QualityCheckPassed { get; set; }
 
-        //Key: ID, value: graph URI or triple, error message and flag indicating if it's possible to fix the error automatically
-        public readonly Dictionary<int, IEnumerable<Tuple<string, string, bool>>> ErrorsById = new Dictionary<int, IEnumerable<Tuple<string, string, bool>>>();
+        //Key: ID, value: graph URI, triple, error message and flag indicating if it's possible to fix the error automatically
+        public readonly Dictionary<int, Tuple<string, string, string, bool>> ErrorsById = new Dictionary<int, Tuple<string, string, string, bool>>();
     }
 }
