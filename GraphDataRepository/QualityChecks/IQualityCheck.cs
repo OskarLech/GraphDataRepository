@@ -5,8 +5,8 @@ namespace GraphDataRepository.QualityChecks
 {
     public interface IQualityCheck
     {
-        QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<string> parameters = null);
-        QualityCheckReport CheckData(IEnumerable<string> triples, IEnumerable<IGraph> graphs = null, IEnumerable<string> parameters = null); 
+        QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters = null);
+        QualityCheckReport CheckData(IEnumerable<string> triples, IEnumerable<IGraph> graphs = null, IEnumerable<object> parameters = null); 
         void FixErrors(QualityCheckReport qualityCheckReport, string dataset, IEnumerable<int> errorsToFix);
         IEnumerable<string> ListParameters();
         bool ImportParameters(IEnumerable<object> parameters);

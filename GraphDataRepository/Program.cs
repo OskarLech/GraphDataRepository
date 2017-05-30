@@ -3,35 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using BrightstarDB;
 using BrightstarDB.Client;
+using Common;
+using GraphDataRepository.QualityChecks.VocabularyCheck;
 using GraphDataRepository.Server.BrightstarDb;
 using GraphDataRepository.Utilities.StructureMap;
-using log4net;
-using log4net.Config;
+using Serilog;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Storage;
+using static Serilog.Log;
 
 namespace GraphDataRepository
 {
     internal class Program
     {
-        private static ILog _log;
         private static readonly List<IDisposable> Disposables = new List<IDisposable>();
 
         static void Main(string[] args)
         {
             Initialize();
-
+            Logger.Debug("DUPA");
             /*************/
             //BrightstarClientCli();
             /*************/
 
-            TestGraph();
+            //TestGraph();
+            TestQualityCheck();
 
             var mre = new ManualResetEvent(false);
             mre.WaitOne();
@@ -39,9 +40,18 @@ namespace GraphDataRepository
             Console.WriteLine("Press Enter to stop the program");
             Console.ReadLine();
 
-            _log.Info("Terminating the program");
+            Logger.Verbose("Terminating the program");
             Disposables.ForEach(d => d.Dispose());
-            _log.Info("Program terminated succesfully");
+            Logger.Verbose("Program terminated succesfully");
+        }
+
+        private static void TestQualityCheck()
+        {
+            var dataGraph = new Graph();
+            FileLoader.Load(dataGraph, @"..\..\..\Common\TestData\RDF\foaf_example.rdf");
+
+            var vocabCheck = new VocabularyCheck();
+            vocabCheck.CheckGraphs(dataGraph.SingleItemAsEnumerable(), new Uri("http://xmlns.com/foaf/spec/index.rdf").SingleItemAsEnumerable());
         }
 
         //private static void Test()
@@ -202,9 +212,10 @@ namespace GraphDataRepository
 
         private static void Initialize()
         {
-            //log4net
-            XmlConfigurator.Configure();
-            _log = ObjectFactory.Container.GetInstance<ILog>();
+            //Serilog
+            Logger = new LoggerConfiguration()
+                .ReadFrom.AppSettings()
+                .CreateLogger();
         }
 
         private static void Playground()

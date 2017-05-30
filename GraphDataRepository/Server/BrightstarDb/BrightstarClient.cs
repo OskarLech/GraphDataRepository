@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using BrightstarDB.Client;
-using log4net;
+using static Serilog.Log;
 
 namespace GraphDataRepository.Server.BrightstarDb
 {
@@ -16,7 +16,7 @@ namespace GraphDataRepository.Server.BrightstarDb
         private readonly IBrightstarService _brightstarClient;
 
         #region public methods
-        public BrightstarClient(ILog log, string endpoint) : base(log, endpoint)
+        public BrightstarClient(string endpoint) : base(endpoint)
         {
             _brightstarClient = BrightstarService.GetClient($"Type=rest;endpoint={endpoint};");
         }
@@ -27,7 +27,7 @@ namespace GraphDataRepository.Server.BrightstarDb
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    Log.Debug("Dataset name cannot be empty");
+                    Logger.Debug("Dataset name cannot be empty");
                     return false;
                 }
 
@@ -37,7 +37,7 @@ namespace GraphDataRepository.Server.BrightstarDb
                     return true;
                 }
 
-                Log.Debug($"Dataset {name} already exists");
+                Logger.Debug($"Dataset {name} already exists");
                 return false;
             }, CancellationTokenSource.Token));
         }
@@ -48,7 +48,7 @@ namespace GraphDataRepository.Server.BrightstarDb
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    Log.Debug("Dataset name cannot be empty");
+                    Logger.Debug("Dataset name cannot be empty");
                     return false;
                 }
 
@@ -58,7 +58,7 @@ namespace GraphDataRepository.Server.BrightstarDb
                     return true;
                 }
 
-                Log.Debug($"Tried to delete non-existing dataset {name}");
+                Logger.Debug($"Tried to delete non-existing dataset {name}");
                 return false;
             }, CancellationTokenSource.Token));
         }
@@ -78,7 +78,7 @@ namespace GraphDataRepository.Server.BrightstarDb
             {
                 if (string.IsNullOrEmpty(dataset) || string.IsNullOrEmpty(graphUri.ToString()))
                 {
-                    Log.Debug("Dataset and graph URI cannot be empty");
+                    Logger.Debug("Dataset and graph URI cannot be empty");
                     return false;
                 }
 
@@ -103,7 +103,7 @@ namespace GraphDataRepository.Server.BrightstarDb
                 var jobInfo = _brightstarClient.ExecuteTransaction(dataset, transactionData);
                 if (!jobInfo.JobCompletedOk)
                 {
-                    Log.Error($"BrightstarDB transactional update failed: {jobInfo.ExceptionInfo}");
+                    Logger.Error($"BrightstarDB transactional update failed: {jobInfo.ExceptionInfo}");
                     return false;
                 }
 

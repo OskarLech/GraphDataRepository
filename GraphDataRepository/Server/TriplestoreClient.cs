@@ -6,10 +6,10 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using log4net;
 using VDS.RDF;
 using VDS.RDF.Query;
 using VDS.RDF.Storage;
+using static Serilog.Log;
 
 namespace GraphDataRepository.Server
 {
@@ -26,7 +26,7 @@ namespace GraphDataRepository.Server
             Timeout = TimeSpan.FromSeconds(5)
         };
 
-        protected TriplestoreClient(ILog log, string endpoint) : base(log)
+        protected TriplestoreClient(string endpoint)
         {
             EndpointUri = endpoint;
         }
@@ -57,7 +57,7 @@ namespace GraphDataRepository.Server
                 var response = HttpClient.DeleteAsync($"{EndpointUri}/{dataset}/graphs?graph={graphUri}", CancellationTokenSource.Token).Result;
                 if (!response.IsSuccessStatusCode)
                 {
-                    Log.Debug($"Error {response.StatusCode} while sending HTTP request to {EndpointUri}: {response.Content}");
+                    Logger.Debug($"Error {response.StatusCode} while sending HTTP request to {EndpointUri}: {response.Content}");
                     return false;
                 }
 
@@ -114,7 +114,7 @@ namespace GraphDataRepository.Server
             }
             catch (WebException webEx)
             {
-                Log.Debug($"{webEx.GetDetails()}");
+                Logger.Debug($"{webEx.GetDetails()}");
                 return default(T);
             }
             catch (TaskCanceledException)
@@ -123,7 +123,7 @@ namespace GraphDataRepository.Server
             }
             catch (Exception e)
             {
-                Log.Error($"Request to {EndpointUri} failed: {e.GetDetails()}");
+                Logger.Error($"Request to {EndpointUri} failed: {e.GetDetails()}");
                 return default(T);
             }
         }
@@ -140,7 +140,7 @@ namespace GraphDataRepository.Server
 
             if (!Task.WaitAll(tasksToWait, TimeSpan.FromSeconds(10)))
             {
-                Log.Error("Client call tasks did not finish in specified time");
+                Logger.Error("Client call tasks did not finish in specified time");
             }
 
             CancellationTokenSource.Dispose();

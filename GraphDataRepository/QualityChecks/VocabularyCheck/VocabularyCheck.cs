@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using log4net;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 
@@ -12,9 +11,9 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
     /// </summary>
     public class VocabularyCheck : QualityCheck
     {
-        private readonly Dictionary<Uri, IEnumerable<string>> _vocabulariesByUri = new Dictionary<Uri, IEnumerable<string>>(); //TODO: temp for POC 
+        private readonly Dictionary<Uri, IEnumerable<string>> _vocabularySubjectsByUri = new Dictionary<Uri, IEnumerable<string>>(); //TODO: temp for POC 
 
-        public VocabularyCheck(ILog log) : base(log)
+        public VocabularyCheck()
         {
             LoadVocabsTemp();
         }
@@ -24,12 +23,14 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
             var schemaGraph = new Graph();
             FileLoader.Load(schemaGraph, @"..\..\..\Common\TestData\Schemas\foaf_20140114.rdf");
             var subjectList = schemaGraph.Triples.Select(triple => triple.Subject.ToString()).Distinct().ToList();
-            _vocabulariesByUri[new Uri("http://xmlns.com/foaf/spec/")] = subjectList;
+            _vocabularySubjectsByUri[new Uri("http://xmlns.com/foaf/spec/")] = subjectList;
         }
 
-        public override QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<string> parameters = null)
+        public override QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters = null)
         {
-            var predicateList = _vocabulariesByUri[new Uri("http://xmlns.com/foaf/spec/")].ToList();//TODO: make list from all vocabs passed in parameters
+            var parsedParameters = ParseParameters(typeof(Uri), parameters);
+
+            var predicateList = _vocabularySubjectsByUri[new Uri("http://xmlns.com/foaf/spec/")].ToList();//TODO: make list from all vocabs passed in parameters
             var wrongPredicates = new List<string>();
 
             //TODO parallel foreaches
@@ -53,8 +54,9 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
             return new QualityCheckReport(); //TODO
         }
 
-        public override QualityCheckReport CheckData(IEnumerable<string> triples, IEnumerable<IGraph> graphs = null, IEnumerable<string> parameters = null)
+        public override QualityCheckReport CheckData(IEnumerable<string> triples, IEnumerable<IGraph> graphs = null, IEnumerable<object> parameters = null)
         {
+            var parsedParameters = ParseParameters(typeof(Uri), parameters);
             throw new System.NotImplementedException();
         }
 

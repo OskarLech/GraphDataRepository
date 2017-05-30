@@ -1,16 +1,11 @@
 ﻿using System;
-using log4net;
+using static Serilog.Log;
 
 namespace Common
 {
     public abstract class Disposable : IDisposable
     {
         private bool _disposed;
-        protected ILog Log { get; }
-        protected Disposable(ILog log)
-        {
-            Log = log;
-        }
 
         protected abstract void OnDispose(bool disposing);
         public void Dispose(bool disposing)
@@ -26,9 +21,9 @@ namespace Common
 
         public void Dispose()
         {
-            Log.Debug($"Disposing {GetType().Name}...");
+            Logger.Debug($"Disposing {GetType().Name}...");
             Dispose(true);
-            Log.Debug($"{GetType().Name} disposed");
+            Logger.Debug($"{GetType().Name} disposed");
             GC.SuppressFinalize(this);
         }
 

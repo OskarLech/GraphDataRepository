@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using log4net;
+using static Serilog.Log;
 
 namespace Common
 {
@@ -30,10 +30,9 @@ namespace Common
 
         public static void WaitAndLog(this Task task, int seconds, string msg)
         {
-            var log = LogManager.GetLogger(typeof(Extensions));
             if (task == null)
             {
-                log.Warn("WaitAndLog extension method called on a null task");
+                Logger.Warning("WaitAndLog extension method called on a null task");
                 return;
             }
 
@@ -41,7 +40,7 @@ namespace Common
             {
                 if (!task.Wait(TimeSpan.FromSeconds(seconds)))
                 {
-                    log.Warn(msg);
+                    Logger.Warning(msg);
                 }
             }
             catch (TaskCanceledException)
