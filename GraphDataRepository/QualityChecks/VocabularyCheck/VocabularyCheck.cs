@@ -11,6 +11,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
 {
     /// <summary>
     /// Checks if predicates used in triples are defined in vocabularies.
+    /// Parameters for this class are vocabulary URIs that can point either to file on a disk or web resource
     /// </summary>
     public class VocabularyCheck : QualityCheck
     {
@@ -18,6 +19,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
 
         public override QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters)
         {
+            IsCheckInProgress = true;
             var parameterList = parameters as IList<object> ?? parameters.ToList(); //multiple enumeration
             if (!AreParametersSupported(parameterList))
             {
@@ -28,20 +30,28 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
             var predicateList = GetPredicates(vocabularyUris);
 
             var wrongTriples = new List<Triple>();
-            var parallelOptions = new ParallelOptions { CancellationToken = CancellationTokenSource.Token };
-            Parallel.ForEach(graphs, parallelOptions, graph =>
+            try
             {
-                lock (wrongTriples)
+                Parallel.ForEach(graphs, ParallelOptions, graph =>
                 {
-                    wrongTriples.AddRange(CheckTriples(graph.Triples.ToList(), predicateList));
-                }
-            });
+                    lock (wrongTriples)
+                    {
+                        wrongTriples.AddRange(CheckTriples(graph.Triples.ToList(), predicateList));
+                    }
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                IsCheckInProgress = false;
+                return null;
+            }
 
             return GenerateQualityCheckReport(wrongTriples);
         }
 
         public override QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters, IEnumerable<IGraph> graphs = null)
         {
+            IsCheckInProgress = true;
             if (graphs != null)
             {
                 throw new Exception($"{GetType().Name} quality check cannot compare triples against graphs.");
@@ -77,19 +87,26 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
         private IEnumerable<Triple> CheckTriples(IEnumerable<Triple> triples, IEnumerable<string> predicateList)
         {
             var wrongTriples = new List<Triple>();
-            var parallelOptions = new ParallelOptions { CancellationToken = CancellationTokenSource.Token };
-            Parallel.ForEach(triples, parallelOptions, triple =>
+            try
             {
-                var predicate = triple.Predicate.ToString();
-                if (predicateList.Contains(predicate)) return;
-
-                lock (wrongTriples)
+                Parallel.ForEach(triples, ParallelOptions, triple =>
                 {
-                    if (wrongTriples.Contains(triple)) return;
-                    Logger.Verbose($"Predicate not found in any dictionary: {triple.Predicate}");
-                    wrongTriples.Add(triple);
-                }
-            });
+                    var predicate = triple.Predicate.ToString();
+                    if (predicateList.Contains(predicate)) return;
+
+                    lock (wrongTriples)
+                    {
+                        if (wrongTriples.Contains(triple)) return;
+                        Logger.Verbose($"Predicate not found in any dictionary: {triple.Predicate}");
+                        wrongTriples.Add(triple);
+                    }
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                IsCheckInProgress = false;
+                return null;
+            }
 
             return wrongTriples;
         }
@@ -105,7 +122,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
             return vocabularySubjectsByUri.SelectMany(predicate => predicate.Value).Distinct().ToList();
         }
 
-        private static QualityCheckReport GenerateQualityCheckReport(List<Triple> wrongTriples)
+        private QualityCheckReport GenerateQualityCheckReport(List<Triple> wrongTriples)
         {
             var report = new QualityCheckReport();
 
@@ -128,6 +145,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
                 errorId++;
             }
 
+            IsCheckInProgress = false;
             return report;
         }
 

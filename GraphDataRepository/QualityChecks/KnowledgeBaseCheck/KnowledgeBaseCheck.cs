@@ -12,41 +12,61 @@ namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
     /// <summary> 
     /// Checks whether triple subjects exist in external knowledge base and if custom SPARQL query for them has results.
     /// Example: Checking if subject is in DBpedia knowledge base and if it's concept is known in YAGO project.
+    /// Parameters for this class are URIs of endpoint and default graph (second one can be null) and SPARQL query that is to be executed
     /// </summary>
     public class KnowledgeBaseCheck : QualityCheck
     {
         public override QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters)
         {
             var parameterList = parameters as IList<object> ?? parameters.ToList(); //multiple enumeration
-            if (!AreParametersSupported(parameterList)) return null;
-            var parsedParameters = ParseParameters<Tuple<Uri, Uri, string>>(parameterList);
-
-            var parallelOptions = new ParallelOptions {CancellationToken = CancellationTokenSource.Token};
-            Parallel.ForEach(parsedParameters, parallelOptions, parameter =>
+            if (!AreParametersSupported(parameterList))
             {
-                var endpoint = new SparqlRemoteEndpoint(parameter.Item1, parameter.Item2);
-                SparqlResultSet results = null;
-                try
-                {
-                    results = endpoint.QueryWithResultSet(parameter.Item3);
-                }
-                catch (Exception e)
-                {
-                    Logger.Error($"{GetType().Name} quality check failed for endpoint {parameter.Item1}" +
-                                 (parameter.Item2 != null ? $"(graph {parameter.Item2})" : "(default graph)") +
-                                 $"{e.GetDetails()}");
-                }
+                return null;
+            }
 
-                if (results != null && results.Count > 0)
+            var parsedParameters = ParseParameters<Tuple<Uri, Uri, string>>(parameterList);
+            var checksFailed = new List<Tuple<Uri, Uri, string>>();
+
+            try
+            {
+                Parallel.ForEach(parsedParameters, ParallelOptions, parameter =>
                 {
-                    foreach (var result in results)
+                    var endpoint = new SparqlRemoteEndpoint(parameter.Item1, parameter.Item2);
+                    SparqlResultSet results = null;
+                    try
                     {
-                        Logger.Verbose($"{result}");
+                        results = endpoint.QueryWithResultSet(parameter.Item3);
                     }
-                }
-            });
+                    catch (Exception e)
+                    {
+                        Logger.Error($"{GetType().Name} quality check failed for endpoint {parameter.Item1}" +
+                                     (parameter.Item2 != null ? $"(graph {parameter.Item2})" : "(default graph)") +
+                                     $":\n{e.GetDetails()}");
+                    }
 
-            return null;
+                    if (results != null && results.Any())
+                    {
+                        foreach (var result in results)
+                        {
+                            Logger.Verbose($"{result}");
+                        }
+                    }
+                    else
+                    {
+                        lock (checksFailed)
+                        {
+                            checksFailed.Add(parameter);
+                        }
+                    }
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                IsCheckInProgress = false;
+                return null;
+            }
+
+            return GenerateQualityCheckReport(checksFailed);
         }
 
         public override QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters, IEnumerable<IGraph> graphs = null)
@@ -62,6 +82,30 @@ namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
         public override bool ImportParameters(IEnumerable<object> parameters)
         {
             throw new System.NotImplementedException();
+        }
+
+        private QualityCheckReport GenerateQualityCheckReport(List<Tuple<Uri, Uri, string>> failedQueries)
+        {
+            var report = new QualityCheckReport();
+
+            if (!failedQueries.Any())
+            {
+                report.QualityCheckPassed = true;
+                return report;
+            }
+
+            //var errorId = 1;
+            //foreach (var query in failedQueries)
+            //{
+            //    report.ErrorsById[errorId] = new Tuple<string, string, string, bool>
+            //    (query.Item1.ToString(), triple.PrettyPrint(), $"Predicate not found in any dictionary: {triple.Predicate}",
+            //        false);
+
+            //    errorId++;
+            //}
+
+            IsCheckInProgress = false;
+            return report;
         }
     }
 }
