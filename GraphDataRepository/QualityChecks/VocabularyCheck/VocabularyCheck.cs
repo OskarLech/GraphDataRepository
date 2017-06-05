@@ -97,7 +97,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
                     lock (wrongTriples)
                     {
                         if (wrongTriples.Contains(triple)) return;
-                        Logger.Verbose($"Predicate not found in any dictionary: {triple.Predicate}");
+                        Verbose($"Predicate not found in any dictionary: {triple.Predicate}");
                         wrongTriples.Add(triple);
                     }
                 });

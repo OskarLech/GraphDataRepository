@@ -57,7 +57,7 @@ namespace GraphDataRepository.Server
                 var response = HttpClient.DeleteAsync($"{EndpointUri}/{dataset}/graphs?graph={graphUri}", CancellationTokenSource.Token).Result;
                 if (!response.IsSuccessStatusCode)
                 {
-                    Logger.Debug($"Error {response.StatusCode} while sending HTTP request to {EndpointUri}: {response.Content}");
+                    Debug($"Error {response.StatusCode} while sending HTTP request to {EndpointUri}: {response.Content}");
                     return false;
                 }
 
@@ -114,7 +114,7 @@ namespace GraphDataRepository.Server
             }
             catch (WebException webEx)
             {
-                Logger.Debug($"{webEx.GetDetails()}");
+                Debug($"{webEx.GetDetails()}");
                 return default(T);
             }
             catch (TaskCanceledException)
@@ -123,7 +123,7 @@ namespace GraphDataRepository.Server
             }
             catch (Exception e)
             {
-                Logger.Error($"Request to {EndpointUri} failed: {e.GetDetails()}");
+                Error($"Request to {EndpointUri} failed: {e.GetDetails()}");
                 return default(T);
             }
         }
@@ -140,7 +140,7 @@ namespace GraphDataRepository.Server
 
             if (!Task.WaitAll(tasksToWait, TimeSpan.FromSeconds(10)))
             {
-                Logger.Error("Client call tasks did not finish in specified time");
+                Error("Client call tasks did not finish in specified time");
             }
 
             CancellationTokenSource.Dispose();

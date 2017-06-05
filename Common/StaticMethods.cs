@@ -13,7 +13,7 @@ namespace Common
             }
             catch (Exception e)
             {
-                Logger.Debug($"Failed to convert {value.GetType()} to {typeof(T)}: {e.GetDetails()}");
+                Debug($"Failed to convert {value.GetType()} to {typeof(T)}: {e.GetDetails()}");
                 throw;
             }
         }

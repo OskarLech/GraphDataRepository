@@ -27,7 +27,7 @@ namespace GraphDataRepository.Server.BrightstarDb
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    Logger.Debug("Dataset name cannot be empty");
+                    Debug("Dataset name cannot be empty");
                     return false;
                 }
 
@@ -37,7 +37,7 @@ namespace GraphDataRepository.Server.BrightstarDb
                     return true;
                 }
 
-                Logger.Debug($"Dataset {name} already exists");
+                Debug($"Dataset {name} already exists");
                 return false;
             }, CancellationTokenSource.Token));
         }
@@ -48,7 +48,7 @@ namespace GraphDataRepository.Server.BrightstarDb
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    Logger.Debug("Dataset name cannot be empty");
+                    Debug("Dataset name cannot be empty");
                     return false;
                 }
 
@@ -58,7 +58,7 @@ namespace GraphDataRepository.Server.BrightstarDb
                     return true;
                 }
 
-                Logger.Debug($"Tried to delete non-existing dataset {name}");
+                Debug($"Tried to delete non-existing dataset {name}");
                 return false;
             }, CancellationTokenSource.Token));
         }
@@ -78,7 +78,7 @@ namespace GraphDataRepository.Server.BrightstarDb
             {
                 if (string.IsNullOrEmpty(dataset) || string.IsNullOrEmpty(graphUri.ToString()))
                 {
-                    Logger.Debug("Dataset and graph URI cannot be empty");
+                    Debug("Dataset and graph URI cannot be empty");
                     return false;
                 }
 
@@ -103,7 +103,7 @@ namespace GraphDataRepository.Server.BrightstarDb
                 var jobInfo = _brightstarClient.ExecuteTransaction(dataset, transactionData);
                 if (!jobInfo.JobCompletedOk)
                 {
-                    Logger.Error($"BrightstarDB transactional update failed: {jobInfo.ExceptionInfo}");
+                    Error($"BrightstarDB transactional update failed: {jobInfo.ExceptionInfo}");
                     return false;
                 }
 

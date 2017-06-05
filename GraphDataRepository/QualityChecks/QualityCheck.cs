@@ -59,7 +59,7 @@ namespace GraphDataRepository.QualityChecks
             }
             catch (Exception e)
             {
-                Logger.Error($"Cannot parse parameters of type {typeof(T)}: {e.GetDetails()}");
+                Error($"Cannot parse parameters of type {typeof(T)}: {e.GetDetails()}");
                 return null;
             }
         }
@@ -76,7 +76,7 @@ namespace GraphDataRepository.QualityChecks
 
             if (retries <= 0)
             {
-                Logger.Error($"Failed to cancel {GetType().Name} quality check");
+                Error($"Failed to cancel {GetType().Name} quality check");
             }
 
             CancellationTokenSource.Dispose();
@@ -94,7 +94,7 @@ namespace GraphDataRepository.QualityChecks
         {
             if (parameters == null || !parameters.Any())
             {
-                Logger.Error($"Cannot run {GetType().Name} quality check with no parameters");
+                Error($"Cannot run {GetType().Name} quality check with no parameters");
                 return false;
             }
 

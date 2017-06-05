@@ -10,9 +10,9 @@ using static Serilog.Log;
 namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
 {
     /// <summary> 
-    /// Checks whether triple subjects exist in external knowledge base and if custom SPARQL query for them has results.
+    /// Checks whether triple subjects exist in external knowledge base. Allows for applying strstarts(...) filter on results.
     /// Example: Checking if subject is in DBpedia knowledge base and if it's concept is known in YAGO project.
-    /// Parameters for this class are URIs of endpoint and default graph (second one can be null) and SPARQL query that is to be executed
+    /// Parameters for this class are URIs of endpoint and default graph (second one can be null) and filter (can be null as well)
     /// </summary>
     public class KnowledgeBaseCheck : QualityCheck
     {
@@ -39,7 +39,7 @@ namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
                     }
                     catch (Exception e)
                     {
-                        Logger.Error($"{GetType().Name} quality check failed for endpoint {parameter.Item1}" +
+                        Error($"{GetType().Name} quality check failed for endpoint {parameter.Item1}" +
                                      (parameter.Item2 != null ? $"(graph {parameter.Item2})" : "(default graph)") +
                                      $":\n{e.GetDetails()}");
                     }
@@ -48,7 +48,7 @@ namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
                     {
                         foreach (var result in results)
                         {
-                            Logger.Verbose($"{result}");
+                            Verbose($"{result}");
                         }
                     }
                     else

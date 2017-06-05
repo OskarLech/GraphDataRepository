@@ -32,7 +32,7 @@ namespace Common
         {
             if (task == null)
             {
-                Logger.Warning("WaitAndLog extension method called on a null task");
+                Warning("WaitAndLog extension method called on a null task");
                 return;
             }
 
@@ -40,7 +40,7 @@ namespace Common
             {
                 if (!task.Wait(TimeSpan.FromSeconds(seconds)))
                 {
-                    Logger.Warning(msg);
+                    Warning(msg);
                 }
             }
             catch (TaskCanceledException)

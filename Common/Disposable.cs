@@ -21,9 +21,9 @@ namespace Common
 
         public void Dispose()
         {
-            Logger.Debug($"Disposing {GetType().Name}...");
+            Debug($"Disposing {GetType().Name}...");
             Dispose(true);
-            Logger.Debug($"{GetType().Name} disposed");
+            Debug($"{GetType().Name} disposed");
             GC.SuppressFinalize(this);
         }
 

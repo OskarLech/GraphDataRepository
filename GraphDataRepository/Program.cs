@@ -41,9 +41,9 @@ namespace GraphDataRepository
             Console.WriteLine("Press Enter to stop the program");
             Console.ReadLine();
 
-            Logger.Verbose("Terminating the program");
+            Verbose("Terminating the program");
             Disposables.ForEach(d => d.Dispose());
-            Logger.Verbose("Program terminated succesfully");
+            Verbose("Program terminated succesfully");
         }
 
         private static void TestQualityChecks()
