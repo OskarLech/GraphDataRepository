@@ -7,7 +7,6 @@ using System.Threading;
 using System.Xml.Linq;
 using BrightstarDB;
 using BrightstarDB.Client;
-using Common;
 using GraphDataRepository.QualityChecks.KnowledgeBaseCheck;
 using GraphDataRepository.QualityChecks.VocabularyCheck;
 using GraphDataRepository.Server.BrightstarDb;
@@ -28,11 +27,12 @@ namespace GraphDataRepository
         private static void Main()
         {
             Initialize();
+
             /*************/
             //BrightstarClientCli();
             /*************/
-
             //TestGraph();
+
             TestQualityChecks();
 
             var mre = new ManualResetEvent(false);
@@ -53,7 +53,7 @@ namespace GraphDataRepository
 
             var query = "SELECT DISTINCT ?concept\r\nWHERE {\r\n    <http://dbpedia.org/resource/NASA> a ?concept\r\n    FILTER ( strstarts(str(?concept), \"http://dbpedia.org/class/yago/\") )\r\n}\r\nLIMIT 1";
             var knowledgeBaseCheck = new KnowledgeBaseCheck();
-            knowledgeBaseCheck.CheckGraphs(dataGraph.AsEnumerable(), new Tuple<Uri, Uri, string>(new Uri("http://dbpedia.org/sparql"), null, query).AsEnumerable());
+            knowledgeBaseCheck.CheckGraphs(dataGraph.AsEnumerable(), TupleExtensions.ToTuple<Uri, Uri, string>((new Uri("http://dbpedia.org/sparql"), null, query)).AsEnumerable());
 
             var vocabPath = Path.GetFullPath(@"..\..\..\Common\TestData\Schemas\foaf_20140114.rdf");
             var vocabCheck = new VocabularyCheck();

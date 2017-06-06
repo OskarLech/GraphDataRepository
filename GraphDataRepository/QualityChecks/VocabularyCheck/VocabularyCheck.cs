@@ -139,9 +139,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
                     ? triple.GraphUri.ToString()
                     : "Default graph";
 
-                report.ErrorsById[errorId] = new Tuple<string, string, string, bool>
-                    (graphUri, triple.Print(), $"Predicate not found in any dictionary: {triple.Predicate}", false);
-
+                report.ErrorsById[errorId] = (graphUri, triple.Print(), $"Predicate not found in any dictionary: {triple.Predicate}", false);
                 errorId++;
             }
 

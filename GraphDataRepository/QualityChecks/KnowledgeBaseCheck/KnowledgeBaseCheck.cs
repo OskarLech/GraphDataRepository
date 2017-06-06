@@ -24,8 +24,8 @@ namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
                 return null;
             }
 
-            var parsedParameters = ParseParameters<Tuple<Uri, Uri, string>>(parameterList);
-            var checksFailed = new List<Tuple<Uri, Uri, string>>();
+            var parsedParameters = ParseParameters<(Uri, Uri, string)>(parameterList);
+            var checksFailed = new List<(Uri, Uri, string)>();
 
             try
             {
@@ -84,7 +84,7 @@ namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
             throw new System.NotImplementedException();
         }
 
-        private QualityCheckReport GenerateQualityCheckReport(List<Tuple<Uri, Uri, string>> failedQueries)
+        private QualityCheckReport GenerateQualityCheckReport(IEnumerable<(Uri, Uri, string)> failedQueries)
         {
             var report = new QualityCheckReport();
 
