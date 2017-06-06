@@ -60,7 +60,7 @@ namespace GraphDataRepository.QualityChecks
             catch (Exception e)
             {
                 Error($"Cannot parse parameters of type {typeof(T)}: {e.GetDetails()}");
-                return null;
+                throw;
             }
         }
 

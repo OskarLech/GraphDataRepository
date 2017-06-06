@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GraphDataRepository.QualityChecks
 {
@@ -11,6 +10,6 @@ namespace GraphDataRepository.QualityChecks
         public bool QualityCheckPassed { get; set; }
 
         //Key: ID, value: graph URI, triple, error message and flag indicating if it's possible to fix the error automatically
-        public readonly Dictionary<int, (string, string, string, bool)> ErrorsById = new Dictionary<int, (string graphUri, string triple, string errorMessage, bool canFixAutomatically) >();
+        public readonly Dictionary<int, (string graphUri, string triple, string errorMessage, bool canFixAutomatically)> ErrorsById = new Dictionary<int, (string, string, string, bool )>();
     }
 }

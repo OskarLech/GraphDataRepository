@@ -122,7 +122,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
             return vocabularySubjectsByUri.SelectMany(predicate => predicate.Value).Distinct().ToList();
         }
 
-        private QualityCheckReport GenerateQualityCheckReport(List<Triple> wrongTriples)
+        private QualityCheckReport GenerateQualityCheckReport(IReadOnlyCollection<Triple> wrongTriples)
         {
             var report = new QualityCheckReport();
 

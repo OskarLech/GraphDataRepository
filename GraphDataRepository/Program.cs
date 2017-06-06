@@ -14,8 +14,6 @@ using GraphDataRepository.Utilities.StructureMap;
 using Serilog;
 using VDS.RDF;
 using VDS.RDF.Parsing;
-using VDS.RDF.Query;
-using VDS.RDF.Storage;
 using static Serilog.Log;
 
 namespace GraphDataRepository
@@ -28,12 +26,10 @@ namespace GraphDataRepository
         {
             Initialize();
 
-            /*************/
             //BrightstarClientCli();
-            /*************/
-            //TestGraph();
-
             TestQualityChecks();
+
+            /*******************************************************/
 
             var mre = new ManualResetEvent(false);
             mre.WaitOne();
@@ -53,44 +49,16 @@ namespace GraphDataRepository
 
             var query = "SELECT DISTINCT ?concept\r\nWHERE {\r\n    <http://dbpedia.org/resource/NASA> a ?concept\r\n    FILTER ( strstarts(str(?concept), \"http://dbpedia.org/class/yago/\") )\r\n}\r\nLIMIT 1";
             var knowledgeBaseCheck = new KnowledgeBaseCheck();
-            knowledgeBaseCheck.CheckGraphs(dataGraph.AsEnumerable(), TupleExtensions.ToTuple<Uri, Uri, string>((new Uri("http://dbpedia.org/sparql"), null, query)).AsEnumerable());
+
+            var parameters = (object) new ValueTuple<Uri, Uri, string>(new Uri("http://dbpedia.org/sparql"), null, query);
+            knowledgeBaseCheck.CheckGraphs(dataGraph.AsEnumerable(), parameters.AsEnumerable());
+
+            //knowledgeBaseCheck.CheckGraphs(dataGraph.AsEnumerable(), TupleExtensions.ToTuple<Uri, Uri, string>((new Uri("http://dbpedia.org/sparql"), null, query)).AsEnumerable());
 
             var vocabPath = Path.GetFullPath(@"..\..\..\Common\TestData\Schemas\foaf_20140114.rdf");
             var vocabCheck = new VocabularyCheck();
             vocabCheck.CheckGraphs(dataGraph.AsEnumerable(), new Uri(vocabPath).AsEnumerable());
         }
-
-        //private static void Test()
-        //{
-        //    var parallelOptions = new ParallelOptions
-        //    {
-        //        CancellationToken = _cancellationTokenSource.Token,
-        //        MaxDegreeOfParallelism = Environment.ProcessorCount
-        //    };
-
-        //    var graphList = new List<IGraph>();
-        //    var loopResult = Parallel.ForEach(graphUris, parallelOptions, async (graphUri, state) =>
-        //    {
-        //        var graph = await _triplestoreClient.ReadGraph(dataset, graphUri);
-        //        if (graph == null)
-        //        {
-        //            state.Break();
-        //        }
-
-        //        lock (graphList)
-        //        {
-        //            graphList.Add(graph);
-        //        }
-        //    });
-
-        //    if (!loopResult.IsCompleted && loopResult.LowestBreakIteration.HasValue)
-        //    {
-        //        Log.Warn("One or more graphs failed to load");
-        //        return null;
-        //    }
-
-        //    return CheckGraphs(graphList, parameters);
-        //}
 
         private static async void BrightstarClientCli()
         {
@@ -222,115 +190,6 @@ namespace GraphDataRepository
             Logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
                 .CreateLogger();
-        }
-
-        private static void Playground()
-        {
-            //TestGraph();
-
-            /********************************/
-            /***********BRIGHTSTAR**********/
-            /********************************/
-            
-            var client = BrightstarService.GetClient("Type=rest;endpoint=http://192.168.0.111:8090/brightstar;");
-            string storeName = "Store_" + Guid.NewGuid();
-            client.CreateStore(storeName);
-
-            var addTriples = new StringBuilder();
-            addTriples.AppendLine(
-                "<http://www.brightstardb.com/products/brightstar> <http://www.brightstardb.com/schemas/product/name> \"BrightstarDB\" <http://example.org/graphs/alice> .");
-            addTriples.AppendLine(
-                "<http://www.brightstardb.com/products/brightstar> <http://www.brightstardb.com/schemas/product/category> <http://www.brightstardb.com/categories/nosql> <http://example.org/graphs/alice> .");
-            addTriples.AppendLine(
-                "<http://www.brightstardb.com/products/brightstar> <http://www.brightstardb.com/schemas/product/category> <http://www.brightstardb.com/categories/.net> <http://example.org/graphs/alice> .");
-            addTriples.AppendLine(
-                "<http://www.brightstardb.com/products/brightstar> <http://www.brightstardb.com/schemas/product/category> <http://www.brightstardb.com/categories/rdf> <http://example.org/graphs/alice> .");
-            var transactionData = new UpdateTransactionData
-            {
-                InsertData = addTriples.ToString(),
-                //DefaultGraphUri = "http://example.org/graphs/alice"
-            };
-
-            var jobInfo = client.ExecuteTransaction(storeName, transactionData);
-            var namedGraphs = client.ListNamedGraphs(storeName);
-
-            var query = "SELECT ?category WHERE { " +
-                        "<http://www.brightstardb.com/products/brightstar> <http://www.brightstardb.com/schemas/product/category> ?category ." +
-                        "}";
-
-            var result = XDocument.Load(client.ExecuteQuery(storeName, query, "http://example.org/graphs/alice"));
-            var result2 = client.ExecuteQuery(storeName, query, resultsFormat: SparqlResultsFormat.Xml);
-
-            /********************************/
-            /************DOTNETRDF***********/
-            /********************************/
-
-            SparqlConnector connect = new SparqlConnector(new Uri($"http://192.168.0.111:8090/brightstar/{storeName}//SPARQL"));
-            PersistentTripleStore store = new PersistentTripleStore(connect);
-            var aliceGraph = new Graph();
-            connect.LoadGraph(aliceGraph, "http://example.org/graphs/alice");
-
-            Object results = store.ExecuteQuery(query);//TODO: search in !default graph
-            if (results is SparqlResultSet)
-            {
-                //Print out the results
-                SparqlResultSet rset = (SparqlResultSet)results;
-                foreach (VDS.RDF.Query.SparqlResult resultxxxx in rset)
-                {
-                    Console.WriteLine(resultxxxx.ToString());
-                }
-
-            }
-
-            var y = store.UnderlyingStore.ListGraphs();
-
-            foreach (var graphUri in store.UnderlyingStore.ListGraphs())
-            {
-                var z = store.Graphs.FirstOrDefault(g => g.BaseUri == graphUri);
-            }
-
-            //IGraph g = new Graph();
-            //var x = new RdfXmlParser();
-            //x.Load(g, result);
-
-            //var gNamespaceMap = g.NamespaceMap;
-            //foreach (var triple in g.Triples)
-            //{
-            //    Console.WriteLine(triple.Predicate);
-            //}
-            Console.WriteLine("KUNIEC");
-            Console.ReadLine();
-        }
-
-        private static void TestGraph()
-        {
-            var dataGraph = new Graph();
-            FileLoader.Load(dataGraph, @"..\..\..\Common\TestData\RDF\foaf_example.rdf");
-
-            var schemaGraph = new Graph();
-            FileLoader.Load(schemaGraph, @"..\..\..\Common\TestData\Schemas\foaf_20140114.rdf");
-
-            var subjectList = schemaGraph.Triples.Select(triple => triple.Subject.ToString()).Distinct().ToList();
-
-            foreach (var triple in schemaGraph.Triples)
-            {
-                Console.WriteLine($"{triple.Subject} {triple.Predicate} {triple.Object}");
-            }
-
-            var wrongPredicates = new List<string>();
-            foreach (var triple in dataGraph.Triples)
-            {
-                var predicate = triple.Predicate.ToString();
-                if (!subjectList.Contains(predicate) && !wrongPredicates.Contains(predicate))
-                {
-                    wrongPredicates.Add(predicate);
-                }
-            }
-
-            foreach (var predicate in wrongPredicates)
-            {
-                Console.WriteLine(predicate);
-            }
         }
     }
 }

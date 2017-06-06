@@ -24,14 +24,14 @@ namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
                 return null;
             }
 
-            var parsedParameters = ParseParameters<(Uri, Uri, string)>(parameterList);
+            var parsedParameters = ParseParameters<(Uri endpointUri, Uri graphUri, string filter)>(parameterList);
             var checksFailed = new List<(Uri, Uri, string)>();
 
             try
             {
                 Parallel.ForEach(parsedParameters, ParallelOptions, parameter =>
                 {
-                    var endpoint = new SparqlRemoteEndpoint(parameter.Item1, parameter.Item2);
+                    var endpoint = new SparqlRemoteEndpoint(parameter.endpointUri, parameter.graphUri);
                     SparqlResultSet results = null;
                     try
                     {
@@ -39,8 +39,8 @@ namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
                     }
                     catch (Exception e)
                     {
-                        Error($"{GetType().Name} quality check failed for endpoint {parameter.Item1}" +
-                                     (parameter.Item2 != null ? $"(graph {parameter.Item2})" : "(default graph)") +
+                        Error($"{GetType().Name} quality check failed for endpoint {parameter.endpointUri}" +
+                                     (parameter.graphUri != null ? $"(graph {parameter.graphUri})" : "(default graph)") +
                                      $":\n{e.GetDetails()}");
                     }
 
