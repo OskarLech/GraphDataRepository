@@ -14,8 +14,7 @@ namespace Common
         {
             var details = $"{e.GetType().Name}: {e.Message}, Stack trace:{e.StackTrace}" + (e.InnerException != null ? "\n\nInner Exception: " + e.InnerException.GetDetails() : "");
 
-            var webEx = e as WebException;
-            if (webEx != null)
+            if (e is WebException webEx)
             {
                 details += $"\nWebException details:\n\nResponse: {webEx.Response}, Status: {webEx.Status}";
                 var responseStream = webEx.Response.GetResponseStream();
@@ -32,7 +31,7 @@ namespace Common
         {
             if (task == null)
             {
-                Warning("WaitAndLog extension method called on a null task");
+                Warning($"{System.Reflection.MethodBase.GetCurrentMethod().Name} extension method called on a null task");
                 return;
             }
 
@@ -58,7 +57,7 @@ namespace Common
             }
         }
 
-        public static string PrettyPrint(this Triple triple)
+        public static string Print(this Triple triple)
         {
             return $"{triple.Subject} {triple.Predicate} {triple.Object}";
         }

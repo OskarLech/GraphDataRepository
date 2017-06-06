@@ -140,7 +140,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
                     : "Default graph";
 
                 report.ErrorsById[errorId] = new Tuple<string, string, string, bool>
-                    (graphUri, triple.PrettyPrint(), $"Predicate not found in any dictionary: {triple.Predicate}", false);
+                    (graphUri, triple.Print(), $"Predicate not found in any dictionary: {triple.Predicate}", false);
 
                 errorId++;
             }
