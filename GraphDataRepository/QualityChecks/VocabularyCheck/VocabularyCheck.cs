@@ -20,7 +20,7 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
         public override QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters)
         {
             IsCheckInProgress = true;
-            var parameterList = parameters as IList<object> ?? parameters.ToList(); //multiple enumeration
+            var parameterList = parameters.ToList(); //multiple enumeration
             if (!AreParametersSupported(parameterList))
             {
                 return null;
@@ -49,15 +49,11 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
             return GenerateQualityCheckReport(wrongTriples);
         }
 
-        public override QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters, IEnumerable<IGraph> graphs = null)
+        public override QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters)
         {
             IsCheckInProgress = true;
-            if (graphs != null)
-            {
-                throw new Exception($"{GetType().Name} quality check cannot compare triples against graphs.");
-            }
 
-            var parameterList = parameters as IList<object> ?? parameters.ToList(); //multiple enumeration
+            var parameterList = parameters.ToList(); //multiple enumeration
             if (!AreParametersSupported(parameterList))
             {
                 return null;
@@ -71,11 +67,6 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
         }
 
         public override bool ImportParameters(IEnumerable<object> parameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void FixErrors(QualityCheckReport qualityCheckReport, string dataset, IEnumerable<int> errorsToFix)
         {
             throw new NotImplementedException();
         }
@@ -137,9 +128,9 @@ namespace GraphDataRepository.QualityChecks.VocabularyCheck
             {
                 var graphUri = triple.GraphUri != null
                     ? triple.GraphUri.ToString()
-                    : "Default graph";
+                    : "Default graph or triple not bound to graph";
 
-                report.ErrorsById[errorId] = (graphUri, triple.Print(), $"Predicate not found in any dictionary: {triple.Predicate}", false);
+                report.ErrorsById[errorId] = (graphUri, triple.Print(), $"Predicate not found in any dictionary: {triple.Predicate}");
                 errorId++;
             }
 

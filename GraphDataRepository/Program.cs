@@ -47,10 +47,9 @@ namespace GraphDataRepository
             var dataGraph = new Graph();
             FileLoader.Load(dataGraph, @"..\..\..\Common\TestData\RDF\foaf_example.rdf");
 
-            var query = "SELECT DISTINCT ?concept\r\nWHERE {\r\n    <http://dbpedia.org/resource/NASA> a ?concept\r\n    FILTER ( strstarts(str(?concept), \"http://dbpedia.org/class/yago/\") )\r\n}\r\nLIMIT 1";
+            //var query = "SELECT DISTINCT ?concept\r\nWHERE {\r\n    <http://dbpedia.org/resource/NASA> a ?concept\r\n    FILTER ( strstarts(str(?concept), \"http://dbpedia.org/class/yago/\") )\r\n}\r\nLIMIT 1";
             var knowledgeBaseCheck = new KnowledgeBaseCheck();
-
-            var parameters = (object) new ValueTuple<Uri, Uri, string>(new Uri("http://dbpedia.org/sparql"), null, query);
+            var parameters = (object) new ValueTuple<Uri, Uri, string>(new Uri("http://dbpedia.org/sparql"), null, "");
             knowledgeBaseCheck.CheckGraphs(dataGraph.AsEnumerable(), parameters.AsEnumerable());
 
             //knowledgeBaseCheck.CheckGraphs(dataGraph.AsEnumerable(), TupleExtensions.ToTuple<Uri, Uri, string>((new Uri("http://dbpedia.org/sparql"), null, query)).AsEnumerable());

@@ -9,7 +9,7 @@ namespace GraphDataRepository.QualityChecks
     {
         public bool QualityCheckPassed { get; set; }
 
-        //Key: ID, value: graph URI, triple, error message and flag indicating if it's possible to fix the error automatically
-        public readonly Dictionary<int, (string graphUri, string triple, string errorMessage, bool canFixAutomatically)> ErrorsById = new Dictionary<int, (string, string, string, bool )>();
+        //Key: ID, value: graph URI, triple, error message
+        public readonly Dictionary<int, (string graphUri, string triple, string errorMessage)> ErrorsById = new Dictionary<int, (string, string, string)>();
     }
 }

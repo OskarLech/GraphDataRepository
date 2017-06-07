@@ -45,8 +45,7 @@ namespace GraphDataRepository.QualityChecks
         }
 
         public abstract QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters);
-        public abstract QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters, IEnumerable<IGraph> graphs = null);
-        public abstract void FixErrors(QualityCheckReport qualityCheckReport, string dataset, IEnumerable<int> errorsToFix);
+        public abstract QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters);
         public abstract bool ImportParameters(IEnumerable<object> parameters);
 
         protected IEnumerable<T> ParseParameters<T> (IEnumerable<object> parameters)

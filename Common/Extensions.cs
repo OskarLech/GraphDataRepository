@@ -17,7 +17,7 @@ namespace Common
             if (e is WebException webEx)
             {
                 details += $"\nWebException details:\n\nResponse: {webEx.Response}, Status: {webEx.Status}";
-                var responseStream = webEx.Response.GetResponseStream();
+                var responseStream = webEx.Response?.GetResponseStream();
                 if (responseStream != null)
                 {
                     details += $", Reponse: {new StreamReader(responseStream).ReadToEnd()}";
