@@ -92,8 +92,10 @@
     <Compile Include="QualityChecks\QualityCheck.cs" />
     <Compile Include="QualityChecks\QualityCheckReport.cs" />
     <Compile Include="QualityChecks\VocabularyCheck\VocabularyCheck.cs" />
-    <Compile Include="Server\BrightstarDb\BrightstarClient.cs" />
+    <Compile Include="Server\BrightstarDb\BrightstarClient.Basic.cs" />
+    <Compile Include="Server\BrightstarDb\BrightstarClient.Extended.cs" />
     <Compile Include="Server\BrightstarDb\IBrightstarClient.cs" />
+    <Compile Include="Server\ITripleStoreClientExtended.cs" />
     <Compile Include="Server\ITriplestoreClient.cs" />
     <Compile Include="Server\TriplestoreClient.cs" />
     <Compile Include="Utilities\StructureMap\MainRegistry.cs" />

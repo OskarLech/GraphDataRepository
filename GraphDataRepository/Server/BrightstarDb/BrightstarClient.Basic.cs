@@ -10,17 +10,17 @@ namespace GraphDataRepository.Server.BrightstarDb
     /// <summary>
     /// Handles communication with BrightstarDB endpoint
     /// </summary>
-    internal class BrightstarClient : TriplestoreClient, IBrightstarClient
+    internal partial class BrightstarClient : TriplestoreClient
     {
         //TODO add some authentication mechanisms
         private readonly IBrightstarService _brightstarClient;
 
-        #region public methods
         public BrightstarClient(string endpoint) : base(endpoint)
         {
             _brightstarClient = BrightstarService.GetClient($"Type=rest;endpoint={endpoint};");
         }
 
+        #region ITripleStore implementation
         public override async Task<bool> CreateDataset(string name)
         {
             return await ClientCall(Task.Run(() =>

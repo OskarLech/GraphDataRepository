@@ -1,10 +1,12 @@
-﻿namespace GraphDataRepository.Server.BrightstarDb
+﻿using System.Threading.Tasks;
+
+namespace GraphDataRepository.Server.BrightstarDb
 {
     /// <summary>
-    /// Extends ITriplestoreClient by additional functionalities provided by BrightstarDB
+    /// Functionalities specific to BrightstarDB
     /// </summary>
-    internal interface IBrightstarClient : ITriplestoreClient
+    internal interface IBrightstarClient
     {
-        //TODO
+        Task<bool> ConsolidateStore(string storeName);
     }
 }

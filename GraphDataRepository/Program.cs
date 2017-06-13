@@ -9,6 +9,7 @@ using BrightstarDB;
 using BrightstarDB.Client;
 using GraphDataRepository.QualityChecks.KnowledgeBaseCheck;
 using GraphDataRepository.QualityChecks.VocabularyCheck;
+using GraphDataRepository.Server;
 using GraphDataRepository.Server.BrightstarDb;
 using GraphDataRepository.Utilities.StructureMap;
 using Serilog;
@@ -63,7 +64,7 @@ namespace GraphDataRepository
         {
             var triplestoreClient = ObjectFactory.Container
                 .With("endpoint").EqualTo("http://192.168.0.111:8090/brightstar")
-                .GetInstance<IBrightstarClient>();
+                .GetInstance<ITriplestoreClientExtended>();
 
             Disposables.Add(triplestoreClient);
 
