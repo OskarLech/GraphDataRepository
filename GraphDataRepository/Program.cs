@@ -115,7 +115,7 @@ namespace GraphDataRepository
                         dataset = Console.ReadLine();
                         Console.WriteLine("graph URI:");
                         graph = Console.ReadLine();
-                        if (string.IsNullOrEmpty(graph)) continue;
+                        if (string.IsNullOrWhiteSpace(graph)) continue;
                         if (await triplestoreClient.DeleteGraphs(dataset, new List<Uri>{ new Uri(graph)}))
                         {
                             Console.WriteLine("success");
@@ -138,8 +138,13 @@ namespace GraphDataRepository
                         triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
                         triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
 
-                        if (string.IsNullOrEmpty(graph)) continue;
-                        if (await triplestoreClient.UpdateGraph(dataset, new Uri(graph), triplesToRemove, triplesToAdd))
+                        if (string.IsNullOrWhiteSpace(graph)) continue;
+                        var triplesByUri = new Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)>
+                            {
+                                [new Uri(graph)] = (triplesToRemove, triplesToAdd)
+                            };
+
+                        if (await triplestoreClient.UpdateGraphs(dataset, triplesByUri))
                         {
                             Console.WriteLine("success");
                         }
@@ -151,7 +156,7 @@ namespace GraphDataRepository
                         Console.WriteLine("graph URI:");
                         graph = Console.ReadLine();
 
-                        if (string.IsNullOrEmpty(graph)) continue;
+                        if (string.IsNullOrWhiteSpace(graph)) continue;
                         var dnrGraph = await triplestoreClient.ReadGraphs(dataset, new Uri(graph).AsEnumerable());
                         break;
 

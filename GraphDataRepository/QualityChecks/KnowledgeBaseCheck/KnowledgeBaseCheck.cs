@@ -80,7 +80,7 @@ namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
                             var query = BaseQuery.Replace("{subject}", subject);
 
                             var filterReplacement = "";
-                            if (!string.IsNullOrEmpty(parameter.filter))
+                            if (!string.IsNullOrWhiteSpace(parameter.filter))
                             {
                                 filterReplacement = Filter.Replace("{filter}", parameter.filter);
                             }

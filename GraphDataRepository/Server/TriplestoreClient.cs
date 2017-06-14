@@ -34,23 +34,9 @@ namespace GraphDataRepository.Server
         public abstract Task<bool> CreateDataset(string name);
         public abstract Task<bool> DeleteDataset(string name);
         public abstract Task<IEnumerable<string>> ListDatasets();
-        public abstract Task<bool> UpdateGraph(string dataset, Uri graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd);
+        public abstract Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)> triplesByGraphUri);
 
-        public async Task<IEnumerable<Uri>> ListGraphs(string dataset)
-        {
-            return await ClientCall(Task.Run(() =>
-            {
-                using (var connector = new SparqlConnector(new Uri($"{EndpointUri}/{dataset}/SPARQL")))
-                {
-                    using (var store = new PersistentTripleStore(connector))
-                    {
-                        return store.UnderlyingStore.ListGraphs();
-                    }
-                }
-            }, CancellationTokenSource.Token));
-        }
-
-        public async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
+        public virtual async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
         {
             return await ClientCall(Task.Run(() =>
             {
@@ -66,6 +52,20 @@ namespace GraphDataRepository.Server
                 }
 
                 return true;
+            }, CancellationTokenSource.Token));
+        }
+
+        public async Task<IEnumerable<Uri>> ListGraphs(string dataset)
+        {
+            return await ClientCall(Task.Run(() =>
+            {
+                using (var connector = new SparqlConnector(new Uri($"{EndpointUri}/{dataset}/SPARQL")))
+                {
+                    using (var store = new PersistentTripleStore(connector))
+                    {
+                        return store.UnderlyingStore.ListGraphs();
+                    }
+                }
             }, CancellationTokenSource.Token));
         }
 
