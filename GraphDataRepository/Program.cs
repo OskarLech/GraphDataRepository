@@ -115,7 +115,8 @@ namespace GraphDataRepository
                         dataset = Console.ReadLine();
                         Console.WriteLine("graph URI:");
                         graph = Console.ReadLine();
-                        if (await triplestoreClient.DeleteGraph(dataset, new Uri(graph)))
+                        if (string.IsNullOrEmpty(graph)) continue;
+                        if (await triplestoreClient.DeleteGraphs(dataset, new List<Uri>{ new Uri(graph)}))
                         {
                             Console.WriteLine("success");
                         }
@@ -137,6 +138,7 @@ namespace GraphDataRepository
                         triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
                         triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
 
+                        if (string.IsNullOrEmpty(graph)) continue;
                         if (await triplestoreClient.UpdateGraph(dataset, new Uri(graph), triplesToRemove, triplesToAdd))
                         {
                             Console.WriteLine("success");
@@ -149,7 +151,8 @@ namespace GraphDataRepository
                         Console.WriteLine("graph URI:");
                         graph = Console.ReadLine();
 
-                        var dnrGraph = await triplestoreClient.ReadGraph(dataset, new Uri(graph));
+                        if (string.IsNullOrEmpty(graph)) continue;
+                        var dnrGraph = await triplestoreClient.ReadGraphs(dataset, new Uri(graph).AsEnumerable());
                         break;
 
                     case ConsoleKey.F7:

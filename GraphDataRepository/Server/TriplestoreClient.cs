@@ -50,33 +50,41 @@ namespace GraphDataRepository.Server
             }, CancellationTokenSource.Token));
         }
 
-        public async Task<bool> DeleteGraph(string dataset, Uri graphUri)
+        public async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
         {
             return await ClientCall(Task.Run(() =>
             {
-                var response = HttpClient.DeleteAsync($"{EndpointUri}/{dataset}/graphs?graph={graphUri}", CancellationTokenSource.Token).Result;
-                if (!response.IsSuccessStatusCode)
+                foreach (var uri in graphUris)
                 {
-                    Debug($"Error {response.StatusCode} while sending HTTP request to {EndpointUri}: {response.Content}");
-                    return false;
+                    var response = HttpClient.DeleteAsync($"{EndpointUri}/{dataset}/graphs?graph={uri}", CancellationTokenSource.Token).Result;
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Debug($"Error {response.StatusCode} while sending HTTP request to {EndpointUri}: {response.Content}." +
+                              $"Graph {uri} not deleted.");
+                        return false;
+                    }
                 }
 
                 return true;
             }, CancellationTokenSource.Token));
         }
 
-        public async Task<IGraph> ReadGraph(string dataset, Uri graphUri)
+        public async Task<IEnumerable<IGraph>> ReadGraphs(string dataset, IEnumerable<Uri> graphUris)
         {
             return await ClientCall(Task.Run(() =>
             {
-                Graph resultGraph;
+                var resultGraphs = new List<IGraph>();
                 using (var connector = new SparqlConnector(new Uri($"{EndpointUri}/{dataset}/SPARQL")))
                 {
-                    resultGraph = new Graph();
-                    connector.LoadGraph(resultGraph, graphUri);
+                    foreach (var uri in graphUris)
+                    {
+                        var graph = new Graph();
+                        connector.LoadGraph(graph, uri);
+                        resultGraphs.Add(graph);
+                    }
                 }
 
-                return resultGraph;
+                return resultGraphs;
             }, CancellationTokenSource.Token));
         }
 

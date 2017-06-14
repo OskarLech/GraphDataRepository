@@ -14,9 +14,9 @@ namespace GraphDataRepository.Server
         Task<bool> CreateDataset(string name);
         Task<bool> DeleteDataset(string name);
         Task<IEnumerable<string>> ListDatasets();
-        Task<bool> DeleteGraph(string dataset, Uri graphUri);
+        Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris);
         Task<bool> UpdateGraph(string dataset, Uri graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd);
-        Task<IGraph> ReadGraph(string dataset, Uri graphUri);
+        Task<IEnumerable<IGraph>> ReadGraphs(string dataset, IEnumerable<Uri> graphUris);
         Task<IEnumerable<Uri>> ListGraphs(string dataset);
         Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query);
     }
