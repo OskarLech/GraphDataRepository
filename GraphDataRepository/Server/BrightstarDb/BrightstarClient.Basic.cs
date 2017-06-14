@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BrightstarDB.Client;
@@ -25,7 +26,7 @@ namespace GraphDataRepository.Server.BrightstarDb
         {
             return await ClientCall(Task.Run(() =>
             {
-                if (string.IsNullOrEmpty(name))
+                if (string.IsNullOrWhiteSpace(name))
                 {
                     Debug("Dataset name cannot be empty");
                     return false;
@@ -46,7 +47,7 @@ namespace GraphDataRepository.Server.BrightstarDb
         {
             return await ClientCall(Task.Run(() =>
             {
-                if (string.IsNullOrEmpty(name))
+                if (string.IsNullOrWhiteSpace(name))
                 {
                     Debug("Dataset name cannot be empty");
                     return false;
@@ -72,26 +73,29 @@ namespace GraphDataRepository.Server.BrightstarDb
             }, CancellationTokenSource.Token));
         }
 
-        public override async Task<bool> UpdateGraph(string dataset, Uri graphUri, IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)
+        public override async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)> triplesByGraphUri)
         {
             return await ClientCall(Task.Run(() =>
             {
-                if (string.IsNullOrEmpty(dataset) || string.IsNullOrEmpty(graphUri.ToString()))
+                if (string.IsNullOrWhiteSpace(dataset) || triplesByGraphUri.Any(t => string.IsNullOrWhiteSpace(t.Key.ToString())))
                 {
                     Debug("Dataset and graph URI cannot be empty");
                     return false;
                 }
 
                 var deletePatterns = new StringBuilder();
-                foreach (var triple in triplesToRemove)
-                {
-                    deletePatterns.AppendLine($"{triple} <{graphUri}> .");
-                }
-
                 var insertData = new StringBuilder();
-                foreach (var triple in triplesToAdd)
+                foreach (var triples in triplesByGraphUri)
                 {
-                    insertData.AppendLine($"{triple} <{graphUri}> .");
+                    foreach (var triple in triples.Value.triplesToAdd)
+                    {
+                        deletePatterns.AppendLine($"{triple} <{triples.Key}> .");
+                    }
+
+                    foreach (var triple in triples.Value.triplesToAdd)
+                    {
+                        insertData.AppendLine($"{triple} <{triples.Key}> .");
+                    }
                 }
 
                 var transactionData = new UpdateTransactionData
@@ -110,6 +114,12 @@ namespace GraphDataRepository.Server.BrightstarDb
                 return true;
             }, CancellationTokenSource.Token));
         }
+
+        public override async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
+        {
+            throw new System.NotImplementedException();
+        }
+
         #endregion
     }
 }
