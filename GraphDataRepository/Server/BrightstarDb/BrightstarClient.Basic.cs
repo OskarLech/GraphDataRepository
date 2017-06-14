@@ -90,7 +90,7 @@ namespace GraphDataRepository.Server.BrightstarDb
                     foreach (var triple in triples.Value.triplesToAdd)
                     {
                         deletePatterns.AppendLine($"{triple} <{triples.Key}> .");
-                    }0,
+                    }
 
                     foreach (var triple in triples.Value.triplesToAdd)
                     {
