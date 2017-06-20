@@ -1,7 +1,7 @@
 ﻿using Libraries.Server.BrightstarDb;
 using StructureMap;
 
-namespace GraphDataRepository.Utilities.StructureMap
+namespace QualityGrapher.Utilities.StructureMap
 {
     public class MainRegistry : Registry
     {

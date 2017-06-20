@@ -1,6 +1,6 @@
 ﻿using StructureMap;
 
-namespace GraphDataRepository.Utilities.StructureMap
+namespace QualityGrapher.Utilities.StructureMap
 {
     public static class ObjectFactory
     {

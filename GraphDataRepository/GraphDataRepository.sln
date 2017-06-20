@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphDataRepository", "GraphDataRepository.csproj", "{2F19D730-3334-4769-9685-E6BC2F49E099}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{B2AD8D50-DAD2-410C-8061-6B9DB6B97543}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "..\Tests\Tests.csproj", "{3A130A3B-D854-4EA1-A040-D6E489733016}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libraries", "..\Libraries\Libraries.csproj", "{24B9E6D1-3D92-45CA-B7FC-77D38119ABFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QualityGrapher", "QualityGrapher\QualityGrapher.csproj", "{ABB4876C-3E9C-4EC0-B440-0005AD8BA82E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2F19D730-3334-4769-9685-E6BC2F49E099}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F19D730-3334-4769-9685-E6BC2F49E099}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F19D730-3334-4769-9685-E6BC2F49E099}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F19D730-3334-4769-9685-E6BC2F49E099}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B2AD8D50-DAD2-410C-8061-6B9DB6B97543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B2AD8D50-DAD2-410C-8061-6B9DB6B97543}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2AD8D50-DAD2-410C-8061-6B9DB6B97543}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{24B9E6D1-3D92-45CA-B7FC-77D38119ABFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24B9E6D1-3D92-45CA-B7FC-77D38119ABFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24B9E6D1-3D92-45CA-B7FC-77D38119ABFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABB4876C-3E9C-4EC0-B440-0005AD8BA82E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABB4876C-3E9C-4EC0-B440-0005AD8BA82E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABB4876C-3E9C-4EC0-B440-0005AD8BA82E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABB4876C-3E9C-4EC0-B440-0005AD8BA82E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
