@@ -7,7 +7,7 @@ using Common;
 using VDS.RDF;
 using static Serilog.Log;
 
-namespace GraphDataRepository.QualityChecks
+namespace Libraries.QualityChecks
 {
     /// <summary>
     /// Base class for all quality checks

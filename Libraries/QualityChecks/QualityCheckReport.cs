@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GraphDataRepository.QualityChecks
+namespace Libraries.QualityChecks
 {
     /// <summary>
     /// Indicates if quality check passed and lists errors

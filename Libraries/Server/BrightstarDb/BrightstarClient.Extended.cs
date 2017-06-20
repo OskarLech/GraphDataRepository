@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using static Serilog.Log;
 
-namespace GraphDataRepository.Server.BrightstarDb
+namespace Libraries.Server.BrightstarDb
 {
-    internal partial class BrightstarClient : ITriplestoreClientExtended, IBrightstarClient
+    public partial class BrightstarClient : ITriplestoreClientExtended, IBrightstarClient
     {
         #region ITripleStoreClientExtended implementation
 

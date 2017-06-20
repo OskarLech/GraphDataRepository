@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using BrightstarDB.Client;
 using static Serilog.Log;
 
-namespace GraphDataRepository.Server.BrightstarDb
+namespace Libraries.Server.BrightstarDb
 {
     /// <summary>
     /// Handles communication with BrightstarDB endpoint
     /// </summary>
-    internal partial class BrightstarClient : TriplestoreClient
+    public partial class BrightstarClient : TriplestoreClient
     {
         //TODO add some authentication mechanisms
         private readonly IBrightstarService _brightstarClient;

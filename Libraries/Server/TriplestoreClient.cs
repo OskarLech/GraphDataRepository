@@ -11,7 +11,7 @@ using VDS.RDF.Query;
 using VDS.RDF.Storage;
 using static Serilog.Log;
 
-namespace GraphDataRepository.Server
+namespace Libraries.Server
 {
     /// <summary>
     /// Base class for all triplestores

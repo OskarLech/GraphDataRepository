@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-namespace GraphDataRepository.Server.BrightstarDb
+namespace Libraries.Server.BrightstarDb
 {
     /// <summary>
     /// Functionalities specific to BrightstarDB
     /// </summary>
-    internal interface IBrightstarClient
+    public interface IBrightstarClient
     {
         Task<bool> ConsolidateStore(string storeName);
     }

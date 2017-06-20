@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Xml.Linq;
-using BrightstarDB;
-using BrightstarDB.Client;
-using GraphDataRepository.QualityChecks.KnowledgeBaseCheck;
-using GraphDataRepository.QualityChecks.VocabularyCheck;
-using GraphDataRepository.Server;
-using GraphDataRepository.Server.BrightstarDb;
 using GraphDataRepository.Utilities.StructureMap;
+using Libraries.QualityChecks.KnowledgeBaseCheck;
+using Libraries.QualityChecks.VocabularyCheck;
+using Libraries.Server;
 using Serilog;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -66,7 +60,10 @@ namespace GraphDataRepository
                 .With("endpoint").EqualTo("http://192.168.0.111:8090/brightstar")
                 .GetInstance<ITriplestoreClientExtended>();
 
-            Disposables.Add(triplestoreClient);
+            if (triplestoreClient is IDisposable disposableTriplestoreClient)
+            {
+                Disposables.Add(disposableTriplestoreClient);
+            }
 
             while (true)
             {

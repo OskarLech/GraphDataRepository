@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using VDS.RDF;
 
-namespace GraphDataRepository.QualityChecks
+namespace Libraries.QualityChecks
 {
     public interface IQualityCheck
     {

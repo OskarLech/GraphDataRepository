@@ -7,7 +7,7 @@ using VDS.RDF;
 using VDS.RDF.Parsing;
 using static Serilog.Log;
 
-namespace GraphDataRepository.QualityChecks.VocabularyCheck
+namespace Libraries.QualityChecks.VocabularyCheck
 {
     /// <summary>
     /// Checks if predicates used in triples are defined in vocabularies.

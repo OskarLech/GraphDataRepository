@@ -7,7 +7,7 @@ using VDS.RDF;
 using VDS.RDF.Query;
 using static Serilog.Log;
 
-namespace GraphDataRepository.QualityChecks.KnowledgeBaseCheck
+namespace Libraries.QualityChecks.KnowledgeBaseCheck
 {
     /// <summary> 
     /// Checks whether triple subjects exist in external knowledge base. Allows for applying strstarts(...) filter on results.

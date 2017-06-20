@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using VDS.RDF;
 using VDS.RDF.Query;
 
-namespace GraphDataRepository.Server
+namespace Libraries.Server
 {
     /// <summary>
     /// Generic interface for basic CRUD operations any triplestore should provide
