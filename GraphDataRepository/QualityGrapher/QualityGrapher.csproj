@@ -96,7 +96,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\PathToImageConverter.cs" />
     <Compile Include="Globalization\SupportedLanguages.cs" />
     <Compile Include="MyEntityContext.cs">
       <AutoGen>True</AutoGen>
@@ -153,6 +152,8 @@
       <LastGenOutput>MyEntityContext.cs</LastGenOutput>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Converters\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
