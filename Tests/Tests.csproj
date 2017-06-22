@@ -61,9 +61,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GraphDataRepository\GraphDataRepository.csproj">
-      <Project>{2f19d730-3334-4769-9685-e6bc2f49e099}</Project>
-      <Name>GraphDataRepository</Name>
+    <ProjectReference Include="..\GraphDataRepository\QualityGrapher\QualityGrapher.csproj">
+      <Project>{ABB4876C-3E9C-4EC0-B440-0005AD8BA82E}</Project>
+      <Name>QualityGrapher</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

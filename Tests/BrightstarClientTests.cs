@@ -1,7 +1,7 @@
-﻿using GraphDataRepository.Utilities.StructureMap;
-using log4net;
+﻿using log4net;
 using log4net.Config;
 using NUnit.Framework;
+using QualityGrapher.Utilities.StructureMap;
 using Rhino.Mocks;
 
 namespace Tests

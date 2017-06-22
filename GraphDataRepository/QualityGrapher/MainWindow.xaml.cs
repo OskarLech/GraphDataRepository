@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
-using System.Threading;
 using System.Windows;
 using Libraries.QualityChecks.KnowledgeBaseCheck;
 using Libraries.QualityChecks.VocabularyCheck;
-using Libraries.Server;
 using Libraries.Server.BrightstarDb;
 using QualityGrapher.Utilities.StructureMap;
 using Serilog;
@@ -24,12 +23,9 @@ namespace QualityGrapher
 
         public MainWindow()
         {
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl-PL");
             Init();
             InitializeComponent();
-
-            //Verbose("Terminating the program");
-            //Disposables.ForEach(d => d.Dispose());
-            //Verbose("Program terminated succesfully");
         }
 
         private static void Init()
@@ -194,6 +190,13 @@ namespace QualityGrapher
 
                 if (key.Key == ConsoleKey.Escape) break;
             }
+        }
+
+        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            Verbose("Terminating the program");
+            Disposables.ForEach(d => d.Dispose());
+            Verbose("Program terminated succesfully");
         }
     }
 }
