@@ -96,6 +96,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\PathToImageConverter.cs" />
+    <Compile Include="Globalization\SupportedLanguages.cs" />
     <Compile Include="MyEntityContext.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -103,6 +105,14 @@
     </Compile>
     <Compile Include="Utilities\StructureMap\MainRegistry.cs" />
     <Compile Include="Utilities\StructureMap\ObjectFactory.cs" />
+    <Page Include="Globalization\Languages\en-GB.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Globalization\Languages\pl-PL.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -135,10 +145,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Globalization\FlagIcons\Poland-icon.png" />
+    <Resource Include="Globalization\FlagIcons\United-Kingdom-icon.png" />
+    <Resource Include="Globalization\FlagIcons\license.txt" />
     <Content Include="MyEntityContext.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MyEntityContext.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

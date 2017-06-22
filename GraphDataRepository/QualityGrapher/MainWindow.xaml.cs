@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using Libraries.QualityChecks.KnowledgeBaseCheck;
 using Libraries.QualityChecks.VocabularyCheck;
 using Libraries.Server.BrightstarDb;
+using QualityGrapher.Globalization;
 using QualityGrapher.Utilities.StructureMap;
 using Serilog;
 using VDS.RDF;
@@ -23,17 +25,39 @@ namespace QualityGrapher
 
         public MainWindow()
         {
-            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl-PL");
             Init();
             InitializeComponent();
         }
 
-        private static void Init()
+        private void Init()
         {
             //Serilog
             Logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
                 .CreateLogger();
+
+            //Languages
+            SetLanguageDictionary(Thread.CurrentThread.CurrentCulture.ToString());
+        }
+
+        private void SetLanguageDictionary(string language)
+        {
+            var dict = new ResourceDictionary();
+            switch (language)
+            {
+                case SupportedLanguages.English:
+                    dict.Source = new Uri(@"..\Globalization\Languages\en-GB.xaml", UriKind.Relative);
+                    break;
+                case SupportedLanguages.Polish:
+                    dict.Source = new Uri(@"..\Globalization\Languages\pl-PL.xaml", UriKind.Relative);
+                    break;
+                default:
+                    dict.Source = new Uri(@"..\Globalization\Languages\en-GB.xaml", UriKind.Relative);
+                    break;
+            }
+
+            Resources.MergedDictionaries.Clear();
+            Resources.MergedDictionaries.Add(dict);
         }
 
         private void VocabQualityCheckBtn_OnClick(object sender, RoutedEventArgs e)
@@ -197,6 +221,16 @@ namespace QualityGrapher
             Verbose("Terminating the program");
             Disposables.ForEach(d => d.Dispose());
             Verbose("Program terminated succesfully");
+        }
+
+        private void PolishLanguageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            SetLanguageDictionary(SupportedLanguages.Polish);
+        }
+
+        private void EnglishLanguageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            SetLanguageDictionary(SupportedLanguages.English);
         }
     }
 }
