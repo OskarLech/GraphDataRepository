@@ -5,4 +5,6 @@
     
     <system:String x:Key="EndpointUri">Endpoint URI</system:String>
     <system:String x:Key="Triplestore">Triplestore</system:String>
+    <system:String x:Key="SelectServer">-- Select triplestore --</system:String>
+    <system:String x:Key="SelectOperation">-- Select Operation --</system:String>
 </ResourceDictionary>

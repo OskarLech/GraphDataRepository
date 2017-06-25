@@ -5,4 +5,6 @@
 
     <system:String x:Key="EndpointUri">URI serwera</system:String>
     <system:String x:Key="Triplestore">Serwer</system:String>
+    <system:String x:Key="SelectServer">-- Wybierz serwer --</system:String>
+    <system:String x:Key="SelectOperation">-- Wybierz działanie --</system:String>
 </ResourceDictionary>

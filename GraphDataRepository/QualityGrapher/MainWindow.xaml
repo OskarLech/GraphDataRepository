@@ -5,12 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QualityGrapher"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:converters="clr-namespace:QualityGrapher.Converters"
         mc:Ignorable="d"
         Closing="MainWindow_OnClosing"
         
         Title="Quality Grapher" Height="479.004" Width="529.899">
 
     <Window.Resources>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <Image x:Key="PolishFlagImage" Source="Globalization/FlagIcons/Poland-icon.png"/>
         <Image x:Key="UkFlagImage" Source="Globalization/FlagIcons/United-Kingdom-icon.png"/>
     </Window.Resources>
@@ -36,9 +38,20 @@
                 <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Text="{DynamicResource Triplestore}" FontWeight="Bold"/>
 
                 <TextBox Grid.Column="0" Grid.Row="1" Padding="2"  TextAlignment="Center" Text="http://192.168.0.111:8090/brightstar"/>
-                <ComboBox Grid.Column="1" Grid.Row="1" />
+                
+                <ComboBox x:Name="ServerSelectionComboBox" Grid.Column="1" Grid.Row="1" />
+                <TextBlock Grid.Column="1" Grid.Row="1" Visibility="{Binding SelectedItem, ElementName=ServerSelectionComboBox, Converter={StaticResource NullToVisibilityConverter}}"
+                           IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" Text="{DynamicResource SelectServer}" />
             </Grid>
 
+            <Grid DockPanel.Dock="Top" Margin="0 0 0 5">
+                <Grid>
+                    <ComboBox x:Name="OperationSelectionComboBox" />
+                    <TextBlock Visibility="{Binding SelectedItem, ElementName=OperationSelectionComboBox, Converter={StaticResource NullToVisibilityConverter}}"
+                        IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" Text="{DynamicResource SelectOperation}" />
+                </Grid>
+            </Grid>
+            
             <!--TEST BLOCK START-->
             <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Text="TEST" FontWeight="Bold"/>
             <Grid DockPanel.Dock="Top">
