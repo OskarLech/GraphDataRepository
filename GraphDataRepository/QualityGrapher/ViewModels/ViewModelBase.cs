@@ -1,15 +1,17 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using PropertyChanged;
-using QualityGrapher.Annotations;
 
 namespace QualityGrapher.ViewModels
 {
-    class ViewModelBase : INotifyPropertyChanged
+    /// <summary>
+    /// Base class for all ViewModels, property notification injected automatically by FodyWeavers,
+    /// use <see cref="DoNotNotifyAttribute"/> to  avaoid injecting property notification
+    /// </summary>
+    internal abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
