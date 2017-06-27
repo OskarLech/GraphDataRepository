@@ -77,7 +77,7 @@
     <Compile Include="Server\BrightstarDb\BrightstarClient.Extended.cs" />
     <Compile Include="Server\BrightstarDb\IBrightstarClient.cs" />
     <Compile Include="Server\ITriplestoreClient.cs" />
-    <Compile Include="Server\ITripleStoreClientExtended.cs" />
+    <Compile Include="Server\ITriplestoreClientExtended.cs" />
     <Compile Include="Server\TriplestoreClient.cs" />
   </ItemGroup>
   <ItemGroup>

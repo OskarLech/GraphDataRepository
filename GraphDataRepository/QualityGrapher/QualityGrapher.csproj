@@ -102,8 +102,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Utilities\StructureMap\SupportedOperations.cs" />
+    <Compile Include="Utilities\SupportedTriplestores.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Globalization\SupportedLanguages.cs" />
+    <Compile Include="Models\TriplestoreModel.cs" />
     <Compile Include="MyEntityContext.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -112,6 +115,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Utilities\StructureMap\MainRegistry.cs" />
     <Compile Include="Utilities\StructureMap\ObjectFactory.cs" />
+    <Compile Include="ViewModels\TriplestoresViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="Globalization\Languages\en-GB.xaml">
       <SubType>Designer</SubType>
@@ -121,11 +125,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

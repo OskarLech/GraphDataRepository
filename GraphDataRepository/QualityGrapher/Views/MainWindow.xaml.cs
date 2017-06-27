@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using Libraries.QualityChecks.KnowledgeBaseCheck;
 using Libraries.QualityChecks.VocabularyCheck;
 using Libraries.Server.BrightstarDb;
 using QualityGrapher.Globalization;
+using QualityGrapher.Utilities;
 using QualityGrapher.Utilities.StructureMap;
 using Serilog;
 using VDS.RDF;
 using VDS.RDF.Parsing;
-using static Serilog.Log;
+using QualityGrapher.ViewModels;
 
-namespace QualityGrapher
+namespace QualityGrapher.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -25,14 +27,21 @@ namespace QualityGrapher
 
         public MainWindow()
         {
-            Init();
             InitializeComponent();
+            Init();
+            InitBindings();
+        }
+
+        private void InitBindings()
+        {
+            ServerSelectionComboBox.DataContext = new TriplestoresViewModel();
+            OperationSelectionComboBox.DataContext = SupportedTriplestores.Instance.TriplestoreModelList.First();
         }
 
         private void Init()
         {
             //Serilog
-            Logger = new LoggerConfiguration()
+            Log.Logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
                 .CreateLogger();
 
@@ -62,7 +71,7 @@ namespace QualityGrapher
 
         private void VocabQualityCheckBtn_OnClick(object sender, RoutedEventArgs e)
         {
-            Verbose("VocabQualityCheckBtn_OnClick");
+            Log.Verbose("VocabQualityCheckBtn_OnClick");
             var dataGraph = new Graph();
             FileLoader.Load(dataGraph, @"..\..\..\..\Common\TestData\RDF\foaf_example.rdf");
             var vocabPath = Path.GetFullPath(@"..\..\..\..\Common\TestData\Schemas\foaf_20140114.rdf");
@@ -218,9 +227,9 @@ namespace QualityGrapher
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            Verbose("Terminating the program");
+            Log.Verbose("Terminating the program");
             Disposables.ForEach(d => d.Dispose());
-            Verbose("Program terminated succesfully");
+            Log.Verbose("Program terminated succesfully");
         }
 
         private void PolishLanguageButton_OnClick(object sender, RoutedEventArgs e)
@@ -231,6 +240,11 @@ namespace QualityGrapher
         private void EnglishLanguageButton_OnClick(object sender, RoutedEventArgs e)
         {
             SetLanguageDictionary(SupportedLanguages.English);
+        }
+
+        private void TestBtn_OnClick_OnClick(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

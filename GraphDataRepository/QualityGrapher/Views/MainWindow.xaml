@@ -1,4 +1,4 @@
-﻿<Window x:Class="QualityGrapher.MainWindow"
+﻿<Window x:Class="QualityGrapher.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,8 +13,8 @@
 
     <Window.Resources>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-        <Image x:Key="PolishFlagImage" Source="Globalization/FlagIcons/Poland-icon.png"/>
-        <Image x:Key="UkFlagImage" Source="Globalization/FlagIcons/United-Kingdom-icon.png"/>
+        <Image x:Key="PolishFlagImage" Source="../Globalization/FlagIcons/Poland-icon.png"/>
+        <Image x:Key="UkFlagImage" Source="../Globalization/FlagIcons/United-Kingdom-icon.png"/>
     </Window.Resources>
     <Border Padding="10">
         <DockPanel>
@@ -39,14 +39,14 @@
 
                 <TextBox Grid.Column="0" Grid.Row="1" Padding="2"  TextAlignment="Center" Text="http://192.168.0.111:8090/brightstar"/>
                 
-                <ComboBox x:Name="ServerSelectionComboBox" Grid.Column="1" Grid.Row="1" />
+                <ComboBox x:Name="ServerSelectionComboBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=Triplestores}"/>
                 <TextBlock Grid.Column="1" Grid.Row="1" Visibility="{Binding SelectedItem, ElementName=ServerSelectionComboBox, Converter={StaticResource NullToVisibilityConverter}}"
                            IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" Text="{DynamicResource SelectServer}" />
             </Grid>
 
             <Grid DockPanel.Dock="Top" Margin="0 0 0 5">
                 <Grid>
-                    <ComboBox x:Name="OperationSelectionComboBox" />
+                    <ComboBox x:Name="OperationSelectionComboBox" HorizontalContentAlignment="Center" ItemsSource="{Binding SupportedOperations}"/>
                     <TextBlock Visibility="{Binding SelectedItem, ElementName=OperationSelectionComboBox, Converter={StaticResource NullToVisibilityConverter}}"
                         IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" Text="{DynamicResource SelectOperation}" />
                 </Grid>
@@ -59,11 +59,13 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <Button Name="VocabQualityCheckBtn" Grid.Column="0" Content="VocabQualityCheck" Click="VocabQualityCheckBtn_OnClick"/>
                 <Button Name="KnowledgeBaseBtn" Grid.Column="1" Content="KnowledgeBaseCheck" Click="KnowledgeBaseBtn_OnClick"/>
                 <Button Name="BrightstarCliBtn" Grid.Column="2" Content="BrightstarCli" Click="BrightstarCliBtn_OnClick"/>
+                <Button Name="TestBtn" Grid.Column="3" Content="TestBtn" Click="TestBtn_OnClick_OnClick"/>
             </Grid>
             <!--TEST BLOCK END-->
 
