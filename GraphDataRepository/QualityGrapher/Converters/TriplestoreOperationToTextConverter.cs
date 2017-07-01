@@ -95,7 +95,9 @@ namespace QualityGrapher.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return _resourceDictionary.Keys.Cast<object>().FirstOrDefault(key => _resourceDictionary[key].ToString() == value?.ToString());
+            var operation = _resourceDictionary.Keys.Cast<object>().FirstOrDefault(key => _resourceDictionary[key].ToString() == value?.ToString());
+            Enum.TryParse<SupportedOperations>(operation?.ToString(), true, out var operationAsEnum);
+            return operationAsEnum;
         }
     }
 }

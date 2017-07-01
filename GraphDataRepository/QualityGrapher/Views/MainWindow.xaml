@@ -52,7 +52,9 @@
                         IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" Text="{DynamicResource SelectOperation}" />
                 </Grid>
             </Grid>
-            
+
+            <ContentControl DockPanel.Dock="Top" x:Name="TriplestoreOperationUserControl" />
+
             <!--TEST BLOCK START-->
             <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Text="TEST" FontWeight="Bold"/>
             <Grid DockPanel.Dock="Top">

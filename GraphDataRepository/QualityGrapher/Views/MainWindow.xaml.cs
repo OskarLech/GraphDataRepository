@@ -13,7 +13,6 @@ using Libraries.Server.BrightstarDb;
 using QualityGrapher.Converters;
 using QualityGrapher.Globalization;
 using QualityGrapher.Utilities;
-using QualityGrapher.Utilities.StructureMap;
 using Serilog;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -52,12 +51,6 @@ namespace QualityGrapher.Views
             Logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
                 .CreateLogger();
-
-            //StructureMap
-            ObjectFactory.Container.Configure(x =>
-            {
-                x.AddRegistry(new MainRegistry());
-            });
 
             //Languages
             SetLanguageDictionary(Thread.CurrentThread.CurrentCulture.ToString());
@@ -118,9 +111,7 @@ namespace QualityGrapher.Views
 
         private async void BrightstarCliBtn_OnClick(object sender, RoutedEventArgs e)
         {
-            var triplestoreClient = ObjectFactory.Container
-                .With("endpoint").EqualTo("http://192.168.0.111:8090/brightstar")
-                .GetInstance<IBrightstarClient>();
+            var triplestoreClient = new BrightstarClient("http://192.168.0.111:8090/brightstar");
 
             if (triplestoreClient is IDisposable disposable)
             {
@@ -283,7 +274,7 @@ namespace QualityGrapher.Views
             }
             else
             {
-                Error($"Selected unsupported triplestore: {e.AddedItems[0]}");
+                Error($"Selected unsupported triplestore: {selectedItemText}");
             }
         }
 
@@ -292,6 +283,14 @@ namespace QualityGrapher.Views
             var operationText = ((ComboBox) sender).SelectedItem;
             var operation = _triplestoreOperationToTextConverter.ConvertBack(operationText, typeof(SupportedOperations), null, null);
             if (operation == null) return;
+
+            operation = (SupportedOperations) operation;
+            switch (operation)
+            {
+                case SupportedOperations.CreateDataset:
+                    TriplestoreOperationUserControl.Content = new CreateDataset();
+                    break;
+            }
 
             Verbose(operation.ToString());
         }
