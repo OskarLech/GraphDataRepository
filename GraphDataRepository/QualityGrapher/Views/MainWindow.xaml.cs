@@ -5,16 +5,21 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using Libraries.QualityChecks.KnowledgeBaseCheck;
 using Libraries.QualityChecks.VocabularyCheck;
+using Libraries.Server;
 using Libraries.Server.BrightstarDb;
 using QualityGrapher.Globalization;
+using QualityGrapher.Globalization.Resources;
 using QualityGrapher.Utilities;
 using QualityGrapher.Utilities.StructureMap;
 using Serilog;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using QualityGrapher.ViewModels;
+using static Serilog.Log;
+using static QualityGrapher.Utilities.SupportedTriplestores.TriplestoreProviders;
 
 namespace QualityGrapher.Views
 {
@@ -23,7 +28,12 @@ namespace QualityGrapher.Views
     /// </summary>
     public partial class MainWindow : Window
     {
+        public event Action<string> LanguageSet;
+
         private static readonly List<IDisposable> Disposables = new List<IDisposable>();
+        public DynamicData DynamicData;
+
+        private ITriplestoreClient _triplestore;
 
         public MainWindow()
         {
@@ -35,7 +45,6 @@ namespace QualityGrapher.Views
         private void InitBindings()
         {
             ServerSelectionComboBox.DataContext = new TriplestoresViewModel();
-            OperationSelectionComboBox.DataContext = SupportedTriplestores.Instance.TriplestoreModelList.First();
         }
 
         private void Init()
@@ -45,7 +54,14 @@ namespace QualityGrapher.Views
                 .ReadFrom.AppSettings()
                 .CreateLogger();
 
+            //StructureMap
+            ObjectFactory.Container.Configure(x =>
+            {
+                x.AddRegistry(new MainRegistry());
+            });
+
             //Languages
+            DynamicData = ObjectFactory.Container.GetInstance<DynamicData>();
             SetLanguageDictionary(Thread.CurrentThread.CurrentCulture.ToString());
         }
 
@@ -55,18 +71,21 @@ namespace QualityGrapher.Views
             switch (language)
             {
                 case SupportedLanguages.English:
-                    dict.Source = new Uri(@"..\Globalization\Languages\en-GB.xaml", UriKind.Relative);
+                    dict.Source = new Uri(@"..\Globalization\Resources\en-GB.xaml", UriKind.Relative);
                     break;
                 case SupportedLanguages.Polish:
-                    dict.Source = new Uri(@"..\Globalization\Languages\pl-PL.xaml", UriKind.Relative);
+                    dict.Source = new Uri(@"..\Globalization\Resources\pl-PL.xaml", UriKind.Relative);
                     break;
                 default:
-                    dict.Source = new Uri(@"..\Globalization\Languages\en-GB.xaml", UriKind.Relative);
+                    language = SupportedLanguages.English;
+                    dict.Source = new Uri(@"..\Globalization\Resources\en-GB.xaml", UriKind.Relative);
                     break;
             }
 
             Resources.MergedDictionaries.Clear();
             Resources.MergedDictionaries.Add(dict);
+            DynamicData.CurrentLanguage = language;
+            LanguageSet?.Invoke(language);
         }
 
         private void VocabQualityCheckBtn_OnClick(object sender, RoutedEventArgs e)
@@ -227,9 +246,9 @@ namespace QualityGrapher.Views
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            Log.Verbose("Terminating the program");
+            Verbose("Terminating the program");
             Disposables.ForEach(d => d.Dispose());
-            Log.Verbose("Program terminated succesfully");
+            Verbose("Program terminated succesfully");
         }
 
         private void PolishLanguageButton_OnClick(object sender, RoutedEventArgs e)
@@ -244,7 +263,31 @@ namespace QualityGrapher.Views
 
         private void TestBtn_OnClick_OnClick(object sender, RoutedEventArgs e)
         {
+            //TODO: remove
+        }
 
+        private void ServerSelectionComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(_triplestore is IDisposable oldClient) oldClient.Dispose();
+
+            if (e.AddedItems[0].ToString() == BrightstarDb.ToString())
+            {
+                _triplestore = new BrightstarClient(EndpointUriTextBox.Text);
+                Disposables.Add((IDisposable)_triplestore);
+                OperationSelectionComboBox.DataContext = SupportedTriplestores.Instance.TriplestoreModelList.Where(t => t.Name == BrightstarDb.ToString());
+            }
+            else
+            {
+                Error($"Selected unsupported triplestore: {e.AddedItems[0]}");
+            }
+        }
+
+        private void OperationSelectionComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (e.AddedItems[0])
+            {
+                    
+            }
         }
     }
 }

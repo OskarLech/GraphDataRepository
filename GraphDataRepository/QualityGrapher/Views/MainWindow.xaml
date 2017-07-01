@@ -37,16 +37,16 @@
                 <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Text="{DynamicResource EndpointUri}" FontWeight="Bold" />
                 <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Text="{DynamicResource Triplestore}" FontWeight="Bold"/>
 
-                <TextBox Grid.Column="0" Grid.Row="1" Padding="2"  TextAlignment="Center" Text="http://192.168.0.111:8090/brightstar"/>
+                <TextBox Name = "EndpointUriTextBox" Grid.Column="0" Grid.Row="1" Padding="2"  TextAlignment="Center" Text="http://192.168.0.111:8090/brightstar"/>
                 
-                <ComboBox x:Name="ServerSelectionComboBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=Triplestores}"/>
+                <ComboBox x:Name="ServerSelectionComboBox" Grid.Column="1" Grid.Row="1" SelectionChanged="ServerSelectionComboBox_OnSelectionChanged" ItemsSource="{Binding Path=Triplestores}"/>
                 <TextBlock Grid.Column="1" Grid.Row="1" Visibility="{Binding SelectedItem, ElementName=ServerSelectionComboBox, Converter={StaticResource NullToVisibilityConverter}}"
                            IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" Text="{DynamicResource SelectServer}" />
             </Grid>
 
             <Grid DockPanel.Dock="Top" Margin="0 0 0 5">
                 <Grid>
-                    <ComboBox x:Name="OperationSelectionComboBox" HorizontalContentAlignment="Center" ItemsSource="{Binding SupportedOperations}"/>
+                    <ComboBox x:Name="OperationSelectionComboBox"  SelectionChanged="OperationSelectionComboBox_OnSelectionChanged" HorizontalContentAlignment="Center" ItemsSource="{Binding SupportedOperations.Values}"/>
                     <TextBlock Visibility="{Binding SelectedItem, ElementName=OperationSelectionComboBox, Converter={StaticResource NullToVisibilityConverter}}"
                         IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" Text="{DynamicResource SelectOperation}" />
                 </Grid>

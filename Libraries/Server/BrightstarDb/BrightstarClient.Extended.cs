@@ -6,7 +6,7 @@ using static Serilog.Log;
 
 namespace Libraries.Server.BrightstarDb
 {
-    public partial class BrightstarClient : ITriplestoreClientExtended, IBrightstarClient
+    public partial class BrightstarClient : IBrightstarClient
     {
         #region ITripleStoreClientExtended implementation
 

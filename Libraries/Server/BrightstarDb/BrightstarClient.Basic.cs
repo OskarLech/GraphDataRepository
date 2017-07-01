@@ -13,7 +13,6 @@ namespace Libraries.Server.BrightstarDb
     /// </summary>
     public partial class BrightstarClient : TriplestoreClient
     {
-        //TODO add some authentication mechanisms
         private readonly IBrightstarService _brightstarClient;
 
         public BrightstarClient(string endpoint) : base(endpoint)

@@ -6,9 +6,9 @@ namespace QualityGrapher.ViewModels
 {
     /// <summary>
     /// Base class for all ViewModels, property notification injected automatically by FodyWeavers,
-    /// use <see cref="DoNotNotifyAttribute"/> to  avaoid injecting property notification
+    /// use <see cref="DoNotNotifyAttribute"/> to  avoid injecting property notification
     /// </summary>
-    internal abstract class ViewModelBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
