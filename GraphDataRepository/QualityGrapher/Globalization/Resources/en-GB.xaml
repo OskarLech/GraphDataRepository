@@ -7,4 +7,19 @@
     <system:String x:Key="Triplestore">Triplestore</system:String>
     <system:String x:Key="SelectServer">-- Select triplestore --</system:String>
     <system:String x:Key="SelectOperation">-- Select Operation --</system:String>
+
+    <!--Triplestore operations-->
+    <system:String x:Key="CreateDataset">Create dataset</system:String>
+    <system:String x:Key="DeleteDataset">Delete dataset</system:String>
+    <system:String x:Key="ListDatasets">List datasets</system:String>
+    <system:String x:Key="DeleteGraphs">Delete graphs</system:String>
+    <system:String x:Key="UpdateGraphs">Update graphs</system:String>
+    <system:String x:Key="ReadGraphs">Read graphs</system:String>
+    <system:String x:Key="ListGraphs">List graphs</system:String>
+    <system:String x:Key="RunSparqlQuery">Run SPARQL query</system:String>
+    <system:String x:Key="RevertLastTransaction">Revert last transaction</system:String>
+    <system:String x:Key="ListCommitPoints">List commit points</system:String>
+    <system:String x:Key="RevertToCommitPoint">Revert to commit point</system:String>
+    <system:String x:Key="GetStatistics">Show statistics</system:String>
+    <system:String x:Key="ConsolidateStore">Consolidate store</system:String>
 </ResourceDictionary>

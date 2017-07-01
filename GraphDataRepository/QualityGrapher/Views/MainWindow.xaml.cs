@@ -10,8 +10,8 @@ using Libraries.QualityChecks.KnowledgeBaseCheck;
 using Libraries.QualityChecks.VocabularyCheck;
 using Libraries.Server;
 using Libraries.Server.BrightstarDb;
+using QualityGrapher.Converters;
 using QualityGrapher.Globalization;
-using QualityGrapher.Globalization.Resources;
 using QualityGrapher.Utilities;
 using QualityGrapher.Utilities.StructureMap;
 using Serilog;
@@ -26,13 +26,12 @@ namespace QualityGrapher.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public event Action<string> LanguageSet;
 
         private static readonly List<IDisposable> Disposables = new List<IDisposable>();
-        public DynamicData DynamicData;
-
+        private TriplestoreOperationToTextConverter _triplestoreOperationToTextConverter;
         private ITriplestoreClient _triplestore;
 
         public MainWindow()
@@ -50,7 +49,7 @@ namespace QualityGrapher.Views
         private void Init()
         {
             //Serilog
-            Log.Logger = new LoggerConfiguration()
+            Logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
                 .CreateLogger();
 
@@ -61,8 +60,10 @@ namespace QualityGrapher.Views
             });
 
             //Languages
-            DynamicData = ObjectFactory.Container.GetInstance<DynamicData>();
             SetLanguageDictionary(Thread.CurrentThread.CurrentCulture.ToString());
+
+            //Language Converters
+            _triplestoreOperationToTextConverter = new TriplestoreOperationToTextConverter();
         }
 
         private void SetLanguageDictionary(string language)
@@ -84,8 +85,14 @@ namespace QualityGrapher.Views
 
             Resources.MergedDictionaries.Clear();
             Resources.MergedDictionaries.Add(dict);
-            DynamicData.CurrentLanguage = language;
+
             LanguageSet?.Invoke(language);
+        }
+
+        #region testing
+        private void TestBtn_OnClick_OnClick(object sender, RoutedEventArgs e)
+        {
+            //TODO: remove
         }
 
         private void VocabQualityCheckBtn_OnClick(object sender, RoutedEventArgs e)
@@ -244,6 +251,8 @@ namespace QualityGrapher.Views
             }
         }
 
+        #endregion
+
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
             Verbose("Terminating the program");
@@ -261,16 +270,12 @@ namespace QualityGrapher.Views
             SetLanguageDictionary(SupportedLanguages.English);
         }
 
-        private void TestBtn_OnClick_OnClick(object sender, RoutedEventArgs e)
-        {
-            //TODO: remove
-        }
-
         private void ServerSelectionComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if(_triplestore is IDisposable oldClient) oldClient.Dispose();
 
-            if (e.AddedItems[0].ToString() == BrightstarDb.ToString())
+            var selectedItemText = ((ComboBox)sender).SelectedItem.ToString();
+            if (selectedItemText == BrightstarDb.ToString())
             {
                 _triplestore = new BrightstarClient(EndpointUriTextBox.Text);
                 Disposables.Add((IDisposable)_triplestore);
@@ -284,10 +289,11 @@ namespace QualityGrapher.Views
 
         private void OperationSelectionComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch (e.AddedItems[0])
-            {
-                    
-            }
+            var operationText = ((ComboBox) sender).SelectedItem;
+            var operation = _triplestoreOperationToTextConverter.ConvertBack(operationText, typeof(SupportedOperations), null, null);
+            if (operation == null) return;
+
+            Verbose(operation.ToString());
         }
     }
 }

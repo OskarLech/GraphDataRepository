@@ -102,7 +102,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Globalization\Resources\DynamicData.cs" />
+    <Compile Include="Converters\TriplestoreOperationToTextConverter.cs" />
     <Compile Include="Utilities\SupportedOperations.cs" />
     <Compile Include="Utilities\SupportedTriplestores.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />

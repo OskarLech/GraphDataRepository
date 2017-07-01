@@ -7,4 +7,19 @@
     <system:String x:Key="Triplestore">Serwer</system:String>
     <system:String x:Key="SelectServer">-- Wybierz serwer --</system:String>
     <system:String x:Key="SelectOperation">-- Wybierz działanie --</system:String>
+
+    <!--Triplestore operations-->
+    <system:String x:Key="CreateDataset">Stwórz ontologię</system:String>
+    <system:String x:Key="DeleteDataset">Usuń ontologię</system:String>
+    <system:String x:Key="ListDatasets">Lista ontologii</system:String>
+    <system:String x:Key="DeleteGraphs">Usuń grafy</system:String>
+    <system:String x:Key="UpdateGraphs">Zaktualizuj grafy</system:String>
+    <system:String x:Key="ReadGraphs">Pobierz grafy</system:String>
+    <system:String x:Key="ListGraphs">Lista grafów</system:String>
+    <system:String x:Key="RunSparqlQuery">Wykonaj zapytanie SPARQL</system:String>
+    <system:String x:Key="RevertLastTransaction">Cofnij poprzednią operację</system:String>
+    <system:String x:Key="ListCommitPoints">Wyświetl punkty kontrolne</system:String>
+    <system:String x:Key="RevertToCommitPoint">Cofnij do punktu kontrolnego</system:String>
+    <system:String x:Key="GetStatistics">Pokaż statystyki</system:String>
+    <system:String x:Key="ConsolidateStore">Skompresuj bazę serwera</system:String>
 </ResourceDictionary>

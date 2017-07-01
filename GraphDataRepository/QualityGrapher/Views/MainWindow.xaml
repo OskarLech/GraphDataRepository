@@ -13,6 +13,7 @@
 
     <Window.Resources>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <converters:TriplestoreOperationToTextConverter x:Key="TriplestoreOperationToTextConverter" />
         <Image x:Key="PolishFlagImage" Source="../Globalization/FlagIcons/Poland-icon.png"/>
         <Image x:Key="UkFlagImage" Source="../Globalization/FlagIcons/United-Kingdom-icon.png"/>
     </Window.Resources>
@@ -46,7 +47,7 @@
 
             <Grid DockPanel.Dock="Top" Margin="0 0 0 5">
                 <Grid>
-                    <ComboBox x:Name="OperationSelectionComboBox"  SelectionChanged="OperationSelectionComboBox_OnSelectionChanged" HorizontalContentAlignment="Center" ItemsSource="{Binding SupportedOperations.Values}"/>
+                    <ComboBox x:Name="OperationSelectionComboBox"  SelectionChanged="OperationSelectionComboBox_OnSelectionChanged" HorizontalContentAlignment="Center" ItemsSource="{Binding SupportedOperations, Converter={StaticResource TriplestoreOperationToTextConverter}}"/>
                     <TextBlock Visibility="{Binding SelectedItem, ElementName=OperationSelectionComboBox, Converter={StaticResource NullToVisibilityConverter}}"
                         IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" Text="{DynamicResource SelectOperation}" />
                 </Grid>
