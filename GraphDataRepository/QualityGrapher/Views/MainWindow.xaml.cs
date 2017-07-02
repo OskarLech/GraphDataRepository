@@ -85,7 +85,6 @@ namespace QualityGrapher.Views
         #region testing
         private void TestBtn_OnClick_OnClick(object sender, RoutedEventArgs e)
         {
-            //TODO: remove
         }
 
         private void VocabQualityCheckBtn_OnClick(object sender, RoutedEventArgs e)

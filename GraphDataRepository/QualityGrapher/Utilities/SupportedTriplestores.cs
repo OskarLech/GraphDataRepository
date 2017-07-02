@@ -8,9 +8,10 @@ namespace QualityGrapher.Utilities
 {
     public class SupportedTriplestores
     {
+        public readonly List<TriplestoreViewModel> TriplestoreModelList = new List<TriplestoreViewModel>();
+
         private static readonly object SyncRoot = new object();
         private static SupportedTriplestores _instance;
-        public readonly List<TriplestoreViewModel> TriplestoreModelList = new List<TriplestoreViewModel>();
 
         private SupportedTriplestores()
         {
