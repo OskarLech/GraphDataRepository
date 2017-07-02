@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using QualityGrapher.Utilities;
 using QualityGrapher.Views;
+using static Libraries.Server.SupportedTriplestores;
 
 namespace QualityGrapher.Converters
 {

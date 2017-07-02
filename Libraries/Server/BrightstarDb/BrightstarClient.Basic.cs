@@ -116,7 +116,16 @@ namespace Libraries.Server.BrightstarDb
 
         public override async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
         {
-            throw new System.NotImplementedException();
+            _brightstarClient.ExecuteTransaction(dataset, null); //dummy transaction to create commit point
+
+            if (!await base.DeleteGraphs(dataset, graphUris))
+            {
+                Debug("Could not delete one or more graphs");
+                return false;
+            }
+
+            _brightstarClient.ExecuteTransaction(dataset, null);
+            return true;
         }
 
         #endregion

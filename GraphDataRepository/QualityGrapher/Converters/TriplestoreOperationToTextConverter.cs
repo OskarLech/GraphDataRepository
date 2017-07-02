@@ -7,15 +7,14 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using QualityGrapher.Globalization;
-using QualityGrapher.Utilities;
 using QualityGrapher.Views;
+using static Libraries.Server.SupportedTriplestores;
 
 namespace QualityGrapher.Converters
 {
     public class TriplestoreOperationToTextConverter : IValueConverter
     {
         private ResourceDictionary _resourceDictionary;
-        private readonly Guid x = Guid.NewGuid();
 
         public TriplestoreOperationToTextConverter()
         {

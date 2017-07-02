@@ -1,48 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using Libraries.Server;
+using System.Linq;
 using Libraries.Server.BrightstarDb;
-using QualityGrapher.ViewModels;
 
-namespace QualityGrapher.Utilities
+namespace Libraries.Server
 {
-    public class SupportedTriplestores
+    public static class SupportedTriplestores
     {
-        public readonly List<TriplestoreViewModel> TriplestoreModelList = new List<TriplestoreViewModel>();
-
-        private static readonly object SyncRoot = new object();
-        private static SupportedTriplestores _instance;
-
-        private SupportedTriplestores()
+        public static IEnumerable<(string name, Type clientClass)> TriplestoreProviders = new List<(string name, Type type)>
         {
-            PopulateModelList();
+            ("BrightstarDb", typeof(BrightstarClient))
+        };
+
+        public enum SupportedOperations
+        {
+            //ITriplestoreClient
+            CreateDataset,
+            DeleteDataset,
+            ListDatasets,
+            DeleteGraphs,
+            UpdateGraphs,
+            ReadGraphs,
+            ListGraphs,
+            RunSparqlQuery,
+
+            //ITriplestoreClientExtended
+            RevertLastTransaction,
+            ListCommitPoints,
+            RevertToCommitPoint,
+            GetStatistics,
+
+            //IBrightstarClient
+            ConsolidateStore
         }
 
-        public static SupportedTriplestores Instance
+        public static IEnumerable<(string name, IEnumerable<SupportedOperations> supportedOperations)> GetTriplestoresList()
         {
-            get
-            {
-                lock (SyncRoot)
-                {
-                    return _instance ?? (_instance = new SupportedTriplestores());
-                }
-            }
-        }
-        
-        public enum TriplestoreProviders
-        {
-            BrightstarDb
-        }
-
-        private void PopulateModelList()
-        {
-            var brightstarDb = new TriplestoreViewModel
-            {
-                Name = TriplestoreProviders.BrightstarDb.ToString(),
-                SupportedOperations = GetSupportedOperations(typeof(BrightstarClient))
-            };
-
-            TriplestoreModelList.Add(brightstarDb);
+            return TriplestoreProviders.Select(triplestoreProvider => (triplestoreProvider.name, GetSupportedOperations(triplestoreProvider.clientClass))).ToList();
         }
 
         private static IEnumerable<SupportedOperations> GetSupportedOperations(Type triplestoreType)
@@ -76,4 +70,5 @@ namespace QualityGrapher.Utilities
             return supportedOperations;
         }
     }
+
 }

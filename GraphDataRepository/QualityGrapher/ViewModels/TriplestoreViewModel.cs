@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using QualityGrapher.Utilities;
 using QualityGrapher.Views;
+using static Libraries.Server.SupportedTriplestores;
 
 namespace QualityGrapher.ViewModels
 {

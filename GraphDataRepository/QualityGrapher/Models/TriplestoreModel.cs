@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using Libraries.Server;
-using QualityGrapher.Utilities;
+using static Libraries.Server.SupportedTriplestores;
 
 namespace QualityGrapher.Models
 {
@@ -8,7 +7,5 @@ namespace QualityGrapher.Models
     {
         public string Name { get; set; }
         public IEnumerable<SupportedOperations> SupportedOperations { get; set; }
-
-        private ITriplestoreClient _triplestoreClient;
     }
 }
