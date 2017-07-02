@@ -114,18 +114,19 @@ namespace Libraries.Server.BrightstarDb
             }, CancellationTokenSource.Token));
         }
 
-        public override async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
+        public override async Task<bool> CreateCommitPoint(string dataset)
         {
-            _brightstarClient.ExecuteTransaction(dataset, null); //dummy transaction to create commit point
-
-            if (!await base.DeleteGraphs(dataset, graphUris))
+            return await ClientCall(Task.Run(() =>
             {
-                Debug("Could not delete one or more graphs");
-                return false;
-            }
+                var jobInfo = _brightstarClient.ExecuteTransaction(dataset, null);
+                if (!jobInfo.JobCompletedOk)
+                {
+                    Error($"BrightstarDB transactional update failed: {jobInfo.ExceptionInfo}");
+                    return false;
+                }
 
-            _brightstarClient.ExecuteTransaction(dataset, null);
-            return true;
+                return true;
+            }, CancellationTokenSource.Token));
         }
 
         #endregion

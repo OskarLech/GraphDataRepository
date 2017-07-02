@@ -36,9 +36,14 @@ namespace Libraries.Server
         public abstract Task<IEnumerable<string>> ListDatasets();
         public abstract Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)> triplesByGraphUri);
 
+        public virtual Task<bool> CreateCommitPoint(string dataset)
+        {
+            return Task.FromResult(true);
+        }
+
         public virtual async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
         {
-            return await ClientCall(Task.Run(() =>
+            var operationSucceeded = await ClientCall(Task.Run(() =>
             {
                 foreach (var uri in graphUris)
                 {
@@ -53,6 +58,13 @@ namespace Libraries.Server
 
                 return true;
             }, CancellationTokenSource.Token));
+
+            if (operationSucceeded)
+            {
+                return await CreateCommitPoint(dataset);
+            }
+
+            return false;
         }
 
         public async Task<IEnumerable<Uri>> ListGraphs(string dataset)
@@ -88,9 +100,10 @@ namespace Libraries.Server
             }, CancellationTokenSource.Token));
         }
 
+        //TODO commit point not necessary for select queries, make some filtering
         public async Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query)
         {
-            return await ClientCall(Task.Run(() =>
+            var operationResult = await ClientCall(Task.Run(() =>
             {
                 var endpoint = new SparqlRemoteEndpoint(new Uri($"{EndpointUri}/{dataset}/SPARQL"), graphs);
                 using (var connector = new SparqlConnector(endpoint))
@@ -101,6 +114,14 @@ namespace Libraries.Server
                     }
                 }
             }, CancellationTokenSource.Token));
+
+            if (operationResult != null)
+            {
+                await CreateCommitPoint(dataset);
+                return operationResult;
+            }
+
+            return null;
         }
 
         protected async Task<T> ClientCall<T>(Task<T> call)

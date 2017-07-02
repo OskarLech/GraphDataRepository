@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Libraries.Server.BrightstarDb;
 using VDS.RDF;
 using VDS.RDF.Query;
 
@@ -8,14 +10,12 @@ namespace Libraries.Server
 {
     public class TriplestoreClientQualityWrapper : ITriplestoreClientQualityWrapper
     {
-        private readonly Uri _metadataGraphUri = new Uri("resource://metadata"); 
+        private static readonly Uri MetadataGraphUri = new Uri("resource://metadata"); 
         private readonly ITriplestoreClient _triplestoreClient;
-        private readonly IEnumerable<SupportedTriplestores.SupportedOperations> _supportedOperations;
 
         public TriplestoreClientQualityWrapper(ITriplestoreClient triplestoreClient)
         {
             _triplestoreClient = triplestoreClient;
-            _supportedOperations = SupportedTriplestores.GetSupportedOperations(triplestoreClient.GetType());
         }
 
         public async Task<bool> CreateDataset(string name)
@@ -29,7 +29,7 @@ namespace Libraries.Server
             var triplesByGraphUri =
                 new Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)>
                 {
-                    [_metadataGraphUri] = (null, null)
+                    [MetadataGraphUri] = (null, null)
                 };
 
             return await _triplestoreClient.UpdateGraphs(name, triplesByGraphUri);
@@ -45,54 +45,111 @@ namespace Libraries.Server
             return await _triplestoreClient.ListDatasets();
         }
 
-        public Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
+        public async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
         {
+            var graphUriList = graphUris as IList<Uri> ?? graphUris.ToList(); //multple enumeration
+            if (!await _triplestoreClient.DeleteGraphs(dataset, graphUriList))
+            {
+                return false;
+            }
+
+            var metadataTriples = await GetMetadataTriples(dataset, graphUriList);
+            if (metadataTriples != null)
+            {
+                var triplesToRemove = metadataTriples.Select(triple => triple.ToString()).ToList();
+
+                return await _triplestoreClient.UpdateGraphs(dataset,
+                    new Dictionary<Uri, (IEnumerable<string>, IEnumerable<string>)>
+                    {
+                        [MetadataGraphUri] = (triplesToRemove, null)
+                    });
+            }
+
+            return true;
+        }
+
+        private async Task<IEnumerable<Triple>> GetMetadataTriples(string dataset, ICollection<Uri> graphUriList)
+        {
+            //delete from metadata as well
+            var metadataGraph = (await _triplestoreClient.ReadGraphs(dataset, MetadataGraphUri.AsEnumerable())).FirstOrDefault();
+            var metadataTriples = metadataGraph?.Triples.Where(t => graphUriList.Contains(new Uri(t.Subject.ToString())));
+            return metadataTriples;
+        }
+
+        public async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)> triplesByGraphUri)
+        {
+            var metadataTriples = await GetMetadataTriples(dataset, triplesByGraphUri.Keys.ToList());
+            if (metadataTriples != null)
+            {
+                //TODO
+            }
+
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)> triplesByGraphUri)
+        public async Task<IEnumerable<IGraph>> ReadGraphs(string dataset, IEnumerable<Uri> graphUris)
         {
-            throw new NotImplementedException();
+            return await _triplestoreClient.ReadGraphs(dataset, graphUris);
         }
 
-        public Task<IEnumerable<IGraph>> ReadGraphs(string dataset, IEnumerable<Uri> graphUris)
+        public async Task<IEnumerable<Uri>> ListGraphs(string dataset)
         {
-            throw new NotImplementedException();
+            return await _triplestoreClient.ListGraphs(dataset);
         }
 
-        public Task<IEnumerable<Uri>> ListGraphs(string dataset)
+        public async Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query)
         {
-            throw new NotImplementedException();
+            return await _triplestoreClient.RunSparqlQuery(dataset, graphs, query);
         }
 
-        public Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query)
+        public async Task<bool> RevertLastTransaction(string storename)
         {
-            throw new NotImplementedException();
+            if (_triplestoreClient is ITriplestoreClientExtended triplestoreClientExtended)
+            {
+                return await triplestoreClientExtended.RevertLastTransaction(storename);
+            }
+
+            return false;
         }
 
-        public Task<bool> RevertLastTransaction(string storename)
+        public async Task<IEnumerable<(ulong id, DateTime commitDate)>> ListCommitPoints(string storename, int limit = 100)
         {
-            throw new NotImplementedException();
+            if (_triplestoreClient is ITriplestoreClientExtended triplestoreClientExtended)
+            {
+                return await triplestoreClientExtended.ListCommitPoints(storename, limit);
+            }
+
+            return null;
         }
 
-        public Task<IEnumerable<(ulong id, DateTime commitDate)>> ListCommitPoints(string storename, int limit = 100)
+        public async Task<bool> RevertToCommitPoint(string storename, ulong commitId)
         {
-            throw new NotImplementedException();
+            if (_triplestoreClient is ITriplestoreClientExtended triplestoreClientExtended)
+            {
+                return await triplestoreClientExtended.RevertToCommitPoint(storename, commitId);
+            }
+
+            return false;
         }
 
-        public Task<bool> RevertToCommitPoint(string storename, ulong commitId)
+        public async Task<string> GetStatistics(string storeName)
         {
-            throw new NotImplementedException();
+            if (_triplestoreClient is ITriplestoreClientExtended triplestoreClientExtended)
+            {
+                return await triplestoreClientExtended.GetStatistics(storeName);
+            }
+
+            return null;
         }
 
-        public Task<string> GetStatistics(string storeName)
+        public async Task<bool> ConsolidateStore(string storeName)
         {
-            throw new NotImplementedException();
-        }
+            if (_triplestoreClient is IBrightstarClient brightstarClient)
+            {
+                return await brightstarClient.ConsolidateStore(storeName);
+            }
 
-        public Task<bool> ConsolidateStore(string storeName)
-        {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }
