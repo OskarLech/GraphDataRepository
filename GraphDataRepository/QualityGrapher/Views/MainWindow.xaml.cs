@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using Libraries.QualityChecks.KnowledgeBaseCheck;
 using Libraries.QualityChecks.VocabularyCheck;
 using Libraries.Server;
 using Libraries.Server.BrightstarDb;
 using QualityGrapher.Converters;
 using QualityGrapher.Globalization;
-using QualityGrapher.Utilities;
 using Serilog;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using QualityGrapher.ViewModels;
 using static Serilog.Log;
-using static QualityGrapher.Utilities.SupportedTriplestores.TriplestoreProviders;
 
 namespace QualityGrapher.Views
 {
@@ -28,10 +26,7 @@ namespace QualityGrapher.Views
     public partial class MainWindow
     {
         public event Action<string> LanguageSet;
-
         private static readonly List<IDisposable> Disposables = new List<IDisposable>();
-        private TriplestoreOperationToTextConverter _triplestoreOperationToTextConverter;
-        private ITriplestoreClient _triplestore;
 
         public MainWindow()
         {
@@ -42,7 +37,10 @@ namespace QualityGrapher.Views
 
         private void InitBindings()
         {
-            ServerSelectionComboBox.DataContext = new TriplestoresViewModel();
+            var triplestoresViewModel = new TriplestoresViewModel();
+            ServerSelectionComboBox.DataContext = triplestoresViewModel;
+            OperationSelectionComboBox.DataContext = triplestoresViewModel;
+            TriplestoreOperationUserControl.DataContext = triplestoresViewModel;
         }
 
         private void Init()
@@ -54,9 +52,6 @@ namespace QualityGrapher.Views
 
             //Languages
             SetLanguageDictionary(Thread.CurrentThread.CurrentCulture.ToString());
-
-            //Language Converters
-            _triplestoreOperationToTextConverter = new TriplestoreOperationToTextConverter();
         }
 
         private void SetLanguageDictionary(string language)
@@ -80,6 +75,7 @@ namespace QualityGrapher.Views
             Resources.MergedDictionaries.Add(dict);
 
             LanguageSet?.Invoke(language);
+            ResetIndexOnOperationSelectionComboBox();
         }
 
         #region testing
@@ -262,36 +258,15 @@ namespace QualityGrapher.Views
 
         private void ServerSelectionComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(_triplestore is IDisposable oldClient) oldClient.Dispose();
-
-            var selectedItemText = ((ComboBox)sender).SelectedItem.ToString();
-            if (selectedItemText == BrightstarDb.ToString())
-            {
-                _triplestore = new BrightstarClient(EndpointUriTextBox.Text);
-                Disposables.Add((IDisposable)_triplestore);
-                OperationSelectionComboBox.DataContext = SupportedTriplestores.Instance.TriplestoreModelList.Where(t => t.Name == BrightstarDb.ToString());
-            }
-            else
-            {
-                Error($"Selected unsupported triplestore: {selectedItemText}");
-            }
+            ResetIndexOnOperationSelectionComboBox();
         }
 
-        private void OperationSelectionComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        /// <summary>
+        /// ComboBox text is not updated automatically if binding updates
+        /// </summary>
+        private void ResetIndexOnOperationSelectionComboBox()
         {
-            var operationText = ((ComboBox) sender).SelectedItem;
-            var operation = _triplestoreOperationToTextConverter.ConvertBack(operationText, typeof(SupportedOperations), null, null);
-            if (operation == null) return;
-
-            operation = (SupportedOperations) operation;
-            switch (operation)
-            {
-                case SupportedOperations.CreateDataset:
-                    TriplestoreOperationUserControl.Content = new CreateDataset();
-                    break;
-            }
-
-            Verbose(operation.ToString());
+            OperationSelectionComboBox.SelectedIndex = 0;
         }
     }
 }

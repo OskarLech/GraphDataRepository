@@ -1,7 +1,4 @@
-﻿using log4net;
-using log4net.Config;
-using NUnit.Framework;
-using QualityGrapher.Utilities.StructureMap;
+﻿using NUnit.Framework;
 using Rhino.Mocks;
 
 namespace Tests
@@ -14,11 +11,6 @@ namespace Tests
         [OneTimeSetUp]
         public void TestFixtureSetup()
         {
-            XmlConfigurator.Configure(); // Initialize log4net configuration
-            ObjectFactory.Container.Configure(c =>
-            {
-                c.For<ILog>().Use(LogManager.GetLogger(typeof(BrightstarClientTests)));
-            });
         }
 
         [Test]

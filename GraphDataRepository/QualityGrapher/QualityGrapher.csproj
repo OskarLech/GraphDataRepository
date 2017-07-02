@@ -99,11 +99,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\SelectedOperationToUserControlConverter.cs" />
     <Compile Include="Converters\TriplestoreOperationToTextConverter.cs" />
+    <Compile Include="Models\TriplestoreModel.cs" />
     <Compile Include="Utilities\SupportedOperations.cs" />
-    <Compile Include="Utilities\SupportedTriplestores.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Globalization\SupportedLanguages.cs" />
+    <Compile Include="Utilities\SupportedTriplestores.cs" />
     <Compile Include="ViewModels\TriplestoresViewModel.cs" />
     <Compile Include="ViewModels\TriplestoreViewModel.cs" />
     <Compile Include="MyEntityContext.cs">
@@ -169,9 +171,7 @@
       <LastGenOutput>MyEntityContext.cs</LastGenOutput>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.2.0.0\build\netstandard1.4\Fody.targets" Condition="Exists('..\packages\Fody.2.0.0\build\netstandard1.4\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
