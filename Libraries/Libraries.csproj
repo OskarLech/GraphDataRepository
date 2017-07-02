@@ -72,6 +72,8 @@
     <Compile Include="QualityChecks\KnowledgeBaseCheck\KnowledgeBaseCheck.cs" />
     <Compile Include="QualityChecks\QualityCheck.cs" />
     <Compile Include="QualityChecks\QualityCheckReport.cs" />
+    <Compile Include="Server\ITriplestoreClientQualityWrapper.cs" />
+    <Compile Include="Server\TriplestoreClientQualityWrapper.cs" />
     <Compile Include="QualityChecks\VocabularyCheck\VocabularyCheck.cs" />
     <Compile Include="Server\BrightstarDb\BrightstarClient.Basic.cs" />
     <Compile Include="Server\BrightstarDb\BrightstarClient.Extended.cs" />

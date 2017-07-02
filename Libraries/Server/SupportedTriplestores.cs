@@ -39,7 +39,7 @@ namespace Libraries.Server
             return TriplestoreProviders.Select(triplestoreProvider => (triplestoreProvider.name, GetSupportedOperations(triplestoreProvider.clientClass))).ToList();
         }
 
-        private static IEnumerable<SupportedOperations> GetSupportedOperations(Type triplestoreType)
+        public static IEnumerable<SupportedOperations> GetSupportedOperations(Type triplestoreType)
         {
             var supportedOperations = new List<SupportedOperations>();
             if (typeof(ITriplestoreClient).IsAssignableFrom(triplestoreType))
