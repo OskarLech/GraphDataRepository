@@ -2,21 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Libraries.QualityChecks;
 using Libraries.Server.BrightstarDb;
 using VDS.RDF;
 using VDS.RDF.Query;
+using static Serilog.Log;
 
 namespace Libraries.Server
 {
+    /// <summary>
+    /// Wraps ITriplestoreClient to enforce quality checks fulfillment
+    /// </summary>
     public class TriplestoreClientQualityWrapper : ITriplestoreClientQualityWrapper
     {
         private static readonly Uri MetadataGraphUri = new Uri("resource://metadata"); 
         private readonly ITriplestoreClient _triplestoreClient;
+        private readonly IEnumerable<IQualityCheck> _qualityChecks;
 
         public TriplestoreClientQualityWrapper(ITriplestoreClient triplestoreClient)
         {
             _triplestoreClient = triplestoreClient;
+            _qualityChecks = GetQualityChecks();
         }
+
+        #region public methods
+
+        #region ITripleStoreClient implementation
 
         public async Task<bool> CreateDataset(string name)
         {
@@ -68,23 +79,46 @@ namespace Libraries.Server
             return true;
         }
 
-        private async Task<IEnumerable<Triple>> GetMetadataTriples(string dataset, ICollection<Uri> graphUriList)
+        public async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
         {
-            //delete from metadata as well
-            var metadataGraph = (await _triplestoreClient.ReadGraphs(dataset, MetadataGraphUri.AsEnumerable())).FirstOrDefault();
-            var metadataTriples = metadataGraph?.Triples.Where(t => graphUriList.Contains(new Uri(t.Subject.ToString())));
-            return metadataTriples;
-        }
-
-        public async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)> triplesByGraphUri)
-        {
-            var metadataTriples = await GetMetadataTriples(dataset, triplesByGraphUri.Keys.ToList());
-            if (metadataTriples != null)
+            //if metadata is added directly (e.g. to force the use of quality check with given parameter to any data added in the future)
+            if (triplesByGraphUri.ContainsKey(MetadataGraphUri))
             {
-                //TODO
+                if (triplesByGraphUri.Keys.Any(k => k != MetadataGraphUri))
+                {
+                    Warning("Cannot directly modify metadata when other data is modified");
+                    return false;
+                }
+
+                return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
             }
 
-            throw new NotImplementedException();
+            var metadataTriples = (await GetMetadataTriples(dataset, triplesByGraphUri.Keys.ToList()))
+                .ToList();
+
+            if (metadataTriples.Any())
+            {
+                var fulfilledQualityChecks = GetQualityChecksWithParameters(metadataTriples);
+                
+                var triplesToRemove = triplesByGraphUri.SelectMany(t => t.Value.TriplesToRemove).ToList();
+                var metadataTriplesToRemove = GetMetadataTriplesToRemove(fulfilledQualityChecks, triplesToRemove).ToList();
+                triplesByGraphUri[MetadataGraphUri] = (metadataTriplesToRemove, new List<string>());
+                
+                //Some of the quality checks might not be fulfilled anymore after triple deletion
+                fulfilledQualityChecks = GetQualityChecksWithParameters(metadataTriples.Where(t => !metadataTriplesToRemove.Any(mttr => Equals(mttr, t.ToString())))); //TODO check if this works
+
+                var triplesToAdd = triplesByGraphUri.SelectMany(t => t.Value.TriplesToAdd)
+                    .Distinct(); //there can be same triples in more than one graph
+
+                if (!TriplesFullfilQualityChecks(triplesToAdd, fulfilledQualityChecks))
+                {
+                    return false;
+                }
+
+                return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
+            }
+
+            return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
         }
 
         public async Task<IEnumerable<IGraph>> ReadGraphs(string dataset, IEnumerable<Uri> graphUris)
@@ -101,6 +135,10 @@ namespace Libraries.Server
         {
             return await _triplestoreClient.RunSparqlQuery(dataset, graphs, query);
         }
+
+        #endregion
+
+        #region ITriplestoreExtended implementation
 
         public async Task<bool> RevertLastTransaction(string storename)
         {
@@ -142,6 +180,10 @@ namespace Libraries.Server
             return null;
         }
 
+        #endregion
+
+        #region IBrightstarClient implementation
+
         public async Task<bool> ConsolidateStore(string storeName)
         {
             if (_triplestoreClient is IBrightstarClient brightstarClient)
@@ -151,5 +193,56 @@ namespace Libraries.Server
 
             return false;
         }
+
+        #endregion //IBrightstarClient implementation
+
+        #endregion //public methods 
+
+        #region private methods
+
+        private static IEnumerable<IQualityCheck> GetQualityChecks()
+        {
+            return SupportedQualityChecks.QualityChecksList.Select(qualityCheck => (IQualityCheck) Activator.CreateInstance(qualityCheck.qualityCheckClass)).ToList();
+        }
+
+        private async Task<IEnumerable<Triple>> GetMetadataTriples(string dataset, IEnumerable<Uri> graphUriList)
+        {
+            var metadataGraph = (await _triplestoreClient.ReadGraphs(dataset, MetadataGraphUri.AsEnumerable())).FirstOrDefault();
+            var metadataTriples = metadataGraph?.Triples.Where(t => graphUriList.Contains(new Uri(t.Subject.ToString())));
+            return metadataTriples;
+        }
+
+        private Dictionary<IQualityCheck, IEnumerable<string>> GetQualityChecksWithParameters(IEnumerable<Triple> metadataTriples)
+        {
+            var qualityCheckPredicates = _qualityChecks.Select(p => p.GetPredicate());
+            var qualityCheckTriples = metadataTriples.Where(t => qualityCheckPredicates
+                    .Any(p => p == t.Predicate.ToString()))
+                .ToList();
+
+            var fulfilledQualityChecks = _qualityChecks.Where(q => qualityCheckTriples.Any(t => t.Predicate.ToString() == q.GetPredicate()))
+                .ToList();
+
+            var qualityChecksWithParameters = new Dictionary<IQualityCheck, IEnumerable<string>>();
+            foreach (var qualityCheck in fulfilledQualityChecks)
+            {
+                qualityChecksWithParameters[qualityCheck] = qualityCheckTriples
+                    .Where(t => t.Predicate.ToString() == qualityCheck.GetPredicate())
+                    .Select(t => t.Object.ToString());
+            }
+
+            return qualityChecksWithParameters;
+        }
+
+        private IEnumerable<string> GetMetadataTriplesToRemove(Dictionary<IQualityCheck, IEnumerable<string>> fulfilledQualityChecks, IEnumerable<string> selectMany)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool TriplesFullfilQualityChecks(IEnumerable<string> triples, Dictionary<IQualityCheck, IEnumerable<string>> qualityChecksWithParameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

@@ -14,6 +14,8 @@ namespace Libraries.QualityChecks
     /// </summary>
     public abstract class QualityCheck : IQualityCheck
     {
+        public const string PredicateBase = "MeetsTheRequirementsOf{qualityCheckName}";
+
         protected CancellationTokenSource CancellationTokenSource;
         protected ParallelOptions ParallelOptions;
 
@@ -46,7 +48,11 @@ namespace Libraries.QualityChecks
 
         public abstract QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters);
         public abstract QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters);
-        public abstract bool ImportParameters(IEnumerable<object> parameters);
+
+        public virtual string GetPredicate()
+        {
+            return PredicateBase.Replace("{qualityCheckName}", GetType().Name);
+        }
 
         protected IEnumerable<T> ParseParameters<T> (IEnumerable<object> parameters)
         {

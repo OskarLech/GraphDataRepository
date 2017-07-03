@@ -9,7 +9,7 @@ namespace Libraries.QualityChecks
     {
         public bool QualityCheckPassed { get; set; }
 
-        //Key: ID, value: graph URI, triple, error message
-        public readonly Dictionary<int, (string graphUri, string triple, string errorMessage)> ErrorsById = new Dictionary<int, (string, string, string)>();
+        //{Id, (graph URI, triple, error message)}
+        public readonly Dictionary<int, (string GraphUri, string Triple, string ErrorMessage)> ErrorsById = new Dictionary<int, (string, string, string)>();
     }
 }

@@ -57,12 +57,7 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
 
             return GenerateQualityCheckReport(triplesList, failedQueries);
         }
-
-        public override bool ImportParameters(IEnumerable<object> parameters)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         private Dictionary<string, ValueTuple<Uri, Uri, string>> CheckSubjects(IEnumerable<(Uri endpointUri, Uri graphUri, string filter)> parsedParameters, IReadOnlyCollection<string> subjectList)
         {
             var failedQueries = new Dictionary<string, (Uri endpointUri, Uri graphUri, string filter)>();
@@ -76,7 +71,6 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
                     {
                         foreach (var subject in subjectList)
                         {
-                            //TODO injection protection
                             var query = BaseQuery.Replace("{subject}", subject);
 
                             var filterReplacement = "";

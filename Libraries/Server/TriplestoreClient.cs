@@ -34,7 +34,7 @@ namespace Libraries.Server
         public abstract Task<bool> CreateDataset(string name);
         public abstract Task<bool> DeleteDataset(string name);
         public abstract Task<IEnumerable<string>> ListDatasets();
-        public abstract Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)> triplesByGraphUri);
+        public abstract Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri);
 
         public virtual Task<bool> CreateCommitPoint(string dataset)
         {

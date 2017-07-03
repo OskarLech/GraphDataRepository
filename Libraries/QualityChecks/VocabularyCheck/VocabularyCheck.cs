@@ -66,11 +66,6 @@ namespace Libraries.QualityChecks.VocabularyCheck
             return GenerateQualityCheckReport(wrongTriples.ToList());
         }
 
-        public override bool ImportParameters(IEnumerable<object> parameters)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
         #region private methods
@@ -151,6 +146,7 @@ namespace Libraries.QualityChecks.VocabularyCheck
 
         private string DownloadVocabulary(Uri vocabularyUri)
         {
+            //TODO
             throw new NotImplementedException();
         }
 
