@@ -72,6 +72,7 @@
     <Compile Include="QualityChecks\KnowledgeBaseCheck\KnowledgeBaseCheck.cs" />
     <Compile Include="QualityChecks\QualityCheck.cs" />
     <Compile Include="QualityChecks\QualityCheckReport.cs" />
+    <Compile Include="QualityChecks\SupportedQualityChecks.cs" />
     <Compile Include="Server\ITriplestoreClientQualityWrapper.cs" />
     <Compile Include="Server\TriplestoreClientQualityWrapper.cs" />
     <Compile Include="QualityChecks\VocabularyCheck\VocabularyCheck.cs" />

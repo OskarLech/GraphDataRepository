@@ -72,7 +72,7 @@ namespace Libraries.Server.BrightstarDb
             }, CancellationTokenSource.Token));
         }
 
-        public override async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)> triplesByGraphUri)
+        public override async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
         {
             return await ClientCall(Task.Run(() =>
             {
@@ -86,12 +86,12 @@ namespace Libraries.Server.BrightstarDb
                 var insertData = new StringBuilder();
                 foreach (var triples in triplesByGraphUri)
                 {
-                    foreach (var triple in triples.Value.triplesToAdd)
+                    foreach (var triple in triples.Value.TriplesToAdd)
                     {
                         deletePatterns.AppendLine($"{triple} <{triples.Key}> .");
                     }
 
-                    foreach (var triple in triples.Value.triplesToAdd)
+                    foreach (var triple in triples.Value.TriplesToAdd)
                     {
                         insertData.AppendLine($"{triple} <{triples.Key}> .");
                     }

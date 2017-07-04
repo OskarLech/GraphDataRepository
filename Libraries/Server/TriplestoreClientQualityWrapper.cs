@@ -15,7 +15,8 @@ namespace Libraries.Server
     /// </summary>
     public class TriplestoreClientQualityWrapper : ITriplestoreClientQualityWrapper
     {
-        private static readonly Uri MetadataGraphUri = new Uri("resource://metadata"); 
+        public const string WholeDatasetSubject = "WholeDataset";
+        private static readonly Uri MetadataGraphUri = new Uri("resource://metadata");
         private readonly ITriplestoreClient _triplestoreClient;
         private readonly IEnumerable<IQualityCheck> _qualityChecks;
 
@@ -58,13 +59,14 @@ namespace Libraries.Server
 
         public async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
         {
-            var graphUriList = graphUris as IList<Uri> ?? graphUris.ToList(); //multple enumeration
+            var graphUriList = graphUris.ToList();
             if (!await _triplestoreClient.DeleteGraphs(dataset, graphUriList))
             {
                 return false;
             }
 
-            var metadataTriples = await GetMetadataTriples(dataset, graphUriList);
+            var metadataTriples = (await GetMetadataTriples(dataset, graphUriList))?
+                .Where(t => t.Subject.ToString() != WholeDatasetSubject);
             if (metadataTriples != null)
             {
                 var triplesToRemove = metadataTriples.Select(triple => triple.ToString()).ToList();
@@ -81,7 +83,7 @@ namespace Libraries.Server
 
         public async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
         {
-            //if metadata is added directly (e.g. to force the use of quality check with given parameter to any data added in the future)
+            //metadata should be added exclusively to force the use of quality check with given parameter to any data added in the future (per graph or per dataset)
             if (triplesByGraphUri.ContainsKey(MetadataGraphUri))
             {
                 if (triplesByGraphUri.Keys.Any(k => k != MetadataGraphUri))
@@ -93,10 +95,10 @@ namespace Libraries.Server
                 return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
             }
 
-            var metadataTriples = (await GetMetadataTriples(dataset, triplesByGraphUri.Keys.ToList()))
+            var metadataTriples = (await GetMetadataTriples(dataset, triplesByGraphUri.Keys.ToList()))?
                 .ToList();
 
-            if (metadataTriples.Any())
+            if (metadataTriples != null && metadataTriples.Any())
             {
                 var fulfilledQualityChecks = GetQualityChecksWithParameters(metadataTriples);
                 
@@ -208,7 +210,7 @@ namespace Libraries.Server
         private async Task<IEnumerable<Triple>> GetMetadataTriples(string dataset, IEnumerable<Uri> graphUriList)
         {
             var metadataGraph = (await _triplestoreClient.ReadGraphs(dataset, MetadataGraphUri.AsEnumerable())).FirstOrDefault();
-            var metadataTriples = metadataGraph?.Triples.Where(t => graphUriList.Contains(new Uri(t.Subject.ToString())));
+            var metadataTriples = metadataGraph?.Triples.Where(t => t.Subject.ToString() == WholeDatasetSubject || graphUriList.Contains(new Uri(t.Subject.ToString())));
             return metadataTriples;
         }
 
@@ -216,7 +218,7 @@ namespace Libraries.Server
         {
             var qualityCheckPredicates = _qualityChecks.Select(p => p.GetPredicate());
             var qualityCheckTriples = metadataTriples.Where(t => qualityCheckPredicates
-                    .Any(p => p == t.Predicate.ToString()))
+                 .Any(p => p == t.Predicate.ToString()))
                 .ToList();
 
             var fulfilledQualityChecks = _qualityChecks.Where(q => qualityCheckTriples.Any(t => t.Predicate.ToString() == q.GetPredicate()))
