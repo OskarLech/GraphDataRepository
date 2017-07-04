@@ -10,6 +10,13 @@ namespace Common
 {
     public static class Extensions
     {
+        public enum TripleObjects
+        {
+            Subject,
+            Predicate,
+            Object
+        }
+
         public static string GetDetails(this Exception e)
         {
             var details = $"{e.GetType().Name}: {e.Message}, Stack trace:{e.StackTrace}" + (e.InnerException != null ? "\n\nInner Exception: " + e.InnerException.GetDetails() : "");
@@ -60,6 +67,23 @@ namespace Common
         public static string Print(this Triple triple)
         {
             return $"{triple.Subject} {triple.Predicate} {triple.Object}";
+        }
+
+        public static string GetTripleObject(this string tripleAsString, TripleObjects tripleObject)
+        {
+            var splitString = tripleAsString.Split(new[] {" , "}, StringSplitOptions.None);
+
+            switch (tripleObject)
+            {
+                case TripleObjects.Subject:
+                    return splitString[0];
+                case TripleObjects.Predicate:
+                    return splitString[1];
+                case TripleObjects.Object:
+                    return splitString[2];
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(tripleObject), tripleObject, null);
+            }
         }
     }
 }
