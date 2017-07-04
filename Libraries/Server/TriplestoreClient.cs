@@ -20,11 +20,12 @@ namespace Libraries.Server
     {
         protected readonly string EndpointUri;
         protected readonly List<Task> CallTasks = new List<Task>();
-        protected readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
         protected readonly HttpClient HttpClient = new HttpClient
         {
             Timeout = TimeSpan.FromSeconds(5)
         };
+
+        protected CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
         protected TriplestoreClient(string endpoint)
         {
@@ -122,6 +123,12 @@ namespace Libraries.Server
             }
 
             return null;
+        }
+
+        public void CancelOperation()
+        {
+            CancellationTokenSource.Cancel();
+            CancellationTokenSource = new CancellationTokenSource();
         }
 
         protected async Task<T> ClientCall<T>(Task<T> call)

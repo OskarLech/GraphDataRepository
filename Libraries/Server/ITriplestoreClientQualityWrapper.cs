@@ -1,4 +1,7 @@
-﻿using Libraries.Server.BrightstarDb;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Libraries.Server.BrightstarDb;
+using VDS.RDF;
 
 namespace Libraries.Server
 {
@@ -8,5 +11,6 @@ namespace Libraries.Server
     /// </summary>
     public interface ITriplestoreClientQualityWrapper : IBrightstarClient
     {
+        Task<IEnumerable<Triple>> GetMetadataTriples(string dataset);
     }
 }

@@ -83,6 +83,7 @@
     <Compile Include="Server\ITriplestoreClientExtended.cs" />
     <Compile Include="Server\SupportedTriplestores.cs" />
     <Compile Include="Server\TriplestoreClient.cs" />
+    <Compile Include="Server\TriplestoreOperationResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
