@@ -125,12 +125,33 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\DeleteDataset.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeleteGraphs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ListDatasets.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Views\CreateDataset.xaml.cs">
       <DependentUpon>CreateDataset.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeleteDataset.xaml.cs">
+      <DependentUpon>DeleteDataset.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeleteGraphs.xaml.cs">
+      <DependentUpon>DeleteGraphs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ListDatasets.xaml.cs">
+      <DependentUpon>ListDatasets.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

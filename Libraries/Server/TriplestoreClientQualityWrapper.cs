@@ -152,7 +152,7 @@ namespace Libraries.Server
 
         #endregion //ITriplestoreClient implementation
 
-        #region ITriplestoreClientExtended
+        #region ITriplestoreClientExtended implementation
 
         public async Task<bool> RevertLastTransaction(string storename)
         {

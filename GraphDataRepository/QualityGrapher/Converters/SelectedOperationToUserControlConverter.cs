@@ -16,11 +16,11 @@ namespace QualityGrapher.Converters
                 case SupportedOperations.CreateDataset:
                     return new CreateDataset();
                 case SupportedOperations.DeleteDataset:
-                    return null;
+                    return new DeleteDataset();
                 case SupportedOperations.ListDatasets:
-                    return null;
+                    return new ListDatasets();
                 case SupportedOperations.DeleteGraphs:
-                    return null;
+                    return new DeleteGraphs();
                 case SupportedOperations.UpdateGraphs:
                     return null;
                 case SupportedOperations.ReadGraphs:
