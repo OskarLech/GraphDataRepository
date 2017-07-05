@@ -314,8 +314,7 @@ namespace Libraries.Server
             var graphQualityChecksPassed = false;
             foreach (var graphUri in triplesByGraphUri.Keys)
             {
-                var graphQualityCheckTriples = activeQualityChecks.Where(
-                        t => t.Subject.ToString() == WholeDatasetSubject || t.Subject.ToString() == graphUri.ToString())
+                var graphQualityCheckTriples = activeQualityChecks.Where(t => t.Subject.ToString() == WholeDatasetSubject || t.Subject.ToString() == graphUri.ToString())
                     .Select(t => t.ToString());
 
                 var graphQualityChecks = GetQualityChecksFromTriples(graphQualityCheckTriples);
@@ -340,10 +339,16 @@ namespace Libraries.Server
             return true;
         }
 
-        private Dictionary<IQualityCheck, IEnumerable<string>> GetQualityChecksFromTriples(IEnumerable<string> triples)
+        private Dictionary<IQualityCheck, List<string>> GetQualityChecksFromTriples(IEnumerable<string> triples)
         {
-            //TODO
-            throw new NotImplementedException();
+            var qualityChecks = new Dictionary<IQualityCheck, List<string>>();
+            foreach (var triple in triples)
+            {
+                var qualityCheck = _qualityChecks.First(qc => qc.GetPredicate() == triple.Predicate());
+                qualityChecks[qualityCheck].Add(triple.Object());
+            }
+
+            return qualityChecks;
         }
 
         #endregion
