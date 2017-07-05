@@ -89,8 +89,14 @@ namespace Libraries.Server
             return true;
         }
 
-        public async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
+        public async Task<bool> UpdateGraphs(string dataset,
+            Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
         {
+            var triplesToAdd = triplesByGraphUri.Values.SelectMany(t => t.TriplesToAdd).ToList();
+            if (!triplesToAdd.Any())
+            {
+                return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
+            }
             //metadata should be added exclusively to force the use of quality check with given parameter to any data added in the future (per graph or per dataset)
             if (triplesByGraphUri.ContainsKey(MetadataGraphUri))
             {
@@ -100,36 +106,78 @@ namespace Libraries.Server
                     return false;
                 }
 
-                //TODO if adding metadata requirement check if all current data complies
-
-                var triplesToAdd = triplesByGraphUri.Values.SelectMany(t => t.TriplesToAdd).ToList();
-                if (triplesToAdd.Any())
-                {
-                    var datasetTriples = triplesToAdd.Where(t => t.GetTripleObject(TripleObjects.Subject) == WholeDatasetSubject)
+                var datasetTriples = triplesToAdd.Where(t => t.GetTripleObject(TripleObjects.Subject) == WholeDatasetSubject)
                         .ToList();
 
-                    var datasetQualityChecks = GetQualityChecksFromTriples(datasetTriples);
-                    var graphList = await _triplestoreClient.ListGraphs(dataset);
-                    //var graphs = await _triplestoreClient.ReadGraphs(dataset, graphList);
+                var datasetQualityChecks = GetQualityChecksFromTriples(datasetTriples);
+                var graphList = await _triplestoreClient.ListGraphs(dataset);
+                var graphs = await _triplestoreClient.ReadGraphs(dataset, graphList);
 
-                    Parallel.ForEach(datasetQualityChecks, _parallelOptions, qualityCheck =>
+                var qualityChecksPassed = true;
+                Parallel.ForEach(datasetQualityChecks, _parallelOptions, qualityCheck =>
+                {
+                    var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphs, qualityCheck.Value);
+                    if (!qualityCheckReport.QualityCheckPassed)
                     {
-                        //foreach (var parameter in qualityCheck.Value)
-                        //{
-                        //    _triplestoreClient.ReadGraphs(dataset)
-                        //    qualityCheck.Key.CheckGraphs()
-                        //}
-                    });
+                        Verbose($"{qualityCheck.Key.GetType().Name} for whole dataset failed, won't update metadata");
+                        qualityChecksPassed = false;
+                    }
+                });
 
-                    var graphTriples = triplesToAdd.Except(datasetTriples);
+                if (!qualityChecksPassed) return false;
+
+                var graphTriples = triplesToAdd.Except(datasetTriples)
+                    .ToList();
+
+                var graphUris = graphTriples.Select(t => t.GetTripleObject(TripleObjects.Subject))
+                    .Distinct();
+
+                foreach (var graphUri in graphUris)
+                {
+                    var qualityChecks = GetQualityChecksFromTriples(graphTriples.Where(t => t.GetTripleObject(TripleObjects.Subject) == graphUri));
+                    Parallel.ForEach(qualityChecks, _parallelOptions, qualityCheck =>
+                    {
+                        var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphs.Where(g => g.BaseUri.ToString() == graphUri), qualityCheck.Value);
+                        if (!qualityCheckReport.QualityCheckPassed)
+                        {
+                            Verbose($"{qualityCheck.Key.GetType().Name} for graph {graphUri} failed, won't update metadata");
+                            qualityChecksPassed = false;
+                        }
+                    });
                 }
 
-                //
+                if (!qualityChecksPassed) return false;
 
                 return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
             }
 
-            //TODO
+            var activeQualityChecks = (await GetMetadataTriples(dataset))?
+                .ToList();
+
+            if (activeQualityChecks == null)
+            {
+                Verbose("Could not connect to server");
+                return false;
+            }
+
+            var graphQualityChecksPassed = false;
+            foreach (var graphUri in triplesByGraphUri.Keys)
+            {
+                var graphQualityCheckTriples = activeQualityChecks.Where(t => t.Subject.ToString() == WholeDatasetSubject || t.Subject.ToString() == graphUri.ToString())
+                    .Select(t => t.ToString());
+
+                var graphQualityChecks = GetQualityChecksFromTriples(graphQualityCheckTriples);
+                Parallel.ForEach(graphQualityChecks, _parallelOptions, qualityCheck =>
+                {
+                    qualityCheck.Key.CheckData(triplesByGraphUri.Values.Select(v => v.TriplesToAdd), qualityCheck.Value);
+                    //TODO
+                });
+            }
+
+            if (!graphQualityChecksPassed)
+            {
+                return false;
+            }
 
             return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
         }

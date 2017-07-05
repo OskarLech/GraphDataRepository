@@ -89,12 +89,6 @@ namespace Libraries.QualityChecks
             ParallelOptions = new ParallelOptions { CancellationToken = CancellationTokenSource.Token };
         }
 
-        public IEnumerable<string> GetParameters()
-        {
-            //from DB
-            throw new NotImplementedException();
-        }
-
         protected bool AreParametersSupported(IEnumerable<object> parameters)
         {
             if (parameters == null || !parameters.Any())

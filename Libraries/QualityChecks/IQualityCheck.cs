@@ -7,7 +7,6 @@ namespace Libraries.QualityChecks
     {
         QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters);
         QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters); 
-        IEnumerable<string> GetParameters();
         void CancelCheck();
         string GetPredicate();
     }
