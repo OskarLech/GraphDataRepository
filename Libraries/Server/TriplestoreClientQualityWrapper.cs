@@ -106,7 +106,7 @@ namespace Libraries.Server
                     return false;
                 }
 
-                var datasetTriples = triplesToAdd.Where(t => t.GetTripleObject(TripleObjects.Subject) == WholeDatasetSubject)
+                var datasetTriples = triplesToAdd.Where(t => t.Subject() == WholeDatasetSubject)
                         .ToList();
 
                 var datasetQualityChecks = GetQualityChecksFromTriples(datasetTriples);
@@ -129,12 +129,12 @@ namespace Libraries.Server
                 var graphTriples = triplesToAdd.Except(datasetTriples)
                     .ToList();
 
-                var graphUris = graphTriples.Select(t => t.GetTripleObject(TripleObjects.Subject))
+                var graphUris = graphTriples.Select(t => t.Subject())
                     .Distinct();
 
                 foreach (var graphUri in graphUris)
                 {
-                    var qualityChecks = GetQualityChecksFromTriples(graphTriples.Where(t => t.GetTripleObject(TripleObjects.Subject) == graphUri));
+                    var qualityChecks = GetQualityChecksFromTriples(graphTriples.Where(t => t.Subject() == graphUri));
                     Parallel.ForEach(qualityChecks, _parallelOptions, qualityCheck =>
                     {
                         var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphs.Where(g => g.BaseUri.ToString() == graphUri), qualityCheck.Value);
@@ -169,7 +169,7 @@ namespace Libraries.Server
                 var graphQualityChecks = GetQualityChecksFromTriples(graphQualityCheckTriples);
                 Parallel.ForEach(graphQualityChecks, _parallelOptions, qualityCheck =>
                 {
-                    qualityCheck.Key.CheckData(triplesByGraphUri.Values.Select(v => v.TriplesToAdd), qualityCheck.Value);
+                    //qualityCheck.Key.CheckData(triplesByGraphUri.Values.Select(v => v.Item2), qualityCheck.Value);
                     //TODO
                 });
             }

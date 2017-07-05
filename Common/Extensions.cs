@@ -10,7 +10,7 @@ namespace Common
 {
     public static class Extensions
     {
-        public enum TripleObjects
+        private enum TripleObjects
         {
             Subject,
             Predicate,
@@ -69,9 +69,24 @@ namespace Common
             return $"{triple.Subject} {triple.Predicate} {triple.Object}";
         }
 
-        public static string GetTripleObject(this string tripleAsString, TripleObjects tripleObject)
+        public static string Subject(this string tripleString)
         {
-            var splitString = tripleAsString.Split(new[] {" , "}, StringSplitOptions.None);
+            return GetTripleObject(tripleString, TripleObjects.Subject);
+        }
+
+        public static string Predicate(this string tripleString)
+        {
+            return GetTripleObject(tripleString, TripleObjects.Predicate);
+        }
+
+        public static string Object(this string tripleString)
+        {
+            return GetTripleObject(tripleString, TripleObjects.Object);
+        }
+
+        private static string GetTripleObject(string tripleAsString, TripleObjects tripleObject)
+        {
+            var splitString = tripleAsString.Split(new[] { " , " }, StringSplitOptions.None);
 
             switch (tripleObject)
             {

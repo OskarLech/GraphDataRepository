@@ -30,14 +30,14 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
 
             var parsedParameters = ParseParameters<(Uri endpointUri, Uri graphUri, string filter)>(parameterList);
 
-            var triplesList = graphs.SelectMany(g => g.Triples).Distinct().ToList();
-            var subjectList = triplesList.Select(t => t.Subject.ToString()).Distinct().ToList();
+            var triplesList = graphs.SelectMany(g => g.Triples).Distinct().Select(t => t.ToString()).ToList();
+            var subjectList = triplesList.Select(t => t.Subject()).Distinct().ToList();
             var failedQueries = CheckSubjects(parsedParameters, subjectList);
 
             return GenerateQualityCheckReport(triplesList, failedQueries);
         }
 
-        public override QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters)
+        public override QualityCheckReport CheckData(IEnumerable<string> triples, IEnumerable<object> parameters)
         {
             IsCheckInProgress = true;
 
@@ -52,7 +52,7 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
 
             var parsedParameters = ParseParameters<(Uri endpointUri, Uri graphUri, string filter)>(parameterList);
 
-            var subjectList = triplesList.Select(t => t.Subject.ToString()).Distinct().ToList();
+            var subjectList = triplesList.Select(t => t.Subject()).Distinct().ToList();
             var failedQueries = CheckSubjects(parsedParameters, subjectList);
 
             return GenerateQualityCheckReport(triplesList, failedQueries);
@@ -123,7 +123,7 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
             return failedQueries;
         }
 
-        private QualityCheckReport GenerateQualityCheckReport(IEnumerable<Triple> triples, Dictionary<string, (Uri endpointUri, Uri graphUri, string filter)> failedQueries)
+        private QualityCheckReport GenerateQualityCheckReport(IEnumerable<string> triples, Dictionary<string, (Uri endpointUri, Uri graphUri, string filter)> failedQueries)
         {
             var report = new QualityCheckReport();
 
@@ -137,14 +137,14 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
             var triplesList = triples.ToList(); //multiple enumeration
             foreach (var query in failedQueries)
             {
-                foreach (var triple in triplesList.Where(t => t.Subject.ToString() == query.Key))
+                foreach (var triple in triplesList.Where(t => t.Subject() == query.Key))
                 {
                     var graphUriMsg = query.Value.graphUri != null
                         ? query.Value.graphUri.ToString()
                         : "Default graph";
 
                     var errorMsg = $"Query for subject {query.Key} to {query.Value.endpointUri} ({graphUriMsg}) with filter {query.Value.filter} returned no results.";
-                    report.ErrorsById[errorId] = (triple.GraphUri.ToString(), triple.Print(), errorMsg);
+                    report.ErrorsById[errorId] = (failedQueries.Values.Select(v => v.graphUri).ToString(), triple, errorMsg);
                 }
 
                 errorId++;

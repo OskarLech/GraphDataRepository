@@ -47,7 +47,7 @@ namespace Libraries.QualityChecks
         }
 
         public abstract QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters);
-        public abstract QualityCheckReport CheckData(IEnumerable<Triple> triples, IEnumerable<object> parameters);
+        public abstract QualityCheckReport CheckData(IEnumerable<string> triples, IEnumerable<object> parameters);
 
         public virtual string GetPredicate()
         {
