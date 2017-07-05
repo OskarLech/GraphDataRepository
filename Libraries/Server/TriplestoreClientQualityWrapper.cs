@@ -8,7 +8,6 @@ using Libraries.QualityChecks;
 using Libraries.Server.BrightstarDb;
 using VDS.RDF;
 using VDS.RDF.Query;
-using static Common.Extensions;
 using static Libraries.QualityChecks.QualityChecksData;
 using static Serilog.Log;
 
@@ -19,6 +18,7 @@ namespace Libraries.Server
     /// </summary>
     public class TriplestoreClientQualityWrapper : ITriplestoreClientQualityWrapper
     {
+        private const string TransactionAborted = "Transaction aborted";
         private readonly ITriplestoreClient _triplestoreClient;
         private readonly IEnumerable<IQualityCheck> _qualityChecks;
 
@@ -89,14 +89,17 @@ namespace Libraries.Server
             return true;
         }
 
-        public async Task<bool> UpdateGraphs(string dataset,
-            Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
+        /// <summary>
+        /// Updates graphs with regards to active quality checks for each graph and whole dataset.
+        /// </summary>
+        public async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
         {
             var triplesToAdd = triplesByGraphUri.Values.SelectMany(t => t.TriplesToAdd).ToList();
             if (!triplesToAdd.Any())
             {
                 return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
             }
+
             //metadata should be added exclusively to force the use of quality check with given parameter to any data added in the future (per graph or per dataset)
             if (triplesByGraphUri.ContainsKey(MetadataGraphUri))
             {
@@ -106,76 +109,18 @@ namespace Libraries.Server
                     return false;
                 }
 
-                var datasetTriples = triplesToAdd.Where(t => t.Subject() == WholeDatasetSubject)
-                        .ToList();
-
-                var datasetQualityChecks = GetQualityChecksFromTriples(datasetTriples);
-                var graphList = await _triplestoreClient.ListGraphs(dataset);
-                var graphs = await _triplestoreClient.ReadGraphs(dataset, graphList);
-
-                var qualityChecksPassed = true;
-                Parallel.ForEach(datasetQualityChecks, _parallelOptions, qualityCheck =>
+                if (!await CanAddMetadataTriples(dataset, triplesToAdd))
                 {
-                    var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphs, qualityCheck.Value);
-                    if (!qualityCheckReport.QualityCheckPassed)
-                    {
-                        Verbose($"{qualityCheck.Key.GetType().Name} for whole dataset failed, won't update metadata");
-                        qualityChecksPassed = false;
-                    }
-                });
-
-                if (!qualityChecksPassed) return false;
-
-                var graphTriples = triplesToAdd.Except(datasetTriples)
-                    .ToList();
-
-                var graphUris = graphTriples.Select(t => t.Subject())
-                    .Distinct();
-
-                foreach (var graphUri in graphUris)
-                {
-                    var qualityChecks = GetQualityChecksFromTriples(graphTriples.Where(t => t.Subject() == graphUri));
-                    Parallel.ForEach(qualityChecks, _parallelOptions, qualityCheck =>
-                    {
-                        var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphs.Where(g => g.BaseUri.ToString() == graphUri), qualityCheck.Value);
-                        if (!qualityCheckReport.QualityCheckPassed)
-                        {
-                            Verbose($"{qualityCheck.Key.GetType().Name} for graph {graphUri} failed, won't update metadata");
-                            qualityChecksPassed = false;
-                        }
-                    });
+                    Verbose(TransactionAborted);
+                    return false;
                 }
-
-                if (!qualityChecksPassed) return false;
 
                 return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
             }
 
-            var activeQualityChecks = (await GetMetadataTriples(dataset))?
-                .ToList();
-
-            if (activeQualityChecks == null)
+            if (!await CanAddGraphTriples(dataset, triplesByGraphUri))
             {
-                Verbose("Could not connect to server");
-                return false;
-            }
-
-            var graphQualityChecksPassed = false;
-            foreach (var graphUri in triplesByGraphUri.Keys)
-            {
-                var graphQualityCheckTriples = activeQualityChecks.Where(t => t.Subject.ToString() == WholeDatasetSubject || t.Subject.ToString() == graphUri.ToString())
-                    .Select(t => t.ToString());
-
-                var graphQualityChecks = GetQualityChecksFromTriples(graphQualityCheckTriples);
-                Parallel.ForEach(graphQualityChecks, _parallelOptions, qualityCheck =>
-                {
-                    //qualityCheck.Key.CheckData(triplesByGraphUri.Values.Select(v => v.Item2), qualityCheck.Value);
-                    //TODO
-                });
-            }
-
-            if (!graphQualityChecksPassed)
-            {
+                Verbose(TransactionAborted);
                 return false;
             }
 
@@ -286,8 +231,118 @@ namespace Libraries.Server
             return SupportedQualityChecks.Select(qualityCheck => (IQualityCheck) Activator.CreateInstance(qualityCheck.qualityCheckClass)).ToList();
         }
 
+        private async Task<bool> CanAddMetadataTriples(string dataset, IReadOnlyCollection<string> triplesToAdd)
+        {
+            var graphList = await _triplestoreClient.ListGraphs(dataset);
+            if (graphList == null)
+            {
+                Verbose("Transaction failed due to connection error");
+                return false;
+            }
+
+            var graphs = await _triplestoreClient.ReadGraphs(dataset, graphList);
+            if (graphs == null)
+            {
+                Verbose("Transaction failed due to connection error");
+                return false;
+            }
+
+            //Quality checks regarding whole dataset
+            var datasetTriples = triplesToAdd.Where(t => t.Subject() == WholeDatasetSubject)
+                .ToList();
+
+            var datasetQualityChecks = GetQualityChecksFromTriples(datasetTriples);
+            var qualityChecksPassed = true;
+            Parallel.ForEach(datasetQualityChecks, _parallelOptions, qualityCheck =>
+            {
+                var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphs, qualityCheck.Value);
+                if (!qualityCheckReport.QualityCheckPassed)
+                {
+                    Verbose($"{qualityCheck.Key.GetType().Name} for whole dataset failed");
+                    qualityChecksPassed = false;
+                }
+            });
+
+            if (!qualityChecksPassed)
+            {
+                Verbose(TransactionAborted);
+                return false;
+            }
+
+            //Quality checks regarding graphs
+            var graphTriples = triplesToAdd.Except(datasetTriples)
+                .ToList();
+
+            var graphUris = graphTriples.Select(t => t.Subject())
+                .Distinct();
+
+            foreach (var graphUri in graphUris)
+            {
+                var qualityChecks = GetQualityChecksFromTriples(graphTriples.Where(t => t.Subject() == graphUri));
+                Parallel.ForEach(qualityChecks, _parallelOptions, qualityCheck =>
+                {
+                    var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphs.Where(g => g.BaseUri.ToString() == graphUri),
+                        qualityCheck.Value);
+                    if (!qualityCheckReport.QualityCheckPassed)
+                    {
+                        Verbose($"{qualityCheck.Key.GetType().Name} for graph {graphUri} failed");
+                        qualityChecksPassed = false;
+                    }
+                });
+            }
+
+            if (!qualityChecksPassed)
+            {
+                Verbose(TransactionAborted);
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> CanAddGraphTriples(string dataset, Dictionary<Uri, ValueTuple<IEnumerable<string>, IEnumerable<string>>> triplesByGraphUri)
+        {
+            var activeQualityChecks = (await GetMetadataTriples(dataset))?
+                .ToList();
+
+            if (activeQualityChecks == null)
+            {
+                Verbose(TransactionAborted);
+                return false;
+            }
+
+            var graphQualityChecksPassed = false;
+            foreach (var graphUri in triplesByGraphUri.Keys)
+            {
+                var graphQualityCheckTriples = activeQualityChecks.Where(
+                        t => t.Subject.ToString() == WholeDatasetSubject || t.Subject.ToString() == graphUri.ToString())
+                    .Select(t => t.ToString());
+
+                var graphQualityChecks = GetQualityChecksFromTriples(graphQualityCheckTriples);
+                Parallel.ForEach(graphQualityChecks, _parallelOptions, qualityCheck =>
+                {
+                    var qualityCheckReport = qualityCheck.Key.CheckData(triplesByGraphUri[graphUri].Item2,
+                        qualityCheck.Value);
+                    if (!qualityCheckReport.QualityCheckPassed)
+                    {
+                        Verbose($"{qualityCheck.Key.GetType().Name} for graph {graphUri} failed, transaction aborted");
+                        graphQualityChecksPassed = false;
+                    }
+                });
+            }
+
+            if (!graphQualityChecksPassed)
+            {
+                Verbose(TransactionAborted);
+                return false;
+            }
+
+            return true;
+        }
+
         private Dictionary<IQualityCheck, IEnumerable<string>> GetQualityChecksFromTriples(IEnumerable<string> triples)
         {
+            //TODO
             throw new NotImplementedException();
         }
 

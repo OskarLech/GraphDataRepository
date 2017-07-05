@@ -64,11 +64,6 @@ namespace Common
             }
         }
 
-        public static string Print(this Triple triple)
-        {
-            return $"{triple.Subject} {triple.Predicate} {triple.Object}";
-        }
-
         public static string Subject(this string tripleString)
         {
             return GetTripleObject(tripleString, TripleObjects.Subject);
