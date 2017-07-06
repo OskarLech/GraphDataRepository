@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Libraries.Server;
 using QualityGrapher.Views;
 using static Libraries.Server.SupportedTriplestores;
 
@@ -7,6 +9,8 @@ namespace QualityGrapher.ViewModels
     public class TriplestoreViewModel : ViewModelBase
     {
         public string Name { get; set; }
+        public Type Type { get; set; }
+        public  ITriplestoreClientQualityWrapper TriplestoreClientQualityWrapper { get; set; }
         public IEnumerable<SupportedOperations> SupportedOperations { get; set; }
 
         public SupportedOperations SelectedOperation { get; set; }

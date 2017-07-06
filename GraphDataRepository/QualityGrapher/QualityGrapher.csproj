@@ -104,7 +104,7 @@
     <Compile Include="Models\TriplestoreModel.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Globalization\SupportedLanguages.cs" />
-    <Compile Include="ViewModels\TriplestoresViewModel.cs" />
+    <Compile Include="ViewModels\TriplestoresListViewModel.cs" />
     <Compile Include="ViewModels\TriplestoreViewModel.cs" />
     <Compile Include="MyEntityContext.cs">
       <AutoGen>True</AutoGen>

@@ -7,7 +7,7 @@ namespace Libraries.Server
 {
     public static class SupportedTriplestores
     {
-        public static IEnumerable<(string name, Type clientClass)> TriplestoreProviders = new List<(string name, Type type)>
+        public static IEnumerable<(string name, Type clientClass)> TriplestoreProviders = new List<(string Name, Type Type)>
         {
             ("BrightstarDb", typeof(BrightstarClient))
         };
@@ -34,9 +34,10 @@ namespace Libraries.Server
             ConsolidateStore
         }
 
-        public static IEnumerable<(string name, IEnumerable<SupportedOperations> supportedOperations)> GetTriplestoresList()
+        public static IEnumerable<(string Name, Type Type, IEnumerable<SupportedOperations> SupportedOperations)> GetTriplestoresList()
         {
-            return TriplestoreProviders.Select(triplestoreProvider => (triplestoreProvider.name, GetSupportedOperations(triplestoreProvider.clientClass))).ToList();
+            return TriplestoreProviders.Select(triplestoreProvider => (triplestoreProvider.name, triplestoreProvider.clientClass, GetSupportedOperations(triplestoreProvider.clientClass)))
+                .ToList();
         }
 
         public static IEnumerable<SupportedOperations> GetSupportedOperations(Type triplestoreType)

@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Libraries.QualityChecks.KnowledgeBaseCheck;
 using Libraries.QualityChecks.VocabularyCheck;
 using Libraries.Server.BrightstarDb;
@@ -34,7 +35,8 @@ namespace QualityGrapher.Views
 
         private void InitBindings()
         {
-            var triplestoresViewModel = new TriplestoresViewModel();
+            var triplestoresViewModel = new TriplestoresListViewModel();
+            EndpointUriTextBox.DataContext = triplestoresViewModel;
             ServerSelectionComboBox.DataContext = triplestoresViewModel;
             OperationSelectionComboBox.DataContext = triplestoresViewModel;
             TriplestoreOperationUserControl.DataContext = triplestoresViewModel;
@@ -256,6 +258,13 @@ namespace QualityGrapher.Views
         private void ServerSelectionComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ResetIndexOnOperationSelectionComboBox();
+            MakeEndpointUriTextBoxReadonly();
+        }
+
+        private void MakeEndpointUriTextBoxReadonly()
+        {
+            EndpointUriTextBox.IsReadOnly = true;
+            EndpointUriTextBox.Background = Brushes.LightGray;
         }
 
         /// <summary>
