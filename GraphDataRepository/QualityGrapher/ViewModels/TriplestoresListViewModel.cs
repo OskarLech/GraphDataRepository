@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Libraries.Server;
+using QualityGrapher.Models;
 
 namespace QualityGrapher.ViewModels
 {
     internal class TriplestoresListViewModel : ViewModelBase
     {
+        public string EndpointUri { set; get; }
         public List<TriplestoreViewModel> Triplestores { get; } = PopulateTriplestoreList();
-        public string EndpointUri { get; set; }
-
         private TriplestoreViewModel _selectedTriplestore;
 
         public TriplestoreViewModel SelectedTriplestore
         {
-            get { return _selectedTriplestore; }
+            get => _selectedTriplestore;
             set
             {
                 _selectedTriplestore = value;
-                var triplestoreType = _selectedTriplestore.Type;
-                var triplestoreClient = (ITriplestoreClient)Activator.CreateInstance(triplestoreType, EndpointUri);
-                _selectedTriplestore.TriplestoreClientQualityWrapper = new TriplestoreClientQualityWrapper(triplestoreClient);
+                _selectedTriplestore.CreateTriplestoreQualityWrapper(EndpointUri);
             }
         }
 
@@ -29,9 +26,12 @@ namespace QualityGrapher.ViewModels
             return SupportedTriplestores.GetTriplestoresList()
                 .Select(triplestore => new TriplestoreViewModel
                 {
-                    Name = triplestore.Name,
-                    Type = triplestore.Type,
-                    SupportedOperations = triplestore.SupportedOperations
+                    TriplestoreModel = new TriplestoreModel
+                    {
+                        Name = triplestore.Name,
+                        Type = triplestore.Type,
+                        SupportedOperations = triplestore.SupportedOperations
+                    }
                 })
                 .ToList();
         }

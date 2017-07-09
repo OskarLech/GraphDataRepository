@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Libraries.Server;
 
 namespace QualityGrapher.Views
 {
@@ -25,9 +14,19 @@ namespace QualityGrapher.Views
             InitializeComponent();
         }
 
-        private void DeleteDatasetButton_OnClick(object sender, RoutedEventArgs e)
+        private async void DeleteDatasetButton_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+
+            var triplestoreClientQualityWrapper = (ITriplestoreClientQualityWrapper)DataContext;
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (await triplestoreClientQualityWrapper.DeleteDataset(DeleteDatasetTextBox.Text))
+            {
+                mainWindow.OnOperationSucceeded();
+            }
+            else
+            {
+                mainWindow.OnOperationFailed();
+            }
         }
     }
 }

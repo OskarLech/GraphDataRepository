@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using Libraries.Server;
+using QualityGrapher.Models;
 using QualityGrapher.Views;
 using static Libraries.Server.SupportedTriplestores;
 
@@ -8,11 +8,7 @@ namespace QualityGrapher.ViewModels
 {
     public class TriplestoreViewModel : ViewModelBase
     {
-        public string Name { get; set; }
-        public Type Type { get; set; }
-        public  ITriplestoreClientQualityWrapper TriplestoreClientQualityWrapper { get; set; }
-        public IEnumerable<SupportedOperations> SupportedOperations { get; set; }
-
+        public TriplestoreModel TriplestoreModel { get; set; }
         public SupportedOperations SelectedOperation { get; set; }
 
         public TriplestoreViewModel()
@@ -20,9 +16,15 @@ namespace QualityGrapher.ViewModels
             ((MainWindow)System.Windows.Application.Current.MainWindow).LanguageSet += delegate { OnPropertyChanged(nameof(SupportedOperations)); };
         }
 
+        public void CreateTriplestoreQualityWrapper(string endpointUri)
+        {
+            var triplestoreClient = (ITriplestoreClient) Activator.CreateInstance(TriplestoreModel.Type, endpointUri);
+            TriplestoreModel.TriplestoreClientQualityWrapper = new TriplestoreClientQualityWrapper(triplestoreClient); 
+        }
+
         public override string ToString()
         {
-            return Name;
+            return TriplestoreModel.Name;
         }
     }
 }

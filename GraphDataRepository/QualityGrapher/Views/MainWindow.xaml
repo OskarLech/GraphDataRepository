@@ -42,7 +42,7 @@
                 <TextBox Name = "EndpointUriTextBox" Grid.Column="0" Grid.Row="1" Padding="2"  TextAlignment="Center" 
                          Text="{Binding EndpointUri}"/>
                 
-                <ComboBox x:Name="ServerSelectionComboBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=Triplestores}" 
+                <ComboBox x:Name="ServerSelectionComboBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=Triplestores.}" 
                           SelectedItem="{Binding SelectedTriplestore}" SelectionChanged="ServerSelectionComboBox_OnSelectionChanged"/>
                 
                 <TextBlock Grid.Column="1" Grid.Row="1" Visibility="{Binding SelectedItem, ElementName=ServerSelectionComboBox, 
@@ -53,7 +53,7 @@
             <Grid DockPanel.Dock="Top" Margin="0 0 0 5">
                 <Grid>
                     <ComboBox x:Name="OperationSelectionComboBox" HorizontalContentAlignment="Center"
-                              ItemsSource="{Binding SelectedTriplestore.SupportedOperations, 
+                              ItemsSource="{Binding SelectedTriplestore.TriplestoreModel.SupportedOperations, 
                               Converter={StaticResource TriplestoreOperationToTextConverter}}"
                               SelectedItem="{Binding SelectedTriplestore.SelectedOperation, Mode=TwoWay, Converter={StaticResource TriplestoreOperationToTextConverter}}"/>
                     
@@ -83,7 +83,7 @@
             <!--TEST BLOCK END-->
 
             <!--Log-->
-            <TextBox DockPanel.Dock="Top" IsReadOnly="True" Margin="0 5 0 0" TextWrapping="Wrap" />
+            <TextBox DockPanel.Dock="Top" Name="LogBox" IsReadOnly="True" Margin="0 5 0 0" TextWrapping="Wrap" />
         </DockPanel>
     </Border>
 </Window>

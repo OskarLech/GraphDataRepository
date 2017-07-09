@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Libraries.Server;
+using QualityGrapher.ViewModels;
 
 namespace QualityGrapher.Views
 {
@@ -25,9 +15,20 @@ namespace QualityGrapher.Views
             InitializeComponent();
         }
 
-        private void ListDatasets_OnLoaded(object sender, RoutedEventArgs e)
+        private async void ListDatasets_OnLoaded(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var triplestoreClientQualityWrapper = ((TriplestoresListViewModel)DataContext).SelectedTriplestore.TriplestoreModel.TriplestoreClientQualityWrapper;
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            var datasets = await triplestoreClientQualityWrapper.ListDatasets();
+            if (datasets != null)
+            {
+                mainWindow.OnOperationSucceeded();
+                DatasetListTextBox.Text = datasets.ToString();
+            }
+            else
+            {
+                mainWindow.OnOperationFailed();
+            }
         }
     }
 }

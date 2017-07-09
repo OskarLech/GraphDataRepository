@@ -10,6 +10,7 @@ using Libraries.QualityChecks.KnowledgeBaseCheck;
 using Libraries.QualityChecks.VocabularyCheck;
 using Libraries.Server.BrightstarDb;
 using QualityGrapher.Globalization;
+using QualityGrapher.Utilities.Serilog;
 using Serilog;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -33,6 +34,16 @@ namespace QualityGrapher.Views
             InitBindings();
         }
 
+        public void OnOperationFailed()
+        {
+            LogBox.BorderBrush = Brushes.Red;
+        }
+
+        public void OnOperationSucceeded()
+        {
+            LogBox.BorderBrush = Brushes.Green;
+        }
+
         private void InitBindings()
         {
             var triplestoresViewModel = new TriplestoresListViewModel();
@@ -47,7 +58,9 @@ namespace QualityGrapher.Views
             //Serilog
             Logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
+                .WriteTo.TextBoxSink() //TODO move to app.config
                 .CreateLogger();
+
 
             //Languages
             SetLanguageDictionary(Thread.CurrentThread.CurrentCulture.ToString());
