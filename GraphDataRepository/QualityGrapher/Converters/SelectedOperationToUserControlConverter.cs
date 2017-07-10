@@ -10,35 +10,35 @@ namespace QualityGrapher.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Enum.TryParse<SupportedOperations>(value?.ToString(), true, out var operation);
+            Enum.TryParse<SupportedOperation>(value?.ToString(), true, out var operation);
             switch (operation)
             {
-                case SupportedOperations.CreateDataset:
+                case SupportedOperation.CreateDataset:
                     return new CreateDataset();
-                case SupportedOperations.DeleteDataset:
+                case SupportedOperation.DeleteDataset:
                     return new DeleteDataset();
-                case SupportedOperations.ListDatasets:
+                case SupportedOperation.ListDatasets:
                     return new ListDatasets();
-                case SupportedOperations.DeleteGraphs:
+                case SupportedOperation.DeleteGraphs:
                     return new DeleteGraphs();
-                case SupportedOperations.UpdateGraphs:
-                    return null;
-                case SupportedOperations.ReadGraphs:
-                    return null;
-                case SupportedOperations.ListGraphs:
-                    return null;
-                case SupportedOperations.RunSparqlQuery:
-                    return null;
-                case SupportedOperations.RevertLastTransaction:
-                    return null;
-                case SupportedOperations.ListCommitPoints:
-                    return null;
-                case SupportedOperations.RevertToCommitPoint:
-                    return null;
-                case SupportedOperations.GetStatistics:
-                    return null;
-                case SupportedOperations.ConsolidateStore:
-                    return null;
+                case SupportedOperation.UpdateGraphs:
+                    //return new UpdateGraphs();
+                case SupportedOperation.ReadGraphs:
+                    //return new ReadGraphs();
+                case SupportedOperation.ListGraphs:
+                    return new ListGraphs();
+                case SupportedOperation.RunSparqlQuery:
+                    //return new RunSparqlQuery();
+                case SupportedOperation.RevertLastTransaction:
+                    //return new RevertLastTransaction();
+                case SupportedOperation.ListCommitPoints:
+                    //return new ListCommitPoints();
+                case SupportedOperation.RevertToCommitPoint:
+                    //return new RevertToCommitPoint();
+                case SupportedOperation.GetStatistics:
+                    //return new GetStatistics();
+                case SupportedOperation.ConsolidateStore:
+                    //return new ConsolidateStore();
                 default:
                     return null;
             }

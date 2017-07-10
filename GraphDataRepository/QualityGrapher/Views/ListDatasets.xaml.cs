@@ -1,7 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
-using Libraries.Server;
-using QualityGrapher.ViewModels;
 
 namespace QualityGrapher.Views
 {
@@ -15,15 +16,31 @@ namespace QualityGrapher.Views
             InitializeComponent();
         }
 
-        private async void ListDatasets_OnLoaded(object sender, RoutedEventArgs e)
+        private void ListDatasets_OnLoaded(object sender, EventArgs e)
         {
-            var triplestoreClientQualityWrapper = ((TriplestoresListViewModel)DataContext).SelectedTriplestore.TriplestoreModel.TriplestoreClientQualityWrapper;
+            GetDatasetList(DataContext);
+        }
+
+        public async void GetDatasetList(object dataContext)
+        {
+            if (DataContext == null)
+            {
+                DataContext = dataContext;
+            }
+
+            var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
             var mainWindow = (MainWindow)Application.Current.MainWindow;
+
+            if (triplestoreClientQualityWrapper == null)
+            {
+                mainWindow.OnOperationFailed();
+                return;
+            }
+
             var datasets = await triplestoreClientQualityWrapper.ListDatasets();
             if (datasets != null)
             {
-                mainWindow.OnOperationSucceeded();
-                DatasetListTextBox.Text = datasets.ToString();
+                DatasetListBox.ItemsSource = datasets;
             }
             else
             {

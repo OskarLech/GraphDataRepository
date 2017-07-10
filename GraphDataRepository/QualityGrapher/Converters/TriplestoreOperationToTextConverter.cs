@@ -47,44 +47,44 @@ namespace QualityGrapher.Converters
             {
                 switch (operation)
                 {
-                    case SupportedOperations.CreateDataset:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.CreateDataset)].ToString());
+                    case SupportedOperation.CreateDataset:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.CreateDataset)].ToString());
                         break;
-                    case SupportedOperations.DeleteDataset:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.DeleteDataset)].ToString());
+                    case SupportedOperation.DeleteDataset:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.DeleteDataset)].ToString());
                         break;
-                    case SupportedOperations.ListDatasets:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.ListDatasets)].ToString());
+                    case SupportedOperation.ListDatasets:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.ListDatasets)].ToString());
                         break;
-                    case SupportedOperations.DeleteGraphs:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.DeleteGraphs)].ToString());
+                    case SupportedOperation.DeleteGraphs:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.DeleteGraphs)].ToString());
                         break;
-                    case SupportedOperations.UpdateGraphs:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.UpdateGraphs)].ToString());
+                    case SupportedOperation.UpdateGraphs:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.UpdateGraphs)].ToString());
                         break;
-                    case SupportedOperations.ReadGraphs:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.ReadGraphs)].ToString());
+                    case SupportedOperation.ReadGraphs:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.ReadGraphs)].ToString());
                         break;
-                    case SupportedOperations.ListGraphs:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.ListGraphs)].ToString());
+                    case SupportedOperation.ListGraphs:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.ListGraphs)].ToString());
                         break;
-                    case SupportedOperations.RunSparqlQuery:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.RunSparqlQuery)].ToString());
+                    case SupportedOperation.RunSparqlQuery:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.RunSparqlQuery)].ToString());
                         break;
-                    case SupportedOperations.RevertLastTransaction:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.RevertLastTransaction)].ToString());
+                    case SupportedOperation.RevertLastTransaction:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.RevertLastTransaction)].ToString());
                         break;
-                    case SupportedOperations.ListCommitPoints:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.ListCommitPoints)].ToString());
+                    case SupportedOperation.ListCommitPoints:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.ListCommitPoints)].ToString());
                         break;
-                    case SupportedOperations.RevertToCommitPoint:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.RevertToCommitPoint)].ToString());
+                    case SupportedOperation.RevertToCommitPoint:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.RevertToCommitPoint)].ToString());
                         break;
-                    case SupportedOperations.GetStatistics:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.GetStatistics)].ToString());
+                    case SupportedOperation.GetStatistics:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.GetStatistics)].ToString());
                         break;
-                    case SupportedOperations.ConsolidateStore:
-                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperations.ConsolidateStore)].ToString());
+                    case SupportedOperation.ConsolidateStore:
+                        operationTextList.Add(_resourceDictionary[nameof(SupportedOperation.ConsolidateStore)].ToString());
                         break;
                 }
             }
@@ -95,7 +95,7 @@ namespace QualityGrapher.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var operation = _resourceDictionary.Keys.Cast<object>().FirstOrDefault(key => _resourceDictionary[key].ToString() == value?.ToString());
-            Enum.TryParse<SupportedOperations>(operation?.ToString(), true, out var operationAsEnum);
+            Enum.TryParse<SupportedOperation>(operation?.ToString(), true, out var operationAsEnum);
             return operationAsEnum;
         }
     }

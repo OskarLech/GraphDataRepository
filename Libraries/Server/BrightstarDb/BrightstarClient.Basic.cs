@@ -82,11 +82,17 @@ namespace Libraries.Server.BrightstarDb
                     return false;
                 }
 
+                if (triplesByGraphUri.Values.Any(v => v.TriplesToAdd == null && v.TriplesToRemove == null))
+                {
+                    Warning("Cannot run update graph operation with no arguments");
+                    return false;
+                }
+
                 var deletePatterns = new StringBuilder();
                 var insertData = new StringBuilder();
                 foreach (var triples in triplesByGraphUri)
                 {
-                    foreach (var triple in triples.Value.TriplesToAdd)
+                    foreach (var triple in triples.Value.TriplesToRemove)
                     {
                         deletePatterns.AppendLine($"{triple} <{triples.Key}> .");
                     }

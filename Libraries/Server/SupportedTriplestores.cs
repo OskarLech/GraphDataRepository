@@ -12,7 +12,7 @@ namespace Libraries.Server
             ("BrightstarDb", typeof(BrightstarClient))
         };
 
-        public enum SupportedOperations
+        public enum SupportedOperation
         {
             //ITriplestoreClient
             CreateDataset,
@@ -34,38 +34,38 @@ namespace Libraries.Server
             ConsolidateStore
         }
 
-        public static IEnumerable<(string Name, Type Type, IEnumerable<SupportedOperations> SupportedOperations)> GetTriplestoresList()
+        public static IEnumerable<(string Name, Type Type, IEnumerable<SupportedOperation> SupportedOperations)> GetTriplestoresList()
         {
             return TriplestoreProviders.Select(triplestoreProvider => (triplestoreProvider.name, triplestoreProvider.clientType, GetSupportedOperations(triplestoreProvider.clientType)))
                 .ToList();
         }
 
-        public static IEnumerable<SupportedOperations> GetSupportedOperations(Type triplestoreType)
+        public static IEnumerable<SupportedOperation> GetSupportedOperations(Type triplestoreType)
         {
-            var supportedOperations = new List<SupportedOperations>();
+            var supportedOperations = new List<SupportedOperation>();
             if (typeof(ITriplestoreClient).IsAssignableFrom(triplestoreType))
             {
-                supportedOperations.Add(SupportedOperations.CreateDataset);
-                supportedOperations.Add(SupportedOperations.DeleteDataset);
-                supportedOperations.Add(SupportedOperations.ListDatasets);
-                supportedOperations.Add(SupportedOperations.DeleteGraphs);
-                supportedOperations.Add(SupportedOperations.UpdateGraphs);
-                supportedOperations.Add(SupportedOperations.ReadGraphs);
-                supportedOperations.Add(SupportedOperations.ListGraphs);
-                supportedOperations.Add(SupportedOperations.RunSparqlQuery);
+                supportedOperations.Add(SupportedOperation.CreateDataset);
+                supportedOperations.Add(SupportedOperation.DeleteDataset);
+                supportedOperations.Add(SupportedOperation.ListDatasets);
+                supportedOperations.Add(SupportedOperation.DeleteGraphs);
+                supportedOperations.Add(SupportedOperation.UpdateGraphs);
+                supportedOperations.Add(SupportedOperation.ReadGraphs);
+                supportedOperations.Add(SupportedOperation.ListGraphs);
+                supportedOperations.Add(SupportedOperation.RunSparqlQuery);
             }
 
             if (typeof(ITriplestoreClientExtended).IsAssignableFrom(triplestoreType))
             {
-                supportedOperations.Add(SupportedOperations.RevertLastTransaction);
-                supportedOperations.Add(SupportedOperations.ListCommitPoints);
-                supportedOperations.Add(SupportedOperations.RevertToCommitPoint);
-                supportedOperations.Add(SupportedOperations.GetStatistics);
+                supportedOperations.Add(SupportedOperation.RevertLastTransaction);
+                supportedOperations.Add(SupportedOperation.ListCommitPoints);
+                supportedOperations.Add(SupportedOperation.RevertToCommitPoint);
+                supportedOperations.Add(SupportedOperation.GetStatistics);
             }
 
             if (typeof(IBrightstarClient).IsAssignableFrom(triplestoreType))
             {
-                supportedOperations.Add(SupportedOperations.ConsolidateStore);
+                supportedOperations.Add(SupportedOperation.ConsolidateStore);
             }
 
             return supportedOperations;

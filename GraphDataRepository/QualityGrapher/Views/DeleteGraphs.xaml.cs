@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace QualityGrapher.Views
 {
@@ -27,7 +17,20 @@ namespace QualityGrapher.Views
 
         private void DeleteGraphButton_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+        //    var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
+        //    var mainWindow = (MainWindow)Application.Current.MainWindow;
+
+        //    var dupa = DeleteGraphTextBox.Text.Split("\n".ToCharArray()).ToList();
+
+        //    if (triplestoreClientQualityWrapper == null || !await triplestoreClientQualityWrapper.DeleteGraphs())
+        //    {
+        //        mainWindow.OnOperationFailed();
+        //    }
+        //    else
+        //    {
+        //        mainWindow.OnOperationSucceeded();
+        //        ListDatasets();
+        //    }
         }
     }
 }

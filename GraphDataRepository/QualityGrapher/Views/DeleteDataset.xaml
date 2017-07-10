@@ -11,7 +11,13 @@
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBox Name="DeleteDatasetTextBox" Grid.Column="0" Padding="2"  TextAlignment="Center" />
-        <Button Name="DeleteDatasetButton" Grid.Column="1" Content="{DynamicResource DeleteDataset}" Click="DeleteDatasetButton_OnClick" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBox Name="DeleteDatasetTextBox" Grid.Column="0" Grid.Row="0" Padding="2"  TextAlignment="Center" />
+        <Button Name="DeleteDatasetButton" Grid.Column="1" Grid.Row="0" Content="{DynamicResource DeleteDataset}" Click="DeleteDatasetButton_OnClick" />
+        <ContentControl Grid.Row="1" x:Name="ListDatasetControl" Loaded="ListDatasetControl_OnLoaded"/>
     </Grid>
 </UserControl>

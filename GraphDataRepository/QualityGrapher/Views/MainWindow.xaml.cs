@@ -118,7 +118,7 @@ namespace QualityGrapher.Views
 
         private async void BrightstarCliBtn_OnClick(object sender, RoutedEventArgs e)
         {
-            var triplestoreClient = new BrightstarClient("http://192.168.0.111:8090/brightstar");
+            var triplestoreClient = new BrightstarClient("http://192.168.0.3:8090/brightstar");
 
             if (triplestoreClient is IDisposable disposable)
             {

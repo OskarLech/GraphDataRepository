@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows;
-using Libraries.Server;
+﻿using System.Windows;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace QualityGrapher.Views
@@ -17,15 +15,15 @@ namespace QualityGrapher.Views
 
         private async void CreateDatasetButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var triplestoreClientQualityWrapper = (ITriplestoreClientQualityWrapper) DataContext;
+            var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
             var mainWindow = (MainWindow) Application.Current.MainWindow;
-            if (await triplestoreClientQualityWrapper.CreateDataset(CreateDatasetTextBox.Text))
+            if (triplestoreClientQualityWrapper == null || !await triplestoreClientQualityWrapper.CreateDataset(CreateDatasetTextBox.Text))
             {
-                mainWindow.OnOperationSucceeded();
+                mainWindow.OnOperationFailed();
             }
             else
             {
-                mainWindow.OnOperationFailed();
+                mainWindow.OnOperationSucceeded();
             }
         }
     }

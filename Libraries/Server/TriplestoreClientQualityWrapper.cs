@@ -48,7 +48,7 @@ namespace Libraries.Server
             var triplesByGraphUri =
                 new Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)>
                 {
-                    [MetadataGraphUri] = (null, null)
+                    [MetadataGraphUri] = (new List<string>(), new List<string> { "<http://www.brightstardb.com/companies/brightstardb> <http://www.w3.org/2000/01/rdf-schema#label> \"BrightstarDB\" ." })
                 };
 
             return await _triplestoreClient.UpdateGraphs(name, triplesByGraphUri);

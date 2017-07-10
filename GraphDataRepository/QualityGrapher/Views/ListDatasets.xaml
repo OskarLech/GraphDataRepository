@@ -9,6 +9,6 @@
              Loaded="ListDatasets_OnLoaded">
     
     <Grid>
-        <TextBox Name="DatasetListTextBox"/>            
+        <ListBox Name="DatasetListBox" Grid.Column="0" SelectionMode="Single" VerticalAlignment="Center"/>            
     </Grid>
 </UserControl>

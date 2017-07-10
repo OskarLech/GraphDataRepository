@@ -9,11 +9,11 @@ namespace QualityGrapher.ViewModels
     public class TriplestoreViewModel : ViewModelBase
     {
         public TriplestoreModel TriplestoreModel { get; set; }
-        public SupportedOperations SelectedOperation { get; set; }
+        public SupportedOperation SelectedOperation { get; set; }
 
         public TriplestoreViewModel()
         {
-            ((MainWindow)System.Windows.Application.Current.MainWindow).LanguageSet += delegate { OnPropertyChanged(nameof(SupportedOperations)); };
+            ((MainWindow)System.Windows.Application.Current.MainWindow).LanguageSet += delegate { OnPropertyChanged(nameof(SupportedOperation)); };
         }
 
         public void CreateTriplestoreQualityWrapper(string endpointUri)
