@@ -13,7 +13,7 @@ namespace QualityGrapher.ViewModels
 
         public TriplestoreViewModel()
         {
-            ((MainWindow)System.Windows.Application.Current.MainWindow).LanguageSet += delegate { OnPropertyChanged(nameof(SelectedOperation)); };
+            ((MainWindow)System.Windows.Application.Current.MainWindow).LanguageSet += delegate { OnPropertyChanged(nameof(TriplestoreModel)); };
         }
 
         public void CreateTriplestoreQualityWrapper(string endpointUri)
