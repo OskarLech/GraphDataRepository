@@ -14,7 +14,7 @@ namespace QualityGrapher.Views
         public ListGraphs()
         {
             InitializeComponent();
-            ListDatasetControl.Content = _listDatasetsUserControl;
+            ListDatasetsControl.Content = _listDatasetsUserControl;
             _listDatasetsUserControl.DatasetListBox.SelectionChanged += OnListDatasetsSelectionChanged;
         }
 

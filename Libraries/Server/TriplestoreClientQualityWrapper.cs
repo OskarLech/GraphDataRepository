@@ -29,14 +29,14 @@ namespace Libraries.Server
         {
             _triplestoreClient = triplestoreClient;
             _cancellationTokenSource = new CancellationTokenSource();
-            _parallelOptions = new ParallelOptions{ CancellationToken = _cancellationTokenSource.Token };
+            _parallelOptions = new ParallelOptions {CancellationToken = _cancellationTokenSource.Token};
             _qualityChecks = GetQualityChecks();
         }
 
         #region public methods
 
         #region ITripleStoreClient implementation
-
+         
         public async Task<bool> CreateDataset(string name)
         {
             if (!await _triplestoreClient.CreateDataset(name))
@@ -48,7 +48,7 @@ namespace Libraries.Server
             var triplesByGraphUri =
                 new Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)>
                 {
-                    [MetadataGraphUri] = (new List<string>(), new List<string> { "<http://www.brightstardb.com/companies/brightstardb> <http://www.w3.org/2000/01/rdf-schema#label> \"BrightstarDB\" ." })
+                    [MetadataGraphUri] = (new List<string>(), new List<string> { "<http://www.brightstardb.com/companies/brightstardb> <http://www.w3.org/2000/01/rdf-schema#label> \"BrightstarDB\"" })
                 };
 
             return await _triplestoreClient.UpdateGraphs(name, triplesByGraphUri);
@@ -67,6 +67,12 @@ namespace Libraries.Server
         public async Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris)
         {
             var graphUriList = graphUris.ToList();
+            if (graphUriList.Contains(MetadataGraphUri))
+            {
+                Warning("Cannot remove the metadata graph!");
+                return false;
+            }
+
             if (!await _triplestoreClient.DeleteGraphs(dataset, graphUriList))
             {
                 return false;

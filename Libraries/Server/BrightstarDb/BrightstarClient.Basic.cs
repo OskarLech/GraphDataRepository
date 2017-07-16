@@ -92,14 +92,20 @@ namespace Libraries.Server.BrightstarDb
                 var insertData = new StringBuilder();
                 foreach (var triples in triplesByGraphUri)
                 {
-                    foreach (var triple in triples.Value.TriplesToRemove)
+                    if (triples.Value.TriplesToRemove != null)
                     {
-                        deletePatterns.AppendLine($"{triple} <{triples.Key}> .");
+                        foreach (var triple in triples.Value.TriplesToRemove)
+                        {
+                            deletePatterns.AppendLine($"{triple} <{triples.Key}> .");
+                        }
                     }
 
-                    foreach (var triple in triples.Value.TriplesToAdd)
+                    if (triples.Value.TriplesToAdd != null)
                     {
-                        insertData.AppendLine($"{triple} <{triples.Key}> .");
+                        foreach (var triple in triples.Value.TriplesToAdd)
+                        {
+                            insertData.AppendLine($"{triple} <{triples.Key}> .");
+                        }
                     }
                 }
 
@@ -124,7 +130,7 @@ namespace Libraries.Server.BrightstarDb
         {
             return await ClientCall(Task.Run(() =>
             {
-                var jobInfo = _brightstarClient.ExecuteTransaction(dataset, null);
+                var jobInfo = _brightstarClient.ExecuteTransaction(dataset, new UpdateTransactionData());
                 if (!jobInfo.JobCompletedOk)
                 {
                     Error($"BrightstarDB transactional update failed: {jobInfo.ExceptionInfo}");

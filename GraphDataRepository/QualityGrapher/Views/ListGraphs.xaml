@@ -13,7 +13,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <ContentControl Name="ListDatasetControl" Grid.Column="0" Loaded="ListDatasetControl_OnLoaded"/>
+        <ContentControl Name="ListDatasetsControl" Grid.Column="0" Loaded="ListDatasetControl_OnLoaded"/>
         <ListBox Name="ListGraphsListBox" Grid.Column="1" SelectionMode="Multiple"/>
     </Grid>
 </UserControl>

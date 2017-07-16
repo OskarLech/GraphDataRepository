@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace QualityGrapher.Views
 {
@@ -10,27 +11,33 @@ namespace QualityGrapher.Views
     /// </summary>
     public partial class DeleteGraphs : UserControl
     {
+        private readonly ListGraphs _listGraphsUserControl = new ListGraphs();
+
         public DeleteGraphs()
         {
             InitializeComponent();
+            ListGraphsControl.Content = _listGraphsUserControl;
         }
 
-        private void DeleteGraphButton_OnClick(object sender, RoutedEventArgs e)
+        private async void DeleteGraphButton_OnClick(object sender, RoutedEventArgs e)
         {
-        //    var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
-        //    var mainWindow = (MainWindow)Application.Current.MainWindow;
+            var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
 
-        //    var dupa = DeleteGraphTextBox.Text.Split("\n".ToCharArray()).ToList();
+            var listDatasetsChildren = LogicalTreeHelper.GetChildren(_listGraphsUserControl.ListDatasetsControl);
+            var triplestore = listDatasetsChildren.OfType<ListDatasets>()
+                .Select(listDatasets => listDatasets.DatasetListBox.SelectedItem?.ToString())
+                .FirstOrDefault();
 
-        //    if (triplestoreClientQualityWrapper == null || !await triplestoreClientQualityWrapper.DeleteGraphs())
-        //    {
-        //        mainWindow.OnOperationFailed();
-        //    }
-        //    else
-        //    {
-        //        mainWindow.OnOperationSucceeded();
-        //        ListDatasets();
-        //    }
+            var graphs = _listGraphsUserControl.ListGraphsListBox.SelectedItems.Cast<Uri>();
+            if (triplestoreClientQualityWrapper == null || string.IsNullOrWhiteSpace(triplestore) || !await triplestoreClientQualityWrapper.DeleteGraphs(triplestore, graphs))
+            {
+                mainWindow.OnOperationFailed();
+            }
+            else
+            {
+                mainWindow.OnOperationSucceeded();
+            }
         }
     }
 }
