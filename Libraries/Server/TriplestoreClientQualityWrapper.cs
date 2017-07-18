@@ -204,11 +204,11 @@ namespace Libraries.Server
 
         #region IBrightstarClient implementation
 
-        public async Task<bool> ConsolidateStore(string storeName)
+        public async Task<bool> ConsolidateDataset(string storeName)
         {
             if (_triplestoreClient is IBrightstarClient brightstarClient)
             {
-                return await brightstarClient.ConsolidateStore(storeName);
+                return await brightstarClient.ConsolidateDataset(storeName);
             }
 
             return false;

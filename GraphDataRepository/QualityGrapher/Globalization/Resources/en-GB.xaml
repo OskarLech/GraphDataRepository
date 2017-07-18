@@ -28,5 +28,7 @@
     <system:String x:Key="Graphs">Graphs</system:String>
     <system:String x:Key="TriplesToAdd">Triples to add</system:String>
     <system:String x:Key="TriplesToRemove">Triples to remove</system:String>
+    <system:String x:Key="SparqlQuery">Enter SPARQL query</system:String>
+    <system:String x:Key="SparqlQueryResult">SPARQL query result</system:String>
 
 </ResourceDictionary>

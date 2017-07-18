@@ -16,8 +16,7 @@
             <RowDefinition Height="4*"/>
         </Grid.RowDefinitions>
         
-        <TextBox Name="DeleteGraphTextBox" Grid.Column="0" Grid.Row ="0" Padding="2"  TextAlignment="Center" />
-        <Button Name="DeleteGraphButton" Grid.Column="1" Grid.Row ="0" Content="{DynamicResource DeleteGraphs}" Click="DeleteGraphsButton_OnClick" />
+        <Button Name="DeleteGraphButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row ="0" Content="{DynamicResource DeleteGraphs}" Click="DeleteGraphsButton_OnClick" />
         <ContentControl Grid.Column="0" Grid.Row="1" x:Name="ListGraphsControl" />
     </Grid>
 </UserControl>

@@ -28,7 +28,7 @@ namespace QualityGrapher.Converters
                 case SupportedOperation.ListGraphs:
                     return new ListGraphs();
                 case SupportedOperation.RunSparqlQuery:
-                    //return new RunSparqlQuery();
+                    return new RunSparqlQuery();
                 case SupportedOperation.RevertLastTransaction:
                     //return new RevertLastTransaction();
                 case SupportedOperation.ListCommitPoints:
@@ -38,7 +38,7 @@ namespace QualityGrapher.Converters
                 case SupportedOperation.GetStatistics:
                     //return new GetStatistics();
                 case SupportedOperation.ConsolidateStore:
-                    //return new ConsolidateStore();
+                    return new ConsolidateStore();
                 default:
                     return null;
             }

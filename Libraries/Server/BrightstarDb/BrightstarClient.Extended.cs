@@ -79,7 +79,7 @@ namespace Libraries.Server.BrightstarDb
 
         #region IBrightstarClient implementation
 
-        public async Task<bool> ConsolidateStore(string storeName)
+        public async Task<bool> ConsolidateDataset(string storeName)
         {
             return await ClientCall(Task.Run(() =>
             {

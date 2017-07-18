@@ -116,11 +116,17 @@
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\ConsolidateStore.xaml.cs">
+      <DependentUpon>ConsolidateStore.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ListGraphs.xaml.cs">
       <DependentUpon>ListGraphs.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ReadGraphs.xaml.cs">
       <DependentUpon>ReadGraphs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RunSparqlQuery.xaml.cs">
+      <DependentUpon>RunSparqlQuery.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UpdateGraphs.xaml.cs">
       <DependentUpon>UpdateGraphs.xaml</DependentUpon>
@@ -131,6 +137,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Globalization\Resources\pl-PL.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ConsolidateStore.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -175,6 +185,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ReadGraphs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RunSparqlQuery.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

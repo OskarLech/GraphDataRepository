@@ -7,6 +7,6 @@ namespace Libraries.Server.BrightstarDb
     /// </summary>
     public interface IBrightstarClient : ITriplestoreClientExtended
     {
-        Task<bool> ConsolidateStore(string storeName);
+        Task<bool> ConsolidateDataset(string dataset);
     }
 }
