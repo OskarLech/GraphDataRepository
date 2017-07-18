@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="QualityGrapher.Views.UpdateGraphs"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:QualityGrapher.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ContentControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"  x:Name="ListGraphsControl" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Text="{DynamicResource TriplesToAdd}" FontWeight="Bold" />
+        <ScrollViewer Grid.Row="2" Grid.Column="0">
+                <TextBox Name="TriplesToRemoveTextbox" TextWrapping="Wrap" AcceptsReturn="True" />
+        </ScrollViewer>
+
+        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Text="{DynamicResource TriplesToRemove}" FontWeight="Bold" />
+        <ScrollViewer Grid.Row="2" Grid.Column="1">
+                <TextBox Name="TriplesToAddTextbox" TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+        </ScrollViewer>
+        
+        <Button Name="UpdateGraphsButton" Grid.Row ="3" Grid.Column="0" Grid.ColumnSpan="2" Content="{DynamicResource UpdateGraphs}" Click="UpdateGraphsButton_OnClick" />
+        
+    </Grid>
+</UserControl>

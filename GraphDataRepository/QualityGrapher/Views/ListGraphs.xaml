@@ -14,6 +14,11 @@
         </Grid.ColumnDefinitions>
 
         <ContentControl Name="ListDatasetsControl" Grid.Column="0" Loaded="ListDatasetControl_OnLoaded"/>
-        <ListBox Name="ListGraphsListBox" Grid.Column="1" SelectionMode="Multiple"/>
+
+        <StackPanel Grid.Column="1">
+            <TextBlock Text="{DynamicResource Graphs}" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <ListBox Name="ListGraphsListBox" SelectionMode="Multiple" />
+        </StackPanel>
+        
     </Grid>
 </UserControl>

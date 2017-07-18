@@ -119,6 +119,12 @@
     <Compile Include="Views\ListGraphs.xaml.cs">
       <DependentUpon>ListGraphs.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ReadGraphs.xaml.cs">
+      <DependentUpon>ReadGraphs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UpdateGraphs.xaml.cs">
+      <DependentUpon>UpdateGraphs.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControlHelper.cs" />
     <Page Include="Globalization\Resources\en-GB.xaml">
       <SubType>Designer</SubType>
@@ -168,6 +174,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ReadGraphs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UpdateGraphs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

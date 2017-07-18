@@ -8,7 +8,8 @@
              d:DesignHeight="300" d:DesignWidth="300"
              Loaded="ListDatasets_OnLoaded">
     
-    <Grid>
-        <ListBox Name="DatasetListBox" Grid.Column="0" SelectionMode="Single" VerticalAlignment="Center"/>            
-    </Grid>
+    <StackPanel>
+        <TextBlock Text="{DynamicResource Datasets}" FontWeight="Bold" HorizontalAlignment="Center"/>
+        <ListBox Name="DatasetListBox" SelectionMode="Single" VerticalAlignment="Center"/>            
+    </StackPanel>
 </UserControl>

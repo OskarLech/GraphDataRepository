@@ -22,9 +22,9 @@ namespace QualityGrapher.Converters
                 case SupportedOperation.DeleteGraphs:
                     return new DeleteGraphs();
                 case SupportedOperation.UpdateGraphs:
-                    //return new UpdateGraphs();
+                    return new UpdateGraphs();
                 case SupportedOperation.ReadGraphs:
-                    //return new ReadGraphs();
+                    return new ReadGraphs();
                 case SupportedOperation.ListGraphs:
                     return new ListGraphs();
                 case SupportedOperation.RunSparqlQuery:

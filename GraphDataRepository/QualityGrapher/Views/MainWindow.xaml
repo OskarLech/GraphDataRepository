@@ -15,6 +15,7 @@
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <converters:TriplestoreOperationToTextConverter x:Key="TriplestoreOperationToTextConverter" />
         <converters:SelectedOperationToUserControlConverter x:Key="SelectedOperationToUserControlConverter" />
+        <converters:SelectedOperationToUserControlConverter x:Key="GraphToTriplesListConverter" />
         <Image x:Key="PolishFlagImage" Source="../Globalization/FlagIcons/Poland-icon.png"/>
         <Image x:Key="UkFlagImage" Source="../Globalization/FlagIcons/United-Kingdom-icon.png"/>
     </Window.Resources>
@@ -65,7 +66,7 @@
             <ContentControl DockPanel.Dock="Top" x:Name="TriplestoreOperationUserControl" Content="{Binding SelectedTriplestore.SelectedOperation, 
                             Converter={StaticResource SelectedOperationToUserControlConverter}}"/>
 
-            <!--TEST BLOCK START-->
+            <!--TEST BLOCK START--><!--
             <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Text="TEST" FontWeight="Bold"/>
             <Grid DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
@@ -80,7 +81,7 @@
                 <Button Name="BrightstarCliBtn" Grid.Column="2" Content="BrightstarCli" Click="BrightstarCliBtn_OnClick"/>
                 <Button Name="TestBtn" Grid.Column="3" Content="TestBtn" Click="TestBtn_OnClick_OnClick"/>
             </Grid>
-            <!--TEST BLOCK END-->
+            --><!--TEST BLOCK END-->
 
             <!--Log-->
             <TextBox DockPanel.Dock="Top" Name="LogBox" IsReadOnly="True" Margin="0 5 0 0" TextWrapping="Wrap" />

@@ -22,4 +22,11 @@
     <system:String x:Key="RevertToCommitPoint">Revert to commit point</system:String>
     <system:String x:Key="GetStatistics">Show statistics</system:String>
     <system:String x:Key="ConsolidateStore">Consolidate store</system:String>
+    
+    <!--Labels-->
+    <system:String x:Key="Datasets">Datasets</system:String>
+    <system:String x:Key="Graphs">Graphs</system:String>
+    <system:String x:Key="TriplesToAdd">Triples to add</system:String>
+    <system:String x:Key="TriplesToRemove">Triples to remove</system:String>
+
 </ResourceDictionary>

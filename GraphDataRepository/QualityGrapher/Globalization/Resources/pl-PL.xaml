@@ -22,4 +22,11 @@
     <system:String x:Key="RevertToCommitPoint">Cofnij do punktu kontrolnego</system:String>
     <system:String x:Key="GetStatistics">Pokaż statystyki</system:String>
     <system:String x:Key="ConsolidateStore">Skompresuj bazę serwera</system:String>
+    
+    <!--Labels-->
+    <system:String x:Key="Datasets">Ontologie</system:String>
+    <system:String x:Key="Graphs">Grafy</system:String>
+    <system:String x:Key="TriplesToAdd">Trójki do dodania</system:String>
+    <system:String x:Key="TriplesToRemove">Trójki do usunięcia</system:String>
+
 </ResourceDictionary>
