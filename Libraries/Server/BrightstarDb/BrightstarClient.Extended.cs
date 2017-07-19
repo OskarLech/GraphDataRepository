@@ -61,7 +61,11 @@ namespace Libraries.Server.BrightstarDb
             return await ClientCall(Task.Run(() =>
             {
                 var statistics = _brightstarClient.GetStatistics(storeName);
-                var mostUsedPredicates = statistics.PredicateTripleCounts.OrderByDescending(c => c.Value).Take(10);
+                var mostUsedPredicates = statistics?.PredicateTripleCounts?.OrderByDescending(c => c.Value).Take(10);
+                if (mostUsedPredicates == null)
+                {
+                    return "";
+                }
 
                 string predicatesWithCounter = null;
                 foreach (var predicate in mostUsedPredicates)

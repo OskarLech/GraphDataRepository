@@ -99,6 +99,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\CommitPointTupleToStringConverter.cs" />
     <Compile Include="Converters\SelectedOperationToUserControlConverter.cs" />
     <Compile Include="Converters\TriplestoreOperationToTextConverter.cs" />
     <Compile Include="Models\TriplestoreModel.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Utilities\Serilog\TextBoxSinkExtensions.cs" />
     <Compile Include="Utilities\Serilog\TextBoxSinkFormatProvider.cs" />
     <Compile Include="Utilities\Serilog\TextBoxSink.cs" />
+    <Compile Include="ViewModels\CommitPointListViewModel.cs" />
     <Compile Include="ViewModels\TriplestoresListViewModel.cs" />
     <Compile Include="ViewModels\TriplestoreViewModel.cs" />
     <Compile Include="MyEntityContext.cs">
@@ -119,11 +121,23 @@
     <Compile Include="Views\ConsolidateStore.xaml.cs">
       <DependentUpon>ConsolidateStore.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\GetStatistics.xaml.cs">
+      <DependentUpon>GetStatistics.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ListCommitPoints.xaml.cs">
+      <DependentUpon>ListCommitPoints.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ListGraphs.xaml.cs">
       <DependentUpon>ListGraphs.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ReadGraphs.xaml.cs">
       <DependentUpon>ReadGraphs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RevertLastTransaction.xaml.cs">
+      <DependentUpon>RevertLastTransaction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RevertToCommitPoint.xaml.cs">
+      <DependentUpon>RevertToCommitPoint.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RunSparqlQuery.xaml.cs">
       <DependentUpon>RunSparqlQuery.xaml</DependentUpon>
@@ -156,6 +170,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\GetStatistics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ListCommitPoints.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ListDatasets.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -185,6 +207,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ReadGraphs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RevertLastTransaction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RevertToCommitPoint.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

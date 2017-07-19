@@ -15,7 +15,7 @@
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <converters:TriplestoreOperationToTextConverter x:Key="TriplestoreOperationToTextConverter" />
         <converters:SelectedOperationToUserControlConverter x:Key="SelectedOperationToUserControlConverter" />
-        <converters:SelectedOperationToUserControlConverter x:Key="GraphToTriplesListConverter" />
+        
         <Image x:Key="PolishFlagImage" Source="../Globalization/FlagIcons/Poland-icon.png"/>
         <Image x:Key="UkFlagImage" Source="../Globalization/FlagIcons/United-Kingdom-icon.png"/>
     </Window.Resources>

@@ -2,6 +2,7 @@
 using System.Windows;
 using Libraries.Server;
 using QualityGrapher.ViewModels;
+using static Serilog.Log;
 
 namespace QualityGrapher.Views
 {
@@ -18,6 +19,11 @@ namespace QualityGrapher.Views
             var dataset = listDatasetsChildren.OfType<ListDatasets>()
                 .Select(listDatasets => listDatasets.DatasetListBox.SelectedItem?.ToString())
                 .FirstOrDefault();
+
+            if (dataset == null)
+            {
+                Warning("Could not get triplestore client");
+            }
 
             return dataset;
         }

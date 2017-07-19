@@ -30,13 +30,13 @@ namespace QualityGrapher.Converters
                 case SupportedOperation.RunSparqlQuery:
                     return new RunSparqlQuery();
                 case SupportedOperation.RevertLastTransaction:
-                    //return new RevertLastTransaction();
+                    return new RevertLastTransaction();
                 case SupportedOperation.ListCommitPoints:
-                    //return new ListCommitPoints();
+                    return new ListCommitPoints();
                 case SupportedOperation.RevertToCommitPoint:
-                    //return new RevertToCommitPoint();
+                    return new RevertToCommitPoint();
                 case SupportedOperation.GetStatistics:
-                    //return new GetStatistics();
+                    return new GetStatistics();
                 case SupportedOperation.ConsolidateStore:
                     return new ConsolidateStore();
                 default:
