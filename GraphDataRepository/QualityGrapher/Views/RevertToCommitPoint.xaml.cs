@@ -10,13 +10,11 @@ namespace QualityGrapher.Views
     /// </summary>
     public partial class RevertToCommitPoint : UserControl
     {
-        private readonly ListDatasets _listDatasetsUserControl = new ListDatasets();
         private readonly ListCommitPoints _listCommitPointsUserControl = new ListCommitPoints();
 
         public RevertToCommitPoint()
         {
             InitializeComponent();
-            ListDatasetsControl.Content = _listDatasetsUserControl;
             ListCommitPointsControl.Content = _listCommitPointsUserControl;
         }
 
@@ -29,7 +27,7 @@ namespace QualityGrapher.Views
             }
 
             var mainWindow = (MainWindow)Application.Current.MainWindow;
-            var dataset = _listDatasetsUserControl.DatasetListBox.SelectedItem.ToString();
+            var dataset = UserControlHelper.GetDatasetFromListDatasetsUserControl(_listCommitPointsUserControl.ListDatasetsControl);
             var commitPoint = ((ulong Id, DateTime commitDate)) _listCommitPointsUserControl.CommitPointsListBox.SelectedItem;
             if (await triplestoreClientQualityWrapper.RevertToCommitPoint(dataset, commitPoint.Id))
             {

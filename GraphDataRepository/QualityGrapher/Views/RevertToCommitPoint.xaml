@@ -8,19 +8,14 @@
              d:DesignHeight="300" d:DesignWidth="300">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
 
-        <Button Name="RevertButton"  Grid.Column="0" Grid.Row ="0" Grid.ColumnSpan="2"
-                Content="{DynamicResource RevertLastTransaction}" Click="RevertButton_OnClick"/>
+        <Button Name="RevertButton" Grid.Row ="0" Grid.ColumnSpan="2"
+                Content="{DynamicResource RevertToCommitPoint}" Click="RevertButton_OnClick"/>
 
-        <ContentControl Grid.Column="0" Grid.Row="1" x:Name="ListDatasetsControl" />
-        <ContentControl Grid.Column="1" Grid.Row="1" x:Name="ListCommitPointsControl" />
+        <ContentControl Grid.Row="1" x:Name="ListCommitPointsControl" />
     </Grid>
 </UserControl>

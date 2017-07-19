@@ -21,13 +21,12 @@ namespace QualityGrapher.Converters
                 return null;
             }
 
-            var commitInfoList = (IEnumerable<string>) value;
+            var commitInfo = (string) value;
+            var id = int.Parse(commitInfo.Substring(commitInfo.IndexOf(" ", StringComparison.Ordinal) + 1, 1));
+            var substring = commitInfo.Substring(commitInfo.IndexOf("Date: ", StringComparison.Ordinal) + "Date: ".Length);
+            var date = DateTime.Parse(substring);
 
-            return (from commitInfo in commitInfoList
-                    let id = int.Parse(commitInfo.Substring(commitInfo.IndexOf(" ", StringComparison.Ordinal) + 1, 1))
-                    let date = DateTime.Parse(commitInfo.Substring(commitInfo.IndexOf(",", StringComparison.Ordinal) + 2))
-                    select ((ulong) id, date))
-                    .ToList();
+            return ((ulong) id, date);
         }
     }
 }
