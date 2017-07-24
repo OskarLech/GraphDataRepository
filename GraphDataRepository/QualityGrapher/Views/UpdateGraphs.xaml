@@ -16,6 +16,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
 
         <ContentControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"  x:Name="ListGraphsControl" />
@@ -32,6 +33,7 @@
         </ScrollViewer>
         
         <Button Name="UpdateGraphsButton" Grid.Row ="3" Grid.Column="0" Grid.ColumnSpan="2" Content="{DynamicResource UpdateGraphs}" Click="UpdateGraphsButton_OnClick" />
-        
+
+        <ContentControl Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"  x:Name="QualityCheckControl" />
     </Grid>
 </UserControl>

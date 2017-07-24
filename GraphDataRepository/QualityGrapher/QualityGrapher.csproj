@@ -100,6 +100,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\CommitPointTupleToStringConverter.cs" />
+    <Compile Include="Converters\LanguageConverter.cs" />
     <Compile Include="Converters\SelectedOperationToUserControlConverter.cs" />
     <Compile Include="Converters\TriplestoreOperationToTextConverter.cs" />
     <Compile Include="Models\TriplestoreModel.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Utilities\Serilog\TextBoxSinkFormatProvider.cs" />
     <Compile Include="Utilities\Serilog\TextBoxSink.cs" />
     <Compile Include="ViewModels\CommitPointListViewModel.cs" />
+    <Compile Include="ViewModels\QualityCheckListViewModel.cs" />
     <Compile Include="ViewModels\TriplestoresListViewModel.cs" />
     <Compile Include="ViewModels\TriplestoreViewModel.cs" />
     <Compile Include="MyEntityContext.cs">
@@ -129,6 +131,9 @@
     </Compile>
     <Compile Include="Views\ListGraphs.xaml.cs">
       <DependentUpon>ListGraphs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\QualityCheckControl.xaml.cs">
+      <DependentUpon>QualityCheckControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ReadGraphs.xaml.cs">
       <DependentUpon>ReadGraphs.xaml</DependentUpon>
@@ -206,6 +211,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\QualityCheckControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ReadGraphs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

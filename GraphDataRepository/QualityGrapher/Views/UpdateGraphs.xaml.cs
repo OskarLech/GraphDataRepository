@@ -13,11 +13,13 @@ namespace QualityGrapher.Views
     public partial class UpdateGraphs : UserControl
     {
         private readonly ListGraphs _listGraphsUserControl = new ListGraphs();
+        private readonly QualityCheckControl _qualityCheckControl = new QualityCheckControl();
 
         public UpdateGraphs()
         {
             InitializeComponent();
             ListGraphsControl.Content = _listGraphsUserControl;
+            QualityCheckControl.Content = _qualityCheckControl;
         }
 
         private async void UpdateGraphsButton_OnClick(object sender, RoutedEventArgs e)

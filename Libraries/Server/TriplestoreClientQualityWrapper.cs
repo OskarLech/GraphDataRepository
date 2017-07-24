@@ -20,7 +20,6 @@ namespace Libraries.Server
     {
         private const string TransactionAborted = "Transaction aborted";
         private readonly ITriplestoreClient _triplestoreClient;
-        private readonly IEnumerable<IQualityCheck> _qualityChecks;
 
         private CancellationTokenSource _cancellationTokenSource;
         private ParallelOptions _parallelOptions;
@@ -30,7 +29,6 @@ namespace Libraries.Server
             _triplestoreClient = triplestoreClient;
             _cancellationTokenSource = new CancellationTokenSource();
             _parallelOptions = new ParallelOptions {CancellationToken = _cancellationTokenSource.Token};
-            _qualityChecks = GetQualityChecks();
         }
 
         #region public methods
@@ -232,9 +230,16 @@ namespace Libraries.Server
 
         #region private methods
 
-        private static IEnumerable<IQualityCheck> GetQualityChecks()
+        private static Dictionary<IQualityCheck, List<string>> GetQualityChecksFromTriples(IEnumerable<string> triples)
         {
-            return SupportedQualityChecks.Select(qualityCheck => (IQualityCheck) Activator.CreateInstance(qualityCheck.qualityCheckClass)).ToList();
+            var qualityChecks = new Dictionary<IQualityCheck, List<string>>();
+            foreach (var triple in triples)
+            {
+                var qualityCheck = QualityCheckInstances.First(qc => qc.GetPredicate() == triple.Predicate());
+                qualityChecks[qualityCheck].Add(triple.Object());
+            }
+
+            return qualityChecks;
         }
 
         private async Task<bool> CanAddMetadataTriples(string dataset, IReadOnlyCollection<string> triplesToAdd)
@@ -306,7 +311,7 @@ namespace Libraries.Server
             return true;
         }
 
-        private async Task<bool> CanAddGraphTriples(string dataset, Dictionary<Uri, ValueTuple<IEnumerable<string>, IEnumerable<string>>> triplesByGraphUri)
+        private async Task<bool> CanAddGraphTriples(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
         {
             var activeQualityChecks = (await GetMetadataTriples(dataset))?
                 .ToList();
@@ -326,8 +331,7 @@ namespace Libraries.Server
                 var graphQualityChecks = GetQualityChecksFromTriples(graphQualityCheckTriples);
                 Parallel.ForEach(graphQualityChecks, _parallelOptions, qualityCheck =>
                 {
-                    var qualityCheckReport = qualityCheck.Key.CheckData(triplesByGraphUri[graphUri].Item2,
-                        qualityCheck.Value);
+                    var qualityCheckReport = qualityCheck.Key.CheckData(triplesByGraphUri[graphUri].TriplesToAdd, qualityCheck.Value);
                     if (!qualityCheckReport.QualityCheckPassed)
                     {
                         Verbose($"{qualityCheck.Key.GetType().Name} for graph {graphUri} failed, transaction aborted");
@@ -343,18 +347,6 @@ namespace Libraries.Server
             }
 
             return true;
-        }
-
-        private Dictionary<IQualityCheck, List<string>> GetQualityChecksFromTriples(IEnumerable<string> triples)
-        {
-            var qualityChecks = new Dictionary<IQualityCheck, List<string>>();
-            foreach (var triple in triples)
-            {
-                var qualityCheck = _qualityChecks.First(qc => qc.GetPredicate() == triple.Predicate());
-                qualityChecks[qualityCheck].Add(triple.Object());
-            }
-
-            return qualityChecks;
         }
 
         #endregion
