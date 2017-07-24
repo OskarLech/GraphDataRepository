@@ -9,13 +9,13 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="5*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Name="RevertButton" Grid.Row ="0" Grid.ColumnSpan="2"
+        <ContentControl Grid.Row="0" x:Name="ListCommitPointsControl" />
+        
+        <Button Name="RevertButton" Grid.Row ="1"
                 Content="{DynamicResource RevertToCommitPoint}" Click="RevertButton_OnClick"/>
-
-        <ContentControl Grid.Row="1" x:Name="ListCommitPointsControl" />
     </Grid>
 </UserControl>

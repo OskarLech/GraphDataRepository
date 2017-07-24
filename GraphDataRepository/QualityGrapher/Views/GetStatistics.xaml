@@ -8,19 +8,14 @@
              d:DesignHeight="300" d:DesignWidth="300">
     
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="4*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="4*"/>
         </Grid.RowDefinitions>
 
-        <Button Name="GetStatisticsButton"  Grid.Column="0" Grid.ColumnSpan="2" Grid.Row ="0" Content="{DynamicResource GetStatistics}" Click="GetStatisticsButton_OnClick"/>
-        <ContentControl Grid.Column="0" Grid.Row="1" x:Name="ListDatasetsControl" />
-        <TextBox Name="StatisticsTextBox" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" IsReadOnly="True" TextWrapping="Wrap"
-                 HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+        <ContentControl Grid.Row="0" x:Name="ListDatasetsControl" />
+        <TextBox Name="StatisticsTextBox" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+        <Button Name="GetStatisticsButton" Grid.Row ="2" Content="{DynamicResource GetStatistics}" Click="GetStatisticsButton_OnClick"/>
     </Grid>
 </UserControl>

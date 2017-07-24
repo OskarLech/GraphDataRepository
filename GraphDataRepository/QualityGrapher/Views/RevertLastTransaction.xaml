@@ -7,16 +7,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="4*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Name="RevertLastTransactionButton"  Grid.Column="0" Grid.ColumnSpan="2" Grid.Row ="0" Content="{DynamicResource RevertLastTransaction}" Click="RevertLastTransactionButton_OnClick"/>
-        <ContentControl Grid.Column="0" Grid.Row="1" x:Name="ListDatasetsControl" />
+        <ContentControl Grid.Row="0" x:Name="ListDatasetsControl" />
+        <Button Name="RevertLastTransactionButton" Grid.Row ="1" Content="{DynamicResource RevertLastTransaction}" Click="RevertLastTransactionButton_OnClick"/>
     </Grid>
 </UserControl>

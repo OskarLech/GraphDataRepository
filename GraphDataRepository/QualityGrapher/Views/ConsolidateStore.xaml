@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel>
-        <Button Content="{DynamicResource ConsolidateStore}" Click="ButtonBase_OnClick"/>
         <ContentControl Name="ListDatasetsControl" Loaded="ListDatasetControl_OnLoaded"/>
+        <Button Content="{DynamicResource ConsolidateStore}" Click="ButtonBase_OnClick"/>
     </StackPanel>
 </UserControl>

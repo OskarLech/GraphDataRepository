@@ -9,13 +9,13 @@
     
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="4*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="4*"/>
         </Grid.RowDefinitions>
 
-        <Button Name="ReadGraphsButton" Grid.Row ="0" Content="{DynamicResource ReadGraphs}" Click="ReadGraphsButton_OnClick" />
-        <ContentControl x:Name="ListGraphsControl" Grid.Row="1" />
-        <TextBox Name="GraphTriples" Grid.Row="2" IsReadOnly="True" />
+        <ContentControl x:Name="ListGraphsControl" Grid.Row="0" />
+        <TextBox Name="GraphTriples" Grid.Row="1" IsReadOnly="True" />
+        <Button Name="ReadGraphsButton" Grid.Row ="2" Content="{DynamicResource ReadGraphs}" Click="ReadGraphsButton_OnClick" />
     </Grid>
 </UserControl>

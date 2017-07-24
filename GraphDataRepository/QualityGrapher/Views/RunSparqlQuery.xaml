@@ -8,11 +8,12 @@
              d:DesignHeight="300" d:DesignWidth="300">
     
     <StackPanel>
-        <Button Name="ExecuteQuery" Content="{DynamicResource RunSparqlQuery}" Click="ExecuteQuery_OnClick"/>
         <ContentControl x:Name="ListGraphsControl" />
-        
+
         <TextBlock Text="{DynamicResource SparqlQuery}" HorizontalAlignment="Center" FontWeight="Bold"/>
         <TextBox Name="QueryBox" TextWrapping="Wrap" AcceptsReturn="True" />
+        
+        <Button Name="ExecuteQuery" Content="{DynamicResource RunSparqlQuery}" Click="ExecuteQuery_OnClick" Margin="0 5 0 5"/>
 
         <TextBlock Text="{DynamicResource SparqlQueryResult}" HorizontalAlignment="Center" FontWeight="Bold"/>
         <TextBox Name="ResponseBox" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True"/>        
