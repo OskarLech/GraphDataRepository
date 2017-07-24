@@ -19,10 +19,11 @@ namespace QualityGrapher.Views
         private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            var mainWindow = (MainWindow) Application.Current.MainWindow;
 
-            var dataset = _listDatasetsUserControl.DatasetListBox.SelectedItem.ToString();
-            if (triplestoreClientQualityWrapper == null || string.IsNullOrWhiteSpace(dataset) || !await triplestoreClientQualityWrapper.ConsolidateDataset(dataset))
+            var dataset = _listDatasetsUserControl.DatasetListBox.SelectedItem?.ToString();
+            if (string.IsNullOrWhiteSpace(dataset) || triplestoreClientQualityWrapper == null || 
+                string.IsNullOrWhiteSpace(dataset) || !await triplestoreClientQualityWrapper.ConsolidateDataset(dataset))
             {
                 mainWindow.OnOperationFailed();
             }

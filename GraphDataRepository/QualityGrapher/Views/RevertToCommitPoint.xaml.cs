@@ -28,7 +28,8 @@ namespace QualityGrapher.Views
 
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             var dataset = UserControlHelper.GetDatasetFromListDatasetsUserControl(_listCommitPointsUserControl.ListDatasetsControl);
-            var commitPoint = ((ulong Id, DateTime commitDate)) _listCommitPointsUserControl.CommitPointsListBox.SelectedItem;
+
+            var commitPoint = _listCommitPointsUserControl.CommitInfoList.SelectedCommit;
             if (await triplestoreClientQualityWrapper.RevertToCommitPoint(dataset, commitPoint.Id))
             {
                 mainWindow.OnOperationFailed();
