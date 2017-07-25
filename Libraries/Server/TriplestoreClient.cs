@@ -37,6 +37,16 @@ namespace Libraries.Server
         public abstract Task<IEnumerable<string>> ListDatasets();
         public abstract Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri);
 
+        public virtual async Task<bool> CreateGraph(string dataset, Uri graphUri)
+        {
+            var triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
+            {
+                [graphUri] = (new List<string>(), new List<string> { "<http://www.brightstardb.com/companies/brightstardb> <http://www.w3.org/2000/01/rdf-schema#label> \"BrightstarDB\"" })
+            };
+
+            return await UpdateGraphs(dataset, triplesByGraphUri);
+        }
+
         public virtual Task<bool> CreateCommitPoint(string dataset)
         {
             return Task.FromResult(true);

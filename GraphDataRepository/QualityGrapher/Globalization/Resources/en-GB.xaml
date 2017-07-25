@@ -12,6 +12,7 @@
     <system:String x:Key="CreateDataset">Create dataset</system:String>
     <system:String x:Key="DeleteDataset">Delete dataset</system:String>
     <system:String x:Key="ListDatasets">List datasets</system:String>
+    <system:String x:Key="CreateGraphs">Create graphs</system:String>
     <system:String x:Key="DeleteGraphs">Delete graphs</system:String>
     <system:String x:Key="UpdateGraphs">Update graphs</system:String>
     <system:String x:Key="ReadGraphs">Read graphs</system:String>
@@ -26,9 +27,16 @@
     <!--Labels-->
     <system:String x:Key="Datasets">Datasets</system:String>
     <system:String x:Key="Graphs">Graphs</system:String>
+    <system:String x:Key="AddGraph">Add graph</system:String>
     <system:String x:Key="TriplesToAdd">Triples to add</system:String>
     <system:String x:Key="TriplesToRemove">Triples to remove</system:String>
     <system:String x:Key="SparqlQuery">Enter SPARQL query</system:String>
     <system:String x:Key="SparqlQueryResult">SPARQL query result</system:String>
+    <system:String x:Key="AddQualityCheck">Add quality checks</system:String>
+    <system:String x:Key="RemoveQualityCheck">Remove quality checks</system:String>
+
+    <!--QualityCheckNames-->
+    <system:String x:Key="KnowledgeBaseCheck">Knowledge base check</system:String>
+    <system:String x:Key="VocabularyCheck">Vocabulary check</system:String>
 
 </ResourceDictionary>

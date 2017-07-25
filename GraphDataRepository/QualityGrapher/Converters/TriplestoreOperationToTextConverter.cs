@@ -28,6 +28,9 @@ namespace QualityGrapher.Converters
                     case SupportedOperation.ListDatasets:
                         operationTextList.Add(ResourceDictionary[nameof(SupportedOperation.ListDatasets)].ToString());
                         break;
+                    case SupportedOperation.CreateGraphs:
+                        operationTextList.Add(ResourceDictionary[nameof(SupportedOperation.CreateGraphs)].ToString());
+                        break;
                     case SupportedOperation.DeleteGraphs:
                         operationTextList.Add(ResourceDictionary[nameof(SupportedOperation.DeleteGraphs)].ToString());
                         break;

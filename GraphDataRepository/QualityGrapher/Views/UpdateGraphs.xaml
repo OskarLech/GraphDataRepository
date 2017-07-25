@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:QualityGrapher.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -15,7 +16,7 @@
             <RowDefinition Height="5*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
 
@@ -32,7 +33,7 @@
                     ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
         </ScrollViewer>
         
-        <Button Name="UpdateGraphsButton" Grid.Row ="3" Grid.Column="0" Grid.ColumnSpan="2" Content="{DynamicResource UpdateGraphs}" Click="UpdateGraphsButton_OnClick" />
+        <Button Margin="0 5 0 5" Name="UpdateGraphsButton" Grid.Row ="3" Grid.Column="0" Grid.ColumnSpan="2" Content="{DynamicResource UpdateGraphs}" Click="UpdateGraphsButton_OnClick" />
 
         <ContentControl Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"  x:Name="QualityCheckControl" />
     </Grid>

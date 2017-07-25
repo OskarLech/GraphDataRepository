@@ -4,9 +4,32 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:QualityGrapher.Views"
+             xmlns:converters="clr-namespace:QualityGrapher.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel>
-        <ComboBox Name="QualityCheckComboBox" ItemsSource="{Binding SupportedQualityChecks}" Loaded="QualityCheckListBox_OnLoaded"/>
-    </StackPanel>
+
+    <UserControl.Resources>
+        <converters:QualityCheckToTextConverter x:Key="QualityCheckToTextConverter" />
+    </UserControl.Resources>
+
+    <Grid Margin="0 5 0 5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <Button Grid.Column="0" Grid.Row="0" Content="{DynamicResource AddQualityCheck}" Name="AddQualityCheckButton" Click="AddQualityCheckButton_OnClick"/>
+        <Button Grid.Column="1" Grid.Row="0" Content="{DynamicResource RemoveQualityCheck}" Name="RemoveQualityCheckButton" Click="RemoveQualityCheckButton_OnClick"/>
+        
+        <ComboBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Name="QualityCheckComboBox" 
+                  ItemsSource="{Binding SupportedQualityCheckList, Converter={StaticResource QualityCheckToTextConverter}}"
+                  HorizontalContentAlignment="Center" Loaded="QualityCheckListBox_OnLoaded" />
+
+    </Grid>
 </UserControl>

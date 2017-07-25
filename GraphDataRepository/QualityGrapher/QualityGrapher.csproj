@@ -101,6 +101,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\CommitPointTupleToStringConverter.cs" />
     <Compile Include="Converters\LanguageConverter.cs" />
+    <Compile Include="Converters\QualityCheckToTextConverter.cs" />
     <Compile Include="Converters\SelectedOperationToUserControlConverter.cs" />
     <Compile Include="Converters\TriplestoreOperationToTextConverter.cs" />
     <Compile Include="Models\TriplestoreModel.cs" />
@@ -122,6 +123,9 @@
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\ConsolidateStore.xaml.cs">
       <DependentUpon>ConsolidateStore.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateGraphs.xaml.cs">
+      <DependentUpon>CreateGraphs.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GetStatistics.xaml.cs">
       <DependentUpon>GetStatistics.xaml</DependentUpon>
@@ -164,6 +168,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CreateDataset.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CreateGraphs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

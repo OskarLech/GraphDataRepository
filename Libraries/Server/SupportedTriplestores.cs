@@ -18,6 +18,7 @@ namespace Libraries.Server
             CreateDataset,
             DeleteDataset,
             ListDatasets,
+            CreateGraphs,
             DeleteGraphs,
             UpdateGraphs,
             ReadGraphs,
@@ -48,6 +49,7 @@ namespace Libraries.Server
                 supportedOperations.Add(SupportedOperation.CreateDataset);
                 supportedOperations.Add(SupportedOperation.DeleteDataset);
                 supportedOperations.Add(SupportedOperation.ListDatasets);
+                supportedOperations.Add(SupportedOperation.CreateGraphs);
                 supportedOperations.Add(SupportedOperation.DeleteGraphs);
                 supportedOperations.Add(SupportedOperation.UpdateGraphs);
                 supportedOperations.Add(SupportedOperation.ReadGraphs);

@@ -19,6 +19,8 @@ namespace QualityGrapher.Converters
                     return new DeleteDataset();
                 case SupportedOperation.ListDatasets:
                     return new ListDatasets();
+                case SupportedOperation.CreateGraphs:
+                    return new CreateGraphs();
                 case SupportedOperation.DeleteGraphs:
                     return new DeleteGraphs();
                 case SupportedOperation.UpdateGraphs:

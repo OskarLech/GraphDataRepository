@@ -42,14 +42,7 @@ namespace Libraries.Server
                 return false;
             }
 
-            //create metadata graph
-            var triplesByGraphUri =
-                new Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)>
-                {
-                    [MetadataGraphUri] = (new List<string>(), new List<string> { "<http://www.brightstardb.com/companies/brightstardb> <http://www.w3.org/2000/01/rdf-schema#label> \"BrightstarDB\"" })
-                };
-
-            return await _triplestoreClient.UpdateGraphs(name, triplesByGraphUri);
+            return await _triplestoreClient.CreateGraph(name, MetadataGraphUri);
         }
 
         public async Task<bool> DeleteDataset(string name)
@@ -144,6 +137,11 @@ namespace Libraries.Server
         public async Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query)
         {
             return await _triplestoreClient.RunSparqlQuery(dataset, graphs, query);
+        }
+
+        public async Task<bool> CreateGraph(string dataset, Uri graphUri)
+        {
+            return await _triplestoreClient.CreateGraph(dataset, graphUri);
         }
 
         public void CancelOperation()

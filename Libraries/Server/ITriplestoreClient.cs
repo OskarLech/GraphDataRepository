@@ -16,6 +16,7 @@ namespace Libraries.Server
         Task<IEnumerable<string>> ListDatasets();
         Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris);
         Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri);
+        Task<bool> CreateGraph(string dataset, Uri graphUri);
         Task<IEnumerable<IGraph>> ReadGraphs(string dataset, IEnumerable<Uri> graphUris);
         Task<IEnumerable<Uri>> ListGraphs(string dataset);
         Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query);

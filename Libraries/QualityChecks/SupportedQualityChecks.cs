@@ -8,18 +8,23 @@ namespace Libraries.QualityChecks
     {
         public const string WholeDatasetSubject = "WholeDataset";
         public static readonly Uri MetadataGraphUri = new Uri("resources://metadata");
-        public static readonly IEnumerable<(string name, Type qualityCheckClass)> SupportedQualityChecks;
         public static readonly IEnumerable<IQualityCheck> QualityCheckInstances;
+
+        public enum SupportedQualityCheck
+        {
+            KnowledgeBaseCheck,
+            VocabularyCheck
+        }
 
         static QualityChecksData()
         {
-            SupportedQualityChecks = new List<(string, Type)>
+            var supportedQualityChecks = new List<(SupportedQualityCheck Name, Type QualityCheckClass)>
             {
-                ("KnowledgeBase check", typeof(KnowledgeBaseCheck.KnowledgeBaseCheck)),
-                ("Vocabulary check", typeof(VocabularyCheck.VocabularyCheck))
+                (SupportedQualityCheck.KnowledgeBaseCheck, typeof(KnowledgeBaseCheck.KnowledgeBaseCheck)),
+                (SupportedQualityCheck.VocabularyCheck, typeof(VocabularyCheck.VocabularyCheck))
             };
 
-            QualityCheckInstances = SupportedQualityChecks.Select(qualityCheck => (IQualityCheck)Activator.CreateInstance(qualityCheck.qualityCheckClass))
+            QualityCheckInstances = supportedQualityChecks.Select(qualityCheck => (IQualityCheck)Activator.CreateInstance(qualityCheck.QualityCheckClass))
                 .ToList();
         }
     }

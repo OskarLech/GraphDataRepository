@@ -12,6 +12,7 @@
     <system:String x:Key="CreateDataset">Stwórz ontologię</system:String>
     <system:String x:Key="DeleteDataset">Usuń ontologię</system:String>
     <system:String x:Key="ListDatasets">Lista ontologii</system:String>
+    <system:String x:Key="CreateGraphs">Stwórz grafy</system:String>
     <system:String x:Key="DeleteGraphs">Usuń grafy</system:String>
     <system:String x:Key="UpdateGraphs">Zaktualizuj grafy</system:String>
     <system:String x:Key="ReadGraphs">Pobierz grafy</system:String>
@@ -26,9 +27,16 @@
     <!--Labels-->
     <system:String x:Key="Datasets">Ontologie</system:String>
     <system:String x:Key="Graphs">Grafy</system:String>
+    <system:String x:Key="AddGraph">Dodaj graf</system:String>
     <system:String x:Key="TriplesToAdd">Trójki do dodania</system:String>
     <system:String x:Key="TriplesToRemove">Trójki do usunięcia</system:String>
     <system:String x:Key="SparqlQuery">Podaj zapytanie SPARQL</system:String>
     <system:String x:Key="SparqlQueryResult">Wynik zapytania SPARQL</system:String>
+    <system:String x:Key="AddQualityCheck">Dodaj standardy jakości</system:String>
+    <system:String x:Key="RemoveQualityCheck">Usuń standardy jakości</system:String>
+    
+    <!--QualityCheckNames-->
+    <system:String x:Key="KnowledgeBaseCheck">Standard jakości - zewnętrzna baza wiedzy</system:String>
+    <system:String x:Key="VocabularyCheck">Standard jakości - słownictwo</system:String>
 
 </ResourceDictionary>

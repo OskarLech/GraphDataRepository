@@ -10,10 +10,10 @@ namespace QualityGrapher.Converters
 {
     public abstract class LanguageConverter : IValueConverter
     {
+        protected ResourceDictionary ResourceDictionary;
+
         public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
         public abstract object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture);
-
-        protected ResourceDictionary ResourceDictionary;
 
         protected LanguageConverter()
         {
