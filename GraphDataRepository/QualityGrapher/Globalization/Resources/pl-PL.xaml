@@ -32,9 +32,11 @@
     <system:String x:Key="TriplesToRemove">Trójki do usunięcia</system:String>
     <system:String x:Key="SparqlQuery">Podaj zapytanie SPARQL</system:String>
     <system:String x:Key="SparqlQueryResult">Wynik zapytania SPARQL</system:String>
-    <system:String x:Key="AddQualityCheck">Dodaj standardy jakości</system:String>
-    <system:String x:Key="RemoveQualityCheck">Usuń standardy jakości</system:String>
-    
+    <system:String x:Key="AddQualityCheck">Dodaj wymagany standard jakości</system:String>
+    <system:String x:Key="RemoveQualityCheck">Usuń wymagany standard jakości</system:String>
+    <system:String x:Key="QualityCheckParameter">Parametr standardu jakości</system:String>
+    <system:String x:Key="ActiveQualityCheckRequirements">Aktywne standardy jakości</system:String>
+
     <!--QualityCheckNames-->
     <system:String x:Key="KnowledgeBaseCheck">Standard jakości - zewnętrzna baza wiedzy</system:String>
     <system:String x:Key="VocabularyCheck">Standard jakości - słownictwo</system:String>

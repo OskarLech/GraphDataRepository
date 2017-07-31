@@ -72,7 +72,7 @@
     <Compile Include="QualityChecks\KnowledgeBaseCheck\KnowledgeBaseCheck.cs" />
     <Compile Include="QualityChecks\QualityCheck.cs" />
     <Compile Include="QualityChecks\QualityCheckReport.cs" />
-    <Compile Include="QualityChecks\SupportedQualityChecks.cs" />
+    <Compile Include="QualityChecks\QualityChecksData.cs" />
     <Compile Include="Server\ITriplestoreClientQualityWrapper.cs" />
     <Compile Include="Server\TriplestoreClientQualityWrapper.cs" />
     <Compile Include="QualityChecks\VocabularyCheck\VocabularyCheck.cs" />
@@ -105,4 +105,8 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -34,7 +34,7 @@ namespace Libraries.Server
         #region public methods
 
         #region ITripleStoreClient implementation
-         
+
         public async Task<bool> CreateDataset(string name)
         {
             if (!await _triplestoreClient.CreateDataset(name))

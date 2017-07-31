@@ -27,7 +27,7 @@ namespace QualityGrapher.Views
                 return;
             }
 
-            var dataset = _listDatasetsUserControl.DatasetListBox.SelectedItem.ToString();
+            var dataset = _listDatasetsUserControl.DatasetListBox.SelectedItem?.ToString();
             var statistics = await triplestoreClientQualityWrapper.GetStatistics(dataset);
             if (string.IsNullOrWhiteSpace(dataset) || string.IsNullOrWhiteSpace(statistics))
             {

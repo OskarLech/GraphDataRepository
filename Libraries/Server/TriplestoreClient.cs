@@ -9,6 +9,7 @@ using Common;
 using VDS.RDF;
 using VDS.RDF.Query;
 using VDS.RDF.Storage;
+using static Libraries.QualityChecks.QualityChecksData;
 using static Serilog.Log;
 
 namespace Libraries.Server
@@ -39,9 +40,21 @@ namespace Libraries.Server
 
         public virtual async Task<bool> CreateGraph(string dataset, Uri graphUri)
         {
+            const string dummyResource = "http://www.example.com/dummyResource";
+            var dummyTriple = new List<string> { $"<{dummyResource}> <{dummyResource}> \"dummyObject\"" }; //empty graph is automatically removed
             var triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
             {
-                [graphUri] = (new List<string>(), new List<string> { "<http://www.brightstardb.com/companies/brightstardb> <http://www.w3.org/2000/01/rdf-schema#label> \"BrightstarDB\"" })
+                [graphUri] = (new List<string>(), dummyTriple)
+            };
+
+            if (!await UpdateGraphs(dataset, triplesByGraphUri))
+            {
+                return false;
+            }
+
+            triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
+            {
+                [graphUri] = (dummyTriple, new List<string>())
             };
 
             return await UpdateGraphs(dataset, triplesByGraphUri);

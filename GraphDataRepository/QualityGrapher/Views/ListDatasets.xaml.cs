@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,6 +10,8 @@ namespace QualityGrapher.Views
     /// </summary>
     public partial class ListDatasets : UserControl
     {
+        private readonly MainWindow _mainWindow = (MainWindow) Application.Current.MainWindow;
+
         public ListDatasets()
         {
             InitializeComponent();
@@ -29,11 +30,9 @@ namespace QualityGrapher.Views
             }
 
             var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-
             if (triplestoreClientQualityWrapper == null)
             {
-                mainWindow.OnOperationFailed();
+                _mainWindow.OnOperationFailed();
                 return;
             }
 
@@ -44,8 +43,29 @@ namespace QualityGrapher.Views
             }
             else
             {
-                mainWindow.OnOperationFailed();
+                _mainWindow.OnOperationFailed();
             }
+        }
+
+        private async void DatasetListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DatasetListBox.SelectedItems.Count == 0) return;
+            var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
+            if (triplestoreClientQualityWrapper == null)
+            {
+                _mainWindow.OnOperationFailed();
+                return;
+            }
+
+            var metadataTriples = await triplestoreClientQualityWrapper.GetMetadataTriples(DatasetListBox.SelectedItems[0].ToString());
+            if (metadataTriples == null)
+            {
+                _mainWindow.OnOperationFailed();
+                return;
+            }
+
+            var text = metadataTriples.Aggregate("", (current, triple) => current + triple.ToString() + "\n");
+            ActiveQualityCheckRequirementsTextBox.Text = text;
         }
     }
 }

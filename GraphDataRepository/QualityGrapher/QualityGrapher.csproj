@@ -136,9 +136,6 @@
     <Compile Include="Views\ListGraphs.xaml.cs">
       <DependentUpon>ListGraphs.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\QualityCheckControl.xaml.cs">
-      <DependentUpon>QualityCheckControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\ReadGraphs.xaml.cs">
       <DependentUpon>ReadGraphs.xaml</DependentUpon>
     </Compile>
@@ -219,10 +216,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\QualityCheckControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\ReadGraphs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -285,4 +278,12 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.2.0.0\build\netstandard1.4\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.0.0\build\netstandard1.4\Fody.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>
