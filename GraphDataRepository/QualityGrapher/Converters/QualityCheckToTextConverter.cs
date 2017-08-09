@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using static Libraries.QualityChecks.QualityChecksData;
 
 namespace QualityGrapher.Converters
@@ -33,7 +34,9 @@ namespace QualityGrapher.Converters
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            var qualityCheckKey = ResourceDictionary.Keys.Cast<object>().FirstOrDefault(key => ResourceDictionary[key].ToString() == value?.ToString());
+            Enum.TryParse<SupportedQualityCheck>(qualityCheckKey?.ToString(), true, out var qualityCheckAsEnum);
+            return qualityCheckAsEnum;
         }
     }
 }

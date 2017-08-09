@@ -6,7 +6,7 @@ namespace Libraries.QualityChecks
 {
     public static class QualityChecksData
     {
-        public const string WholeDatasetSubject = "WholeDataset";
+        public static readonly Uri WholeDatasetSubjectUri = new Uri("resources://wholedataset");
         public static readonly Uri MetadataGraphUri = new Uri("resources://metadata");
         public static readonly IEnumerable<IQualityCheck> QualityCheckInstances;
 

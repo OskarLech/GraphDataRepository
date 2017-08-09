@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Libraries.QualityChecks;
 using QualityGrapher.ViewModels;
 using static Libraries.QualityChecks.QualityChecksData;
 
@@ -61,7 +62,7 @@ namespace QualityGrapher.Views
             QualityCheckComboBox.SelectedIndex = 0;
         }
 
-        private void AddQualityCheckButton_OnClick(object sender, RoutedEventArgs e)
+        private async void AddQualityCheckButton_OnClick(object sender, RoutedEventArgs e)
         {
             var graphs = _listGraphsUserControl.ListGraphsListBox.SelectedItems.Cast<Uri>()
                 .ToList();
@@ -73,15 +74,27 @@ namespace QualityGrapher.Views
             }
 
             var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
+            var dataset = UserControlHelper.GetDatasetFromListDatasetsUserControl(_listGraphsUserControl.ListDatasetsControl);
+
             if (graphs.Any(g => g == MetadataGraphUri))
             {
-                throw new System.NotImplementedException();
+                var qualityCheckName = ((QualityCheckListViewModel)QualityCheckComboBox.DataContext).SelectedQualityCheck.ToString();
+                var qualityCheckPredicate = QualityCheckInstances.FirstOrDefault(i => i.GetPredicate().Contains(qualityCheckName))?.GetPredicate();
+                if (qualityCheckPredicate == null)
+                {
+                    return;
+                }
+
+                await triplestoreClientQualityWrapper.UpdateGraphs(dataset, new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
+                {
+                    [MetadataGraphUri] = (null, new List<string> { $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" })
+                });
             }
 
             throw new System.NotImplementedException();
         }
 
-        private void RemoveQualityCheckButton_OnClick(object sender, RoutedEventArgs e)
+        private async void RemoveQualityCheckButton_OnClick(object sender, RoutedEventArgs e)
         {
             throw new System.NotImplementedException();
         }

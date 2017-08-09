@@ -233,8 +233,16 @@ namespace Libraries.Server
             var qualityChecks = new Dictionary<IQualityCheck, List<string>>();
             foreach (var triple in triples)
             {
-                var qualityCheck = QualityCheckInstances.First(qc => qc.GetPredicate() == triple.Predicate());
-                qualityChecks[qualityCheck].Add(triple.Object());
+                var qualityCheck = QualityCheckInstances.FirstOrDefault(qc => qc.GetPredicate() == triple.Predicate());
+                if (qualityCheck != null)
+                {
+                    if (!qualityChecks.ContainsKey(qualityCheck))
+                    {
+                        qualityChecks[qualityCheck] = new List<string>();
+                    }
+
+                    qualityChecks[qualityCheck].Add(triple.Object());
+                }
             }
 
             return qualityChecks;
@@ -249,7 +257,7 @@ namespace Libraries.Server
                 return false;
             }
 
-            var graphs = await _triplestoreClient.ReadGraphs(dataset, graphList);
+            var graphs = (await _triplestoreClient.ReadGraphs(dataset, graphList))?.ToList();
             if (graphs == null)
             {
                 Verbose("Transaction failed due to connection error");
@@ -257,21 +265,10 @@ namespace Libraries.Server
             }
 
             //Quality checks regarding whole dataset
-            var datasetTriples = triplesToAdd.Where(t => t.Subject() == WholeDatasetSubject)
+            var datasetTriples = triplesToAdd.Where(t => t.Subject() == WholeDatasetSubjectUri.ToString())
                 .ToList();
 
-            var datasetQualityChecks = GetQualityChecksFromTriples(datasetTriples);
-            var qualityChecksPassed = true;
-            Parallel.ForEach(datasetQualityChecks, _parallelOptions, qualityCheck =>
-            {
-                var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphs, qualityCheck.Value);
-                if (!qualityCheckReport.QualityCheckPassed)
-                {
-                    Verbose($"{qualityCheck.Key.GetType().Name} for whole dataset failed");
-                    qualityChecksPassed = false;
-                }
-            });
-
+            var qualityChecksPassed = QualityChecksForWholeDatasetPassed(graphs, datasetTriples);
             if (!qualityChecksPassed)
             {
                 Verbose(TransactionAborted);
@@ -285,6 +282,21 @@ namespace Libraries.Server
             var graphUris = graphTriples.Select(t => t.Subject())
                 .Distinct();
 
+            qualityChecksPassed = QualityChecksForGraphsPassed(graphs, graphTriples, graphUris);
+
+            if (!qualityChecksPassed)
+            {
+                Verbose(TransactionAborted);
+                return false;
+            }
+
+            return true;
+        }
+
+        //TODO: QualityChecksForGraphsPassed and QualityChecksForWholeDatasetPassed can have some common code extracted
+        private bool QualityChecksForGraphsPassed(IReadOnlyCollection<IGraph> graphs, IReadOnlyCollection<string> graphTriples, IEnumerable<string> graphUris)
+        {
+            var qualityChecksPassed = true;
             foreach (var graphUri in graphUris)
             {
                 var qualityChecks = GetQualityChecksFromTriples(graphTriples.Where(t => t.Subject() == graphUri));
@@ -300,13 +312,29 @@ namespace Libraries.Server
                 });
             }
 
-            if (!qualityChecksPassed)
+            return qualityChecksPassed;
+        }
+
+        private bool QualityChecksForWholeDatasetPassed(IEnumerable<IGraph> graphs, IEnumerable<string> datasetTriples)
+        {
+            var datasetQualityChecks = GetQualityChecksFromTriples(datasetTriples);
+            var qualityChecksPassed = true;
+
+            var graphsToCheck = graphs.Where(g => g.BaseUri != MetadataGraphUri).ToList();
+            if (graphsToCheck.Any())
             {
-                Verbose(TransactionAborted);
-                return false;
+                Parallel.ForEach(datasetQualityChecks, _parallelOptions, qualityCheck =>
+                {
+                    var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphsToCheck, qualityCheck.Value);
+                    if (!qualityCheckReport.QualityCheckPassed)
+                    {
+                        Verbose($"{qualityCheck.Key.GetType().Name} for whole dataset failed");
+                        qualityChecksPassed = false;
+                    }
+                });
             }
 
-            return true;
+            return qualityChecksPassed;
         }
 
         private async Task<bool> CanAddGraphTriples(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
@@ -323,7 +351,7 @@ namespace Libraries.Server
             var graphQualityChecksPassed = false;
             foreach (var graphUri in triplesByGraphUri.Keys)
             {
-                var graphQualityCheckTriples = activeQualityChecks.Where(t => t.Subject.ToString() == WholeDatasetSubject || t.Subject.ToString() == graphUri.ToString())
+                var graphQualityCheckTriples = activeQualityChecks.Where(t => t.Subject.ToString() == WholeDatasetSubjectUri.ToString() || t.Subject.ToString() == graphUri.ToString())
                     .Select(t => t.ToString());
 
                 var graphQualityChecks = GetQualityChecksFromTriples(graphQualityCheckTriples);

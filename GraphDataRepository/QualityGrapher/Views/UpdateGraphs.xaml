@@ -12,7 +12,7 @@
         <converters:QualityCheckToTextConverter x:Key="QualityCheckToTextConverter" />
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="0 5 0 5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
@@ -46,8 +46,9 @@
         <Button Grid.Column="0" Grid.Row="4" Content="{DynamicResource AddQualityCheck}" Name="AddQualityCheckButton" Click="AddQualityCheckButton_OnClick"/>
         <Button Grid.Column="1" Grid.Row="4" Content="{DynamicResource RemoveQualityCheck}" Name="RemoveQualityCheckButton" Click="RemoveQualityCheckButton_OnClick"/>
 
-        <ComboBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" Name="QualityCheckComboBox" 
+        <ComboBox Margin="0 5 0 5" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" Name="QualityCheckComboBox" 
                   ItemsSource="{Binding SupportedQualityCheckList, Converter={StaticResource QualityCheckToTextConverter}}"
+                  SelectedItem="{Binding SelectedQualityCheck, Mode=TwoWay, Converter={StaticResource QualityCheckToTextConverter}}"
                   HorizontalContentAlignment="Center" Loaded="QualityCheckListBox_OnLoaded" />
 
         <TextBlock Grid.Column="0" Grid.Row="6" Text="{DynamicResource QualityCheckParameter}"/>

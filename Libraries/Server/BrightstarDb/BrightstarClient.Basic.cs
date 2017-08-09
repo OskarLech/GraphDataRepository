@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BrightstarDB.Client;
+using Common;
 using static Serilog.Log;
 
 namespace Libraries.Server.BrightstarDb
@@ -96,7 +98,7 @@ namespace Libraries.Server.BrightstarDb
                     {
                         foreach (var triple in triples.Value.TriplesToRemove)
                         {
-                            deletePatterns.AppendLine($"{triple} <{triples.Key}> .");
+                            deletePatterns.AppendLine($"{ConvertToBrightstarCompatibleTriple(triple)}<{triples.Key}> .");
                         }
                     }
 
@@ -104,7 +106,7 @@ namespace Libraries.Server.BrightstarDb
                     {
                         foreach (var triple in triples.Value.TriplesToAdd)
                         {
-                            insertData.AppendLine($"{triple} <{triples.Key}> .");
+                            insertData.AppendLine($"{ConvertToBrightstarCompatibleTriple(triple)}<{triples.Key}> .");
                         }
                     }
                 }
@@ -142,5 +144,33 @@ namespace Libraries.Server.BrightstarDb
         }
 
         #endregion
+
+        private static string ConvertToBrightstarCompatibleTriple(string triple)
+        {
+            var tripleNodes = new[] {triple.Subject(), triple.Predicate(), triple.Object()};
+
+            var result = "";
+            for (var i = 0; i < 3; i++)
+            {
+                var node = tripleNodes[i];
+                if (string.IsNullOrWhiteSpace(node))
+                {
+                    continue;
+                }
+
+                if (i == 2)
+                {
+                    if (!Uri.TryCreate(node, UriKind.Absolute, out var dummy))
+                    {
+                        result = result + node.Insert(node.Length, "\" ").Insert(0, "\"");
+                        continue;
+                    }
+                }
+
+                result = result + node.Insert(node.Length, "> ").Insert(0, "<");
+            }
+
+            return result;
+        }
     }
 }

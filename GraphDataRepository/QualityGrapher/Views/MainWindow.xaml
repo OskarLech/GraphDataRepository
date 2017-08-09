@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Closing="MainWindow_OnClosing"
         
-        Title="Quality Grapher" Height="700" Width="550">
+        Title="Quality Grapher" Height="900" Width="550">
 
     <Window.Resources>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
