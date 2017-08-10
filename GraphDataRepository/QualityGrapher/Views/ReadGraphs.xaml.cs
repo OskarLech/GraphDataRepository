@@ -47,7 +47,7 @@ namespace QualityGrapher.Views
             }
 
             var triplesList = graph.FirstOrDefault()?.Triples.ToList();
-            GraphTriples.Text = triplesList?.Aggregate<Triple, string>(null, (current, triple) => current + triple.ToString());
+            GraphTriples.Text = triplesList?.Aggregate<Triple, string>(null, (current, triple) => current + triple.ToString() + "\n");
             mainWindow.OnOperationSucceeded();
         }
     }

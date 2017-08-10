@@ -257,7 +257,10 @@ namespace Libraries.Server
                 return false;
             }
 
-            var graphs = (await _triplestoreClient.ReadGraphs(dataset, graphList))?.ToList();
+            var graphs = (await _triplestoreClient.ReadGraphs(dataset, graphList))?
+                .Where(g => g.BaseUri != MetadataGraphUri)
+                .ToList();
+
             if (graphs == null)
             {
                 Verbose("Transaction failed due to connection error");
@@ -320,12 +323,12 @@ namespace Libraries.Server
             var datasetQualityChecks = GetQualityChecksFromTriples(datasetTriples);
             var qualityChecksPassed = true;
 
-            var graphsToCheck = graphs.Where(g => g.BaseUri != MetadataGraphUri).ToList();
-            if (graphsToCheck.Any())
+            var graphList = graphs.ToList();
+            if (graphList.Any())
             {
                 Parallel.ForEach(datasetQualityChecks, _parallelOptions, qualityCheck =>
                 {
-                    var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphsToCheck, qualityCheck.Value);
+                    var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphList, qualityCheck.Value);
                     if (!qualityCheckReport.QualityCheckPassed)
                     {
                         Verbose($"{qualityCheck.Key.GetType().Name} for whole dataset failed");
@@ -348,7 +351,13 @@ namespace Libraries.Server
                 return false;
             }
 
-            var graphQualityChecksPassed = false;
+            if (!activeQualityChecks.Any())
+            {
+                return true;
+            }
+
+            var graphQualityChecksPassed = true;
+            var _lock = new object();
             foreach (var graphUri in triplesByGraphUri.Keys)
             {
                 var graphQualityCheckTriples = activeQualityChecks.Where(t => t.Subject.ToString() == WholeDatasetSubjectUri.ToString() || t.Subject.ToString() == graphUri.ToString())
@@ -361,7 +370,10 @@ namespace Libraries.Server
                     if (!qualityCheckReport.QualityCheckPassed)
                     {
                         Verbose($"{qualityCheck.Key.GetType().Name} for graph {graphUri} failed, transaction aborted");
-                        graphQualityChecksPassed = false;
+                        lock (_lock)
+                        {
+                            graphQualityChecksPassed = false;
+                        }
                     }
                 });
             }

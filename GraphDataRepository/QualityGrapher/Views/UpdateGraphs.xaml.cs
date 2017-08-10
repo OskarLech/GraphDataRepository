@@ -131,11 +131,11 @@ namespace QualityGrapher.Views
                     var triplesToModify = new List<string> { $"{graph.AbsoluteUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" } as IEnumerable<string>;
                     if (operationToPerform == OperationToPerform.AddQualityChecks)
                     {
-                        triplesByGraphUri.Add(graph, (new List<string>(), triplesToModify));
+                        triplesByGraphUri.Add(MetadataGraphUri, (new List<string>(), triplesToModify));
                     }
                     else
                     {
-                        triplesByGraphUri.Add(graph, (triplesToModify, new List<string>()));
+                        triplesByGraphUri.Add(MetadataGraphUri, (triplesToModify, new List<string>()));
                     }
                 }
 
