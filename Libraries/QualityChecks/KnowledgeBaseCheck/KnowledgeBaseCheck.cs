@@ -23,7 +23,7 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
         {
             IsCheckInProgress = true;
             var parameterList = parameters.ToList(); //multiple enumeration
-            if (!AreParametersSupported(parameterList))
+            if (!AreParametersValid(parameterList))
             {
                 return null;
             }
@@ -45,7 +45,7 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
             var triplesList = triples.ToList();
             var parameterList = parameters.ToList();
 
-            if (!AreParametersSupported(parameterList))
+            if (!AreParametersValid(parameterList))
             {
                 return null;
             }

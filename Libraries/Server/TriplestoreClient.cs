@@ -41,7 +41,7 @@ namespace Libraries.Server
         public virtual async Task<bool> CreateGraph(string dataset, Uri graphUri)
         {
             const string dummyResource = "http://www.example.com/dummyResource";
-            var dummyTriple = new List<string> { $"<{dummyResource}> <{dummyResource}> \"dummyObject\"" }; //empty graph is automatically removed
+            var dummyTriple = new List<string> { $"{dummyResource} , {dummyResource} , \"dummyObject\"" }; //empty graph is automatically removed
             var triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
             {
                 [graphUri] = (new List<string>(), dummyTriple)

@@ -89,7 +89,7 @@ namespace Libraries.QualityChecks
             ParallelOptions = new ParallelOptions { CancellationToken = CancellationTokenSource.Token };
         }
 
-        protected bool AreParametersSupported(IEnumerable<object> parameters)
+        protected bool AreParametersValid(IEnumerable<object> parameters)
         {
             if (parameters == null || !parameters.Any())
             {
@@ -97,7 +97,7 @@ namespace Libraries.QualityChecks
                 return false;
             }
 
-            //TODO
+            //TODO maybe check what parameters are supported and if they are compatible?
             return true;
         }
     }

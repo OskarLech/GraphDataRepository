@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Libraries.QualityChecks;
 using QualityGrapher.ViewModels;
 using static Libraries.QualityChecks.QualityChecksData;
 
@@ -21,6 +21,12 @@ namespace QualityGrapher.Views
         {
             InitializeComponent();
             ListGraphsControl.Content = _listGraphsUserControl;
+        }
+
+        private enum OperationToPerform
+        {
+            AddQualityChecks,
+            RemoveQualityChecks
         }
 
         /// <summary>
@@ -64,39 +70,78 @@ namespace QualityGrapher.Views
 
         private async void AddQualityCheckButton_OnClick(object sender, RoutedEventArgs e)
         {
+            if (await ModifyQualityChecks(OperationToPerform.AddQualityChecks))
+            {
+                _mainWindow.OnOperationSucceeded();
+                _mainWindow.OnOperationFailed();
+            }
+        }
+
+        private async void RemoveQualityCheckButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (await ModifyQualityChecks(OperationToPerform.RemoveQualityChecks))
+            {
+                _mainWindow.OnOperationSucceeded();
+                _mainWindow.OnOperationFailed();
+            }
+        }
+
+        private async Task<bool> ModifyQualityChecks(OperationToPerform operationToPerform)
+        {
             var graphs = _listGraphsUserControl.ListGraphsListBox.SelectedItems.Cast<Uri>()
                 .ToList();
 
             if (!IsGraphSelectionCorrect(graphs))
             {
-                _mainWindow.OnOperationFailed();
-                return;
+                return false;
             }
 
             var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
             var dataset = UserControlHelper.GetDatasetFromListDatasetsUserControl(_listGraphsUserControl.ListDatasetsControl);
 
-            if (graphs.Any(g => g == MetadataGraphUri))
+            var qualityCheckName = ((QualityCheckListViewModel)QualityCheckComboBox.DataContext).SelectedQualityCheck.ToString();
+            var qualityCheckPredicate = QualityCheckInstances.FirstOrDefault(i => i.GetPredicate().Contains(qualityCheckName))?.GetPredicate();
+            if (qualityCheckPredicate == null)
             {
-                var qualityCheckName = ((QualityCheckListViewModel)QualityCheckComboBox.DataContext).SelectedQualityCheck.ToString();
-                var qualityCheckPredicate = QualityCheckInstances.FirstOrDefault(i => i.GetPredicate().Contains(qualityCheckName))?.GetPredicate();
-                if (qualityCheckPredicate == null)
-                {
-                    return;
-                }
-
-                await triplestoreClientQualityWrapper.UpdateGraphs(dataset, new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
-                {
-                    [MetadataGraphUri] = (null, new List<string> { $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" })
-                });
+                return false;
             }
 
-            throw new System.NotImplementedException();
-        }
+            var triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string>, IEnumerable<string>)>();
+            if (graphs.Any(g => g == MetadataGraphUri))
+            {
+                if (operationToPerform == OperationToPerform.AddQualityChecks)
+                {
+                    triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
+                    {
+                        [MetadataGraphUri] = (new List<string>(), new List<string> { $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" })
+                    };
+                }
+                else
+                {
+                    triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
+                    {
+                        [MetadataGraphUri] = (new List<string> { $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" }, new List<string>())
+                    };
+                }
+            }
+            else
+            {
+                foreach (var graph in graphs)
+                { 
+                    var triplesToModify = new List<string> { $"{graph.AbsoluteUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" } as IEnumerable<string>;
+                    if (operationToPerform == OperationToPerform.AddQualityChecks)
+                    {
+                        triplesByGraphUri.Add(graph, (new List<string>(), triplesToModify));
+                    }
+                    else
+                    {
+                        triplesByGraphUri.Add(graph, (triplesToModify, new List<string>()));
+                    }
+                }
 
-        private async void RemoveQualityCheckButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            throw new System.NotImplementedException();
+            }
+
+            return await triplestoreClientQualityWrapper.UpdateGraphs(dataset, triplesByGraphUri);
         }
     }
 }

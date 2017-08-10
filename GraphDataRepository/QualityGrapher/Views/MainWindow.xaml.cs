@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -36,12 +37,21 @@ namespace QualityGrapher.Views
 
         public void OnOperationFailed()
         {
-            LogBox.Background = Brushes.Red;
+            PaintLogArea(LogBox.Background = Brushes.Red);
         }
 
         public void OnOperationSucceeded()
         {
-            LogBox.Background = Brushes.Green;
+            PaintLogArea(LogBox.Background = Brushes.Green); ;
+        }
+
+        private async void PaintLogArea(Brush brush)
+        {
+            LogBox.Background = brush;
+            await Task.Delay(2000);
+
+            LogBox.Text = string.Empty;
+            LogBox.Background = Brushes.White;
         }
 
         private void InitBindings()

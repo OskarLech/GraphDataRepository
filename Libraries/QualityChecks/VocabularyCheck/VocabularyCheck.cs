@@ -21,7 +21,7 @@ namespace Libraries.QualityChecks.VocabularyCheck
         {
             IsCheckInProgress = true;
             var parameterList = parameters.ToList(); //multiple enumeration
-            if (!AreParametersSupported(parameterList))
+            if (!AreParametersValid(parameterList))
             {
                 return null;
             }
@@ -55,7 +55,7 @@ namespace Libraries.QualityChecks.VocabularyCheck
             IsCheckInProgress = true;
 
             var parameterList = parameters.ToList(); //multiple enumeration
-            if (!AreParametersSupported(parameterList))
+            if (!AreParametersValid(parameterList))
             {
                 return null;
             }
