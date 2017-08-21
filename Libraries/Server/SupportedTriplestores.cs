@@ -44,6 +44,14 @@ namespace Libraries.Server
         public static IEnumerable<SupportedOperation> GetSupportedOperations(Type triplestoreType)
         {
             var supportedOperations = new List<SupportedOperation>();
+
+            if (typeof(ISparqlTriplestore).IsAssignableFrom(triplestoreType))
+            {
+                supportedOperations.Add(SupportedOperation.ReadGraphs);
+                supportedOperations.Add(SupportedOperation.ListGraphs);
+                supportedOperations.Add(SupportedOperation.RunSparqlQuery);
+            }
+
             if (typeof(ITriplestoreClient).IsAssignableFrom(triplestoreType))
             {
                 supportedOperations.Add(SupportedOperation.CreateDataset);
@@ -52,9 +60,6 @@ namespace Libraries.Server
                 supportedOperations.Add(SupportedOperation.CreateGraphs);
                 supportedOperations.Add(SupportedOperation.DeleteGraphs);
                 supportedOperations.Add(SupportedOperation.UpdateGraphs);
-                supportedOperations.Add(SupportedOperation.ReadGraphs);
-                supportedOperations.Add(SupportedOperation.ListGraphs);
-                supportedOperations.Add(SupportedOperation.RunSparqlQuery);
             }
 
             if (typeof(ITriplestoreClientExtended).IsAssignableFrom(triplestoreType))

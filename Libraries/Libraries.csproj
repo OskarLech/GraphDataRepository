@@ -73,6 +73,7 @@
     <Compile Include="QualityChecks\QualityCheck.cs" />
     <Compile Include="QualityChecks\QualityCheckReport.cs" />
     <Compile Include="QualityChecks\QualityChecksData.cs" />
+    <Compile Include="Server\ISparqlTriplestore.cs" />
     <Compile Include="Server\ITriplestoreClientQualityWrapper.cs" />
     <Compile Include="Server\TriplestoreClientQualityWrapper.cs" />
     <Compile Include="QualityChecks\VocabularyCheck\VocabularyCheck.cs" />

@@ -9,7 +9,6 @@ using Common;
 using VDS.RDF;
 using VDS.RDF.Query;
 using VDS.RDF.Storage;
-using static Libraries.QualityChecks.QualityChecksData;
 using static Serilog.Log;
 
 namespace Libraries.Server
