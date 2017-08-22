@@ -28,7 +28,7 @@ namespace QualityGrapher.Views
                 return;
             }
 
-            var dataset = _listDatasetsUserControl.DatasetListBox.SelectedItem.ToString();
+            var dataset = _listDatasetsUserControl.DatasetListBox.SelectedItem?.ToString();
 
             Uri.TryCreate(GraphUriTextBox.Text, UriKind.RelativeOrAbsolute, out var graphUri);
             if (string.IsNullOrWhiteSpace(dataset) || !await triplestoreClientQualityWrapper.CreateGraph(dataset, graphUri))

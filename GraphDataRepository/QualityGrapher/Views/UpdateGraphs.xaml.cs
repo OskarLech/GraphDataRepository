@@ -48,8 +48,8 @@ namespace QualityGrapher.Views
             var dataset = UserControlHelper.GetDatasetFromListDatasetsUserControl(_listGraphsUserControl.ListDatasetsControl);
             var graphs = _listGraphsUserControl.ListGraphsListBox.SelectedItems.Cast<Uri>();
 
-            IEnumerable<string> triplesToRemove = TriplesToRemoveTextbox.Text.Split("\n".ToCharArray()).ToList();
-            IEnumerable<string> triplesToAdd = TriplesToAddTextbox.Text.Split("\n".ToCharArray()).ToList();
+            IList<string> triplesToRemove = TriplesToRemoveTextbox.Text.Split("\n".ToCharArray()).ToList();
+            IList<string> triplesToAdd = TriplesToAddTextbox.Text.Split("\n".ToCharArray()).ToList();
             var triplesByGraphUri = graphs.ToDictionary(graph => graph, graph => (triplesToAdd, triplesToRemove));
 
             if(triplestoreClientQualityWrapper == null || string.IsNullOrWhiteSpace(dataset) || !await triplestoreClientQualityWrapper.UpdateGraphs(dataset, triplesByGraphUri))
@@ -106,19 +106,19 @@ namespace QualityGrapher.Views
                 return false;
             }
 
-            var triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string>, IEnumerable<string>)>();
+            var triplesByGraphUri = new Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)>();
             if (graphs.Any(g => g == MetadataGraphUri))
             {
                 if (operationToPerform == OperationToPerform.AddQualityChecks)
                 {
-                    triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
+                    triplesByGraphUri = new Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)>
                     {
-                        [MetadataGraphUri] = (new List<string>(), new List<string> { $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" })
+                        [MetadataGraphUri] = (new List<string>() , new List<string> { $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" })
                     };
                 }
                 else
                 {
-                    triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
+                    triplesByGraphUri = new Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)>
                     {
                         [MetadataGraphUri] = (new List<string> { $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" }, new List<string>())
                     };
@@ -126,19 +126,23 @@ namespace QualityGrapher.Views
             }
             else
             {
+                if (!triplesByGraphUri.ContainsKey(MetadataGraphUri))
+                {
+                    triplesByGraphUri[MetadataGraphUri] = (new List<string>(), new List<string>());
+                }
+
                 foreach (var graph in graphs)
                 { 
-                    var triplesToModify = new List<string> { $"{graph.AbsoluteUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" } as IEnumerable<string>;
+                    var tripleToModify = $"{graph.AbsoluteUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}";
                     if (operationToPerform == OperationToPerform.AddQualityChecks)
                     {
-                        triplesByGraphUri.Add(MetadataGraphUri, (new List<string>(), triplesToModify));
+                        triplesByGraphUri[MetadataGraphUri].TriplesToAdd.Add(tripleToModify);
                     }
                     else
                     {
-                        triplesByGraphUri.Add(MetadataGraphUri, (triplesToModify, new List<string>()));
+                        triplesByGraphUri[MetadataGraphUri].TriplesToRemove.Add(tripleToModify);
                     }
                 }
-
             }
 
             return await triplestoreClientQualityWrapper.UpdateGraphs(dataset, triplesByGraphUri);

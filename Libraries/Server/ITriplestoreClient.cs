@@ -13,7 +13,7 @@ namespace Libraries.Server
         Task<bool> DeleteDataset(string name);
         Task<IEnumerable<string>> ListDatasets();
         Task<bool> DeleteGraphs(string dataset, IEnumerable<Uri> graphUris);
-        Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri);
+        Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)> triplesByGraphUri);
         Task<bool> CreateGraph(string dataset, Uri graphUri);
         void CancelOperation();
     }

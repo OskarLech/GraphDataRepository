@@ -35,13 +35,13 @@ namespace Libraries.Server
         public abstract Task<bool> CreateDataset(string name);
         public abstract Task<bool> DeleteDataset(string name);
         public abstract Task<IEnumerable<string>> ListDatasets();
-        public abstract Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri);
+        public abstract Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)> triplesByGraphUri);
 
         public virtual async Task<bool> CreateGraph(string dataset, Uri graphUri)
         {
             const string dummyResource = "http://www.example.com/dummyResource";
             var dummyTriple = new List<string> { $"{dummyResource} , {dummyResource} , \"dummyObject\"" }; //empty graph is automatically removed
-            var triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
+            var triplesByGraphUri = new Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)>
             {
                 [graphUri] = (new List<string>(), dummyTriple)
             };
@@ -51,7 +51,7 @@ namespace Libraries.Server
                 return false;
             }
 
-            triplesByGraphUri = new Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)>
+            triplesByGraphUri = new Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)>
             {
                 [graphUri] = (dummyTriple, new List<string>())
             };

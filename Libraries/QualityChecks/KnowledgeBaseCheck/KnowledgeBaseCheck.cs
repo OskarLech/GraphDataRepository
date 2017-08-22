@@ -28,7 +28,7 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
                 return null;
             }
 
-            var parsedParameters = ParseParameters<(Uri endpointUri, Uri graphUri, string filter)>(parameterList);
+            var parsedParameters = ParseParameters(parameterList);
 
             var triplesList = graphs.SelectMany(g => g.Triples).Distinct().Select(t => t.ToString()).ToList();
             var subjectList = triplesList.Select(t => t.Subject()).Distinct().ToList();
@@ -50,7 +50,8 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
                 return null;
             }
 
-            var parsedParameters = ParseParameters<(Uri endpointUri, Uri graphUri, string filter)>(parameterList);
+            var parsedParameters = ParseParameters(parameterList);
+            if (parsedParameters == null) return null;
 
             var subjectList = triplesList.Select(t => t.Subject()).Distinct().ToList();
             var failedQueries = CheckSubjects(parsedParameters, subjectList);
@@ -152,6 +153,26 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
 
             IsCheckInProgress = false;
             return report;
+        }
+
+        protected IEnumerable<(Uri endpointUri, Uri graphUri, string filter)> ParseParameters(IEnumerable<object> parameters)
+        {
+            try
+            {
+                var parameterStrings = parameters.Select(p => p.ToString().Split(new[] { "," }, StringSplitOptions.None));
+
+                return (from stringArray in parameterStrings
+                        let endpointUri = new Uri(stringArray[0])
+                        let graphUri = string.IsNullOrEmpty(stringArray[1]) || stringArray[1] == "default" 
+                            ? null 
+                            : new Uri(stringArray[1])
+                        select (endpointUri, graphUri, stringArray[2])).ToList();
+            }
+            catch (Exception e)
+            {
+                Error($"Cannot convert parameters to {typeof((Uri endpointUri, Uri graphUri, string filter))}: {e.GetDetails()}");
+                return null;
+            }
         }
     }
 }

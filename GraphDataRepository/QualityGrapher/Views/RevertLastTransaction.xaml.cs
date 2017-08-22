@@ -21,7 +21,7 @@ namespace QualityGrapher.Views
             var triplestoreClientQualityWrapper = UserControlHelper.GetTriplestoreClientQualityWrapper(DataContext);
             var mainWindow = (MainWindow)Application.Current.MainWindow;
 
-            var dataset = _listDatasetsUserControl.DatasetListBox.SelectedItem.ToString();
+            var dataset = _listDatasetsUserControl.DatasetListBox.SelectedItem?.ToString();
             if (triplestoreClientQualityWrapper == null || string.IsNullOrWhiteSpace(dataset) || !await triplestoreClientQualityWrapper.RevertLastTransaction(dataset))
             {
                 mainWindow.OnOperationFailed();

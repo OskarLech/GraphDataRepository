@@ -77,7 +77,7 @@ namespace Libraries.Server
                 var triplesToRemove = metadataTriples.Select(triple => triple.ToString()).ToList();
 
                 return await _triplestoreClient.UpdateGraphs(dataset,
-                    new Dictionary<Uri, (IEnumerable<string>, IEnumerable<string>)>
+                    new Dictionary<Uri, (IList<string>, IList<string>)>
                     {
                         [MetadataGraphUri] = (triplesToRemove, null)
                     });
@@ -89,7 +89,7 @@ namespace Libraries.Server
         /// <summary>
         /// Updates graphs with regards to active quality checks for each graph and whole dataset.
         /// </summary>
-        public async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
+        public async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)> triplesByGraphUri)
         {
             var triplesToAdd = triplesByGraphUri.Values.SelectMany(t => t.TriplesToAdd).ToList();
             if (!triplesToAdd.Any())
@@ -340,7 +340,7 @@ namespace Libraries.Server
             return qualityChecksPassed;
         }
 
-        private async Task<bool> CanAddGraphTriples(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
+        private async Task<bool> CanAddGraphTriples(string dataset, Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)> triplesByGraphUri)
         {
             var activeQualityChecks = (await GetMetadataTriples(dataset))?
                 .ToList();

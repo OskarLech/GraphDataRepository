@@ -42,15 +42,14 @@ namespace QualityGrapher.Views
 
         public void OnOperationSucceeded()
         {
-            PaintLogArea(LogBox.Background = Brushes.Green); ;
+            LogBox.Text = string.Empty;
+            PaintLogArea(LogBox.Background = Brushes.Green);
         }
 
         private async void PaintLogArea(Brush brush)
         {
             LogBox.Background = brush;
             await Task.Delay(2000);
-
-            LogBox.Text = string.Empty;
             LogBox.Background = Brushes.White;
         }
 
@@ -205,7 +204,7 @@ namespace QualityGrapher.Views
                         triplesToAdd.Add("<http://www.w3.org/2001/sw/RDFCore/ntriples/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document>");
 
                         if (string.IsNullOrWhiteSpace(graph)) continue;
-                        var triplesByUri = new Dictionary<Uri, (IEnumerable<string> triplesToRemove, IEnumerable<string> triplesToAdd)>
+                        var triplesByUri = new Dictionary<Uri, (IList<string> triplesToRemove, IList<string> triplesToAdd)>
                         {
                             [new Uri(graph)] = (triplesToRemove, triplesToAdd)
                         };

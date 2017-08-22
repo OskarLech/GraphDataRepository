@@ -74,7 +74,7 @@ namespace Libraries.Server.BrightstarDb
             }, CancellationTokenSource.Token));
         }
 
-        public override async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IEnumerable<string> TriplesToRemove, IEnumerable<string> TriplesToAdd)> triplesByGraphUri)
+        public override async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)> triplesByGraphUri)
         {
             return await ClientCall(Task.Run(() =>
             {

@@ -14,7 +14,7 @@ namespace Libraries.QualityChecks
     /// </summary>
     public abstract class QualityCheck : IQualityCheck
     {
-        public const string PredicateBase = "resources://MeetsTheRequirementsOf/qualityCheckName";
+        public const string PredicateBase = "resource://MeetsTheRequirementsOf/qualityCheckName";
 
         protected CancellationTokenSource CancellationTokenSource;
         protected ParallelOptions ParallelOptions;
@@ -54,10 +54,15 @@ namespace Libraries.QualityChecks
             return PredicateBase.Replace("qualityCheckName", GetType().Name);
         }
 
-        protected IEnumerable<T> ParseParameters<T> (IEnumerable<object> parameters)
+        protected virtual IEnumerable<T> ParseParameters<T> (IEnumerable<object> parameters)
         {
             try
             {
+                if (typeof(T) == typeof(IEnumerable<Uri>)) //expected to be a typical parameter type
+                {
+                    parameters = parameters.Select(p => new Uri(p.ToString()));
+                }
+
                 return typeof(T).IsAssignableFrom(typeof(IConvertible)) 
                     ? parameters.Select(StaticMethods.ConvertTo<T>).ToList() 
                     : parameters.Select(parameter => (T) parameter).ToList();
@@ -65,7 +70,7 @@ namespace Libraries.QualityChecks
             catch (Exception e)
             {
                 Error($"Cannot parse parameters of type {typeof(T)}: {e.GetDetails()}");
-                throw;
+                return null;
             }
         }
 

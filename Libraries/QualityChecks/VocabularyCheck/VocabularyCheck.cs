@@ -27,8 +27,9 @@ namespace Libraries.QualityChecks.VocabularyCheck
             }
 
             var vocabularyUris = ParseParameters<Uri>(parameterList);
-            var predicateList = GetPredicates(vocabularyUris);
+            if (vocabularyUris == null) return null;
 
+            var predicateList = GetPredicates(vocabularyUris);
             var wrongTriples = new List<(Uri GraphUri, string Triple)>();
             try
             {
