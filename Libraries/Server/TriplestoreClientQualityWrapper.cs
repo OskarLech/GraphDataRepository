@@ -18,17 +18,11 @@ namespace Libraries.Server
     /// </summary>
     public class TriplestoreClientQualityWrapper : ITriplestoreClientQualityWrapper
     {
-        private const string TransactionAborted = "Transaction aborted";
         private readonly ITriplestoreClient _triplestoreClient;
-
-        private CancellationTokenSource _cancellationTokenSource;
-        private ParallelOptions _parallelOptions;
 
         public TriplestoreClientQualityWrapper(ITriplestoreClient triplestoreClient)
         {
             _triplestoreClient = triplestoreClient;
-            _cancellationTokenSource = new CancellationTokenSource();
-            _parallelOptions = new ParallelOptions {CancellationToken = _cancellationTokenSource.Token};
         }
 
         #region public methods
@@ -91,37 +85,35 @@ namespace Libraries.Server
         /// </summary>
         public async Task<bool> UpdateGraphs(string dataset, Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)> triplesByGraphUri)
         {
-            var triplesToAdd = triplesByGraphUri.Values.SelectMany(t => t.TriplesToAdd).ToList();
-            if (!triplesToAdd.Any())
+            var (relatedGraphs, metadataTriples) = await GetRelatedGraphsAndMetadataTriples(dataset, triplesByGraphUri);
+
+            var qualityChecksPassed = true;
+            foreach (var graphUri in relatedGraphs)
+            {
+                var graphQualityChecks = GetQualityChecksFromTriples(metadataTriples.Where(t => 
+                    t.Subject() == graphUri.ToString() ||
+                    t.Subject() == WholeDatasetSubjectUri.ToString()));
+
+                var triplesToAddInGraph = triplesByGraphUri.Where(t => t.Key == graphUri).
+                    SelectMany(t => t.Value.TriplesToAdd)
+                    .ToList();
+
+                var triplesToRemoveInGraph = triplesByGraphUri.Where(t => t.Key == graphUri)
+                    .SelectMany(t => t.Value.TriplesToRemove)
+                    .ToList();
+
+                if (!await AreQualityCheckCriteriaMet(dataset, graphUri, graphQualityChecks, (triplesToAddInGraph, triplesToRemoveInGraph)))
+                {
+                    qualityChecksPassed = false;
+                }
+            }
+
+            if (qualityChecksPassed)
             {
                 return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
             }
 
-            //metadata should be added exclusively to force the use of quality check with given parameter to any data added in the future (per graph or per dataset)
-            if (triplesByGraphUri.ContainsKey(MetadataGraphUri))
-            {
-                if (triplesByGraphUri.Keys.Any(k => k != MetadataGraphUri))
-                {
-                    Warning("Cannot directly modify metadata when other data is modified");
-                    return false;
-                }
-
-                if (!await CanAddMetadataTriples(dataset, triplesToAdd))
-                {
-                    Verbose(TransactionAborted);
-                    return false;
-                }
-
-                return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
-            }
-
-            if (!await CanAddGraphTriples(dataset, triplesByGraphUri))
-            {
-                Verbose(TransactionAborted);
-                return false;
-            }
-
-            return await _triplestoreClient.UpdateGraphs(dataset, triplesByGraphUri);
+            return false;
         }
 
         public async Task<IEnumerable<IGraph>> ReadGraphs(string dataset, IEnumerable<Uri> graphUris)
@@ -147,9 +139,6 @@ namespace Libraries.Server
         public void CancelOperation()
         {
             _triplestoreClient.CancelOperation();
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource = new CancellationTokenSource();
-            _parallelOptions = new ParallelOptions { CancellationToken = _cancellationTokenSource.Token };
         }
 
         #endregion //ITriplestoreClient implementation
@@ -216,9 +205,9 @@ namespace Libraries.Server
 
         public async Task<IEnumerable<Triple>> GetMetadataTriples(string dataset)
         {
-            var metadataTriples = await _triplestoreClient.ReadGraphs(dataset, MetadataGraphUri.AsEnumerable());
+            var metadataGraph = (await _triplestoreClient.ReadGraphs(dataset, MetadataGraphUri.AsEnumerable()))?
+                .FirstOrDefault();
 
-            var metadataGraph = metadataTriples.FirstOrDefault();
             return metadataGraph?.Triples;
         }
 
@@ -248,143 +237,73 @@ namespace Libraries.Server
             return qualityChecks;
         }
 
-        private async Task<bool> CanAddMetadataTriples(string dataset, IReadOnlyCollection<string> triplesToAdd)
+        private async Task<(List<Uri> relatedGraphs, List<string> metadataTriples)> GetRelatedGraphsAndMetadataTriples(string dataset,
+            Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)> triplesByGraphUri)
         {
-            var graphList = await _triplestoreClient.ListGraphs(dataset);
-            if (graphList == null)
-            {
-                Verbose("Transaction failed due to connection error");
-                return false;
-            }
-
-            var graphs = (await _triplestoreClient.ReadGraphs(dataset, graphList))?
-                .Where(g => g.BaseUri != MetadataGraphUri)
+            var relatedGraphs = new List<Uri>();
+            var metadataTriples = (await GetMetadataTriples(dataset))?.Select(t => t.ToString())
                 .ToList();
 
-            if (graphs == null)
+            if (metadataTriples == null) return default((List<Uri>, List<string>));
+
+            if (triplesByGraphUri.ContainsKey(MetadataGraphUri))
             {
-                Verbose("Transaction failed due to connection error");
-                return false;
+                if (triplesByGraphUri.Keys.Any(k => k != MetadataGraphUri))
+                {
+                    Warning("Cannot directly modify metadata when other data is modified");
+                    return default((List<Uri>, List<string>));
+                }
+
+                var datasetTriplesToAdd = triplesByGraphUri[MetadataGraphUri].TriplesToAdd;
+                var datasetTriplesToRemove = triplesByGraphUri[MetadataGraphUri].TriplesToRemove;
+
+                //if modyfying quality checks for whole dataset each graph has to be checked
+                if (datasetTriplesToAdd.Any(t => t.Subject() == WholeDatasetSubjectUri.ToString()) ||
+                    datasetTriplesToRemove.Any(t => t.Subject() == WholeDatasetSubjectUri.ToString()))
+                {
+                    relatedGraphs = (await ListGraphs(dataset))?.ToList();
+                    if (relatedGraphs == null) return default((List<Uri>, List<string>));
+                }
+                else //otherwise just add each graph separately
+                {
+                    relatedGraphs.AddRange(datasetTriplesToAdd.Union(datasetTriplesToRemove)
+                        .Select(t => t.Subject())
+                        .Select(graphUri => new Uri(graphUri)));
+                }
+
+                //metadata triples after changes
+                metadataTriples = (List<string>)metadataTriples
+                    .Except(datasetTriplesToRemove)
+                    .Union(datasetTriplesToAdd);
+            }
+            else //if quality checks are not edited just add every modified graph
+            {
+                relatedGraphs.AddRange(triplesByGraphUri.Keys);
             }
 
-            //Quality checks regarding whole dataset
-            var datasetTriples = triplesToAdd.Where(t => t.Subject() == WholeDatasetSubjectUri.ToString())
-                .ToList();
-
-            var qualityChecksPassed = QualityChecksForWholeDatasetPassed(graphs, datasetTriples);
-            if (!qualityChecksPassed)
-            {
-                Verbose(TransactionAborted);
-                return false;
-            }
-
-            //Quality checks regarding graphs
-            var graphTriples = triplesToAdd.Except(datasetTriples)
-                .ToList();
-
-            var graphUris = graphTriples.Select(t => t.Subject())
-                .Distinct();
-
-            qualityChecksPassed = QualityChecksForGraphsPassed(graphs, graphTriples, graphUris);
-
-            if (!qualityChecksPassed)
-            {
-                Verbose(TransactionAborted);
-                return false;
-            }
-
-            return true;
+            return (relatedGraphs.Distinct().ToList(), metadataTriples);
         }
 
-        //TODO: QualityChecksForGraphsPassed and QualityChecksForWholeDatasetPassed can have some common code extracted
-        private bool QualityChecksForGraphsPassed(IReadOnlyCollection<IGraph> graphs, IReadOnlyCollection<string> graphTriples, IEnumerable<string> graphUris)
+        private async Task<bool> AreQualityCheckCriteriaMet(string dataset, Uri graphUri, Dictionary<IQualityCheck, List<string>> qualityChecks,
+            (IList<string> TriplesToRemove, IList<string> TriplesToAdd) triplesToModify = default((IList<string>, IList<string>)))
         {
-            var qualityChecksPassed = true;
-            foreach (var graphUri in graphUris)
-            {
-                var qualityChecks = GetQualityChecksFromTriples(graphTriples.Where(t => t.Subject() == graphUri));
-                Parallel.ForEach(qualityChecks, _parallelOptions, qualityCheck =>
-                {
-                    var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphs.Where(g => g.BaseUri.ToString() == graphUri),
-                        qualityCheck.Value);
-                    if (!qualityCheckReport.QualityCheckPassed)
-                    {
-                        Verbose($"{qualityCheck.Key.GetType().Name} for graph {graphUri} failed");
-                        qualityChecksPassed = false;
-                    }
-                });
-            }
-
-            return qualityChecksPassed;
-        }
-
-        private bool QualityChecksForWholeDatasetPassed(IEnumerable<IGraph> graphs, IEnumerable<string> datasetTriples)
-        {
-            var datasetQualityChecks = GetQualityChecksFromTriples(datasetTriples);
-            var qualityChecksPassed = true;
-
-            var graphList = graphs.ToList();
-            if (graphList.Any())
-            {
-                Parallel.ForEach(datasetQualityChecks, _parallelOptions, qualityCheck =>
-                {
-                    var qualityCheckReport = qualityCheck.Key.CheckGraphs(graphList, qualityCheck.Value);
-                    if (!qualityCheckReport.QualityCheckPassed)
-                    {
-                        Verbose($"{qualityCheck.Key.GetType().Name} for whole dataset failed");
-                        qualityChecksPassed = false;
-                    }
-                });
-            }
-
-            return qualityChecksPassed;
-        }
-
-        private async Task<bool> CanAddGraphTriples(string dataset, Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)> triplesByGraphUri)
-        {
-            var activeQualityChecks = (await GetMetadataTriples(dataset))?
+            var graphTriples = (await ReadGraphs(dataset, graphUri.AsEnumerable()))?.FirstOrDefault()?
+                .Triples?.Select(t => t.ToString())
                 .ToList();
 
-            if (activeQualityChecks == null)
+            if (graphTriples == null) return false;
+
+            if (triplesToModify.TriplesToRemove != null)
             {
-                Verbose(TransactionAborted);
-                return false;
+                graphTriples = (List<string>) graphTriples.Except(triplesToModify.TriplesToRemove);
+            }
+            if (triplesToModify.TriplesToAdd != null)
+            {
+                graphTriples.AddRange(triplesToModify.TriplesToAdd);
             }
 
-            if (!activeQualityChecks.Any())
-            {
-                return true;
-            }
-
-            var graphQualityChecksPassed = true;
-            var _lock = new object();
-            foreach (var graphUri in triplesByGraphUri.Keys)
-            {
-                var graphQualityCheckTriples = activeQualityChecks.Where(t => t.Subject.ToString() == WholeDatasetSubjectUri.ToString() || t.Subject.ToString() == graphUri.ToString())
-                    .Select(t => t.ToString());
-
-                var graphQualityChecks = GetQualityChecksFromTriples(graphQualityCheckTriples);
-                Parallel.ForEach(graphQualityChecks, _parallelOptions, qualityCheck =>
-                {
-                    var qualityCheckReport = qualityCheck.Key.CheckData(triplesByGraphUri[graphUri].TriplesToAdd, qualityCheck.Value);
-                    if (!qualityCheckReport.QualityCheckPassed)
-                    {
-                        Verbose($"{qualityCheck.Key.GetType().Name} for graph {graphUri} failed, transaction aborted");
-                        lock (_lock)
-                        {
-                            graphQualityChecksPassed = false;
-                        }
-                    }
-                });
-            }
-
-            if (!graphQualityChecksPassed)
-            {
-                Verbose(TransactionAborted);
-                return false;
-            }
-
-            return true;
+            return qualityChecks.Select(qualityCheck => qualityCheck.Key.CheckData(graphTriples, qualityCheck.Value))
+                .All(qualityCheckReport => qualityCheckReport.QualityCheckPassed);
         }
 
         #endregion

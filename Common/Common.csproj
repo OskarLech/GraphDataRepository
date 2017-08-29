@@ -67,12 +67,12 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="TestData\RDF\animals.rdf" />
-    <None Include="TestData\RDF\foaf_example.rdf" />
-    <None Include="TestData\RDF\proposal.rdf" />
-    <None Include="TestData\RDF\ril_1.rdf" />
-    <None Include="TestData\RDF\sleepinggiant.rdf" />
-    <None Include="TestData\Schemas\foaf_20140114.rdf" />
+    <None Include="Data\RDF\animals.rdf" />
+    <None Include="Data\RDF\foaf_example.rdf" />
+    <None Include="Data\RDF\proposal.rdf" />
+    <None Include="Data\RDF\ril_1.rdf" />
+    <None Include="Data\RDF\sleepinggiant.rdf" />
+    <None Include="Data\Schemas\foaf_20140114.rdf" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -23,6 +23,7 @@ namespace Libraries.Server.BrightstarDb
         }
 
         #region ITripleStore implementation
+
         public override async Task<bool> CreateDataset(string name)
         {
             return await ClientCall(Task.Run(() =>

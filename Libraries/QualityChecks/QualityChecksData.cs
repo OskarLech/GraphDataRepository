@@ -27,5 +27,11 @@ namespace Libraries.QualityChecks
             QualityCheckInstances = supportedQualityChecks.Select(qualityCheck => (IQualityCheck)Activator.CreateInstance(qualityCheck.QualityCheckClass))
                 .ToList();
         }
+
+        public enum OperationToPerform
+        {
+            AddQualityChecks,
+            RemoveQualityChecks
+        }
     }
 }
