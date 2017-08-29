@@ -107,8 +107,8 @@ namespace QualityGrapher.Views
         {
             Log.Verbose("VocabQualityCheckBtn_OnClick");
             var dataGraph = new Graph();
-            FileLoader.Load(dataGraph, @"..\..\..\..\Common\TestData\RDF\foaf_example.rdf");
-            var vocabPath = Path.GetFullPath(@"..\..\..\..\Common\TestData\Schemas\foaf_20140114.rdf");
+            FileLoader.Load(dataGraph, @"..\..\..\..\Common\Data\RDF\foaf_example.rdf");
+            var vocabPath = Path.GetFullPath(@"..\..\..\..\Common\Data\Schemas\foaf_20140114.rdf");
             var vocabCheck = new VocabularyCheck();
             vocabCheck.CheckGraphs(dataGraph.AsEnumerable(), new Uri(vocabPath).AsEnumerable());
         }

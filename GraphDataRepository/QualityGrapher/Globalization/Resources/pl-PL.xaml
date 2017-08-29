@@ -34,7 +34,7 @@
     <system:String x:Key="SparqlQueryResult">Wynik zapytania SPARQL</system:String>
     <system:String x:Key="AddQualityCheck">Dodaj wymagany standard jakości</system:String>
     <system:String x:Key="RemoveQualityCheck">Usuń wymagany standard jakości</system:String>
-    <system:String x:Key="QualityCheckParameter">Parametr standardu jakości</system:String>
+    <system:String x:Key="QualityCheckParameter">Parametry standardu jakości</system:String>
     <system:String x:Key="ActiveQualityCheckRequirements">Aktywne standardy jakości</system:String>
 
     <!--QualityCheckNames-->

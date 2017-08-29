@@ -23,12 +23,6 @@ namespace QualityGrapher.Views
             ListGraphsControl.Content = _listGraphsUserControl;
         }
 
-        private enum OperationToPerform
-        {
-            AddQualityChecks,
-            RemoveQualityChecks
-        }
-
         /// <summary>
         /// Selecting metadata graph adds quality check requirement for whole dataset. User can either add quality check for 
         /// whole dataset or for each graph specifically
@@ -106,21 +100,23 @@ namespace QualityGrapher.Views
                 return false;
             }
 
+            var parameters = QualityCheckParameterTextBox.Text.Split(new[] {"\n"}, StringSplitOptions.None);
             var triplesByGraphUri = new Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)>();
             if (graphs.Any(g => g == MetadataGraphUri))
             {
+                var triplesToModify = parameters.Select(parameter => $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {parameter}").ToList();
                 if (operationToPerform == OperationToPerform.AddQualityChecks)
                 {
                     triplesByGraphUri = new Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)>
                     {
-                        [MetadataGraphUri] = (new List<string>() , new List<string> { $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" })
+                        [MetadataGraphUri] = (new List<string>() , triplesToModify)
                     };
                 }
                 else
                 {
                     triplesByGraphUri = new Dictionary<Uri, (IList<string> TriplesToRemove, IList<string> TriplesToAdd)>
                     {
-                        [MetadataGraphUri] = (new List<string> { $"{WholeDatasetSubjectUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}" }, new List<string>())
+                        [MetadataGraphUri] = (triplesToModify, new List<string>())
                     };
                 }
             }
@@ -133,14 +129,20 @@ namespace QualityGrapher.Views
 
                 foreach (var graph in graphs)
                 { 
-                    var tripleToModify = $"{graph.AbsoluteUri} , {qualityCheckPredicate} , {QualityCheckParameterTextBox.Text}";
+                    var triplesToModify = parameters.Select(parameter => $"{graph.AbsoluteUri} , {qualityCheckPredicate} , {parameter}").ToList();
                     if (operationToPerform == OperationToPerform.AddQualityChecks)
                     {
-                        triplesByGraphUri[MetadataGraphUri].TriplesToAdd.Add(tripleToModify);
+                        foreach (var triple in triplesToModify)
+                        {
+                            triplesByGraphUri[MetadataGraphUri].TriplesToAdd.Add(triple);
+                        }
                     }
                     else
                     {
-                        triplesByGraphUri[MetadataGraphUri].TriplesToRemove.Add(tripleToModify);
+                        foreach (var triple in triplesToModify)
+                        {
+                            triplesByGraphUri[MetadataGraphUri].TriplesToRemove.Add(triple);
+                        }
                     }
                 }
             }

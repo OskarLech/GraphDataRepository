@@ -52,6 +52,10 @@
                   HorizontalContentAlignment="Center" Loaded="QualityCheckListBox_OnLoaded" />
 
         <TextBlock Grid.Column="0" Grid.Row="6" Text="{DynamicResource QualityCheckParameter}"/>
-        <TextBox Grid.Column="1" Grid.Row="6" Name="QualityCheckParameterTextBox"/>
+        
+        <ScrollViewer Grid.Column="1" Grid.Row="6">
+            <TextBox Name="QualityCheckParameterTextBox" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+        </ScrollViewer>
     </Grid>
 </UserControl>

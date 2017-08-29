@@ -34,7 +34,7 @@
     <system:String x:Key="SparqlQueryResult">SPARQL query result</system:String>
     <system:String x:Key="AddQualityCheck">Add quality check requirement</system:String>
     <system:String x:Key="RemoveQualityCheck">Remove quality check requirement</system:String>
-    <system:String x:Key="QualityCheckParameter">Quality check parameter</system:String>
+    <system:String x:Key="QualityCheckParameter">Quality check parameters</system:String>
     <system:String x:Key="ActiveQualityCheckRequirements">Active quality check requirements</system:String>
 
     <!--QualityCheckNames-->
