@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BrightstarDB.Client;
 using Common;
@@ -21,8 +20,6 @@ namespace Libraries.Server.BrightstarDb
         {
             _brightstarClient = BrightstarService.GetClient($"Type=rest;endpoint={endpoint};");
         }
-
-        #region ITripleStore implementation
 
         public override async Task<bool> CreateDataset(string name)
         {
@@ -143,8 +140,6 @@ namespace Libraries.Server.BrightstarDb
                 return true;
             }, CancellationTokenSource.Token));
         }
-
-        #endregion
 
         private static string ConvertToBrightstarCompatibleTriple(string triple)
         {

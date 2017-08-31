@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Libraries.QualityChecks;
@@ -24,10 +23,6 @@ namespace Libraries.Server
         {
             _triplestoreClient = triplestoreClient;
         }
-
-        #region public methods
-
-        #region ITripleStoreClient implementation
 
         public async Task<bool> CreateDataset(string name)
         {
@@ -141,10 +136,6 @@ namespace Libraries.Server
             _triplestoreClient.CancelOperation();
         }
 
-        #endregion //ITriplestoreClient implementation
-
-        #region ITriplestoreClientExtended implementation
-
         public async Task<bool> RevertLastTransaction(string storename)
         {
             if (_triplestoreClient is ITriplestoreClientExtended triplestoreClientExtended)
@@ -185,10 +176,6 @@ namespace Libraries.Server
             return null;
         }
 
-        #endregion //ITriplestoreClientExtended implementation
-
-        #region IBrightstarClient implementation
-
         public async Task<bool> ConsolidateDataset(string storeName)
         {
             if (_triplestoreClient is IBrightstarClient brightstarClient)
@@ -199,10 +186,6 @@ namespace Libraries.Server
             return false;
         }
 
-        #endregion //IBrightstarClient implementation
-
-        #region ITriplestoreClientQualityWrapper implementation
-
         public async Task<IEnumerable<Triple>> GetMetadataTriples(string dataset)
         {
             var metadataGraph = (await _triplestoreClient.ReadGraphs(dataset, MetadataGraphUri.AsEnumerable()))?
@@ -210,12 +193,6 @@ namespace Libraries.Server
 
             return metadataGraph?.Triples;
         }
-
-        #endregion //ITriplestoreClientQualityWrapper implementation
-
-        #endregion //public methods 
-
-        #region private methods
 
         private static Dictionary<IQualityCheck, List<string>> GetQualityChecksFromTriples(IEnumerable<string> triples)
         {
@@ -297,6 +274,7 @@ namespace Libraries.Server
             {
                 graphTriples = (List<string>) graphTriples.Except(triplesToModify.TriplesToRemove);
             }
+
             if (triplesToModify.TriplesToAdd != null)
             {
                 graphTriples.AddRange(triplesToModify.TriplesToAdd);
@@ -305,7 +283,5 @@ namespace Libraries.Server
             return qualityChecks.Select(qualityCheck => qualityCheck.Key.CheckData(graphTriples, qualityCheck.Value))
                 .All(qualityCheckReport => qualityCheckReport.QualityCheckPassed);
         }
-
-        #endregion
     }
 }

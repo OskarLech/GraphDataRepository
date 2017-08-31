@@ -67,7 +67,10 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
             {
                 var loopResult = Parallel.ForEach(parsedParameters, ParallelOptions, (parameter, state) =>
                 {
-                    var endpoint = new SparqlRemoteEndpoint(parameter.endpointUri, parameter.graphUri);
+                    var endpoint = string.IsNullOrWhiteSpace(parameter.graphUri?.ToString()) 
+                    ? new SparqlRemoteEndpoint(parameter.endpointUri, (Uri) null) 
+                    : new SparqlRemoteEndpoint(parameter.endpointUri, parameter.graphUri);
+
                     try
                     {
                         foreach (var subject in subjectList)

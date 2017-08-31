@@ -8,8 +8,6 @@ namespace Libraries.Server.BrightstarDb
 {
     public partial class BrightstarClient : IBrightstarClient
     {
-        #region ITripleStoreClientExtended implementation
-
         public async Task<bool> RevertLastTransaction(string storename)
         {
             return await ClientCall(Task.Run(() =>
@@ -79,10 +77,6 @@ namespace Libraries.Server.BrightstarDb
             }, CancellationTokenSource.Token));
         }
 
-        #endregion
-
-        #region IBrightstarClient implementation
-
         public async Task<bool> ConsolidateDataset(string storeName)
         {
             return await ClientCall(Task.Run(() =>
@@ -91,7 +85,5 @@ namespace Libraries.Server.BrightstarDb
                 return true;
             }, CancellationTokenSource.Token));
         }
-
-        #endregion
     }
 }

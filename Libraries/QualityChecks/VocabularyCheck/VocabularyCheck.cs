@@ -15,8 +15,6 @@ namespace Libraries.QualityChecks.VocabularyCheck
     /// </summary>
     public class VocabularyCheck : QualityCheck
     {
-        #region public methods
-
         public override QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters)
         {
             IsCheckInProgress = true;
@@ -67,10 +65,6 @@ namespace Libraries.QualityChecks.VocabularyCheck
             var wrongTriples = CheckTriples(triples, predicateList);
             return GenerateQualityCheckReport(wrongTriples.Select(t => new ValueTuple<Uri, string>(null, t)).ToList());
         }
-
-        #endregion
-
-        #region private methods
 
         private IEnumerable<string> CheckTriples(IEnumerable<string> triples, IEnumerable<string> predicateList)
         {
@@ -151,7 +145,5 @@ namespace Libraries.QualityChecks.VocabularyCheck
             //TODO
             throw new NotImplementedException();
         }
-
-        #endregion
     }
 }

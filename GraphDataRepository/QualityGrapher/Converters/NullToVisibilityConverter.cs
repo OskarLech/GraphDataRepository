@@ -7,8 +7,6 @@ namespace QualityGrapher.Converters
 {
     public class NullToVisibilityConverter : IValueConverter
     {
-        #region Implementation of IValueConverter
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value == null ? Visibility.Visible : Visibility.Collapsed;
@@ -18,7 +16,5 @@ namespace QualityGrapher.Converters
         {
             throw new NotImplementedException();
         }
-
-        #endregion
     }
 }
