@@ -73,14 +73,14 @@
     <Compile Include="QualityChecks\QualityCheck.cs" />
     <Compile Include="QualityChecks\QualityCheckReport.cs" />
     <Compile Include="QualityChecks\QualityChecksData.cs" />
-    <Compile Include="Server\ISparqlTriplestore.cs" />
+    <Compile Include="Server\ITriplestoreSparql.cs" />
     <Compile Include="Server\ITriplestoreClientQualityWrapper.cs" />
     <Compile Include="Server\TriplestoreClientQualityWrapper.cs" />
     <Compile Include="QualityChecks\VocabularyCheck\VocabularyCheck.cs" />
     <Compile Include="Server\BrightstarDb\BrightstarClient.Basic.cs" />
     <Compile Include="Server\BrightstarDb\BrightstarClient.Extended.cs" />
     <Compile Include="Server\BrightstarDb\IBrightstarClient.cs" />
-    <Compile Include="Server\ITriplestoreClient.cs" />
+    <Compile Include="Server\ITriplestoreClientBasic.cs" />
     <Compile Include="Server\ITriplestoreClientExtended.cs" />
     <Compile Include="Server\SupportedTriplestores.cs" />
     <Compile Include="Server\TriplestoreClient.cs" />

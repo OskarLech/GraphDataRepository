@@ -18,7 +18,7 @@ namespace QualityGrapher.ViewModels
 
         public void CreateTriplestoreQualityWrapper(string endpointUri)
         {
-            var triplestoreClient = (ITriplestoreClient) Activator.CreateInstance(TriplestoreModel.Type, endpointUri);
+            var triplestoreClient = (ITriplestoreClientBasic) Activator.CreateInstance(TriplestoreModel.Type, endpointUri);
             TriplestoreModel.TriplestoreClientQualityWrapper = new TriplestoreClientQualityWrapper(triplestoreClient); 
         }
 

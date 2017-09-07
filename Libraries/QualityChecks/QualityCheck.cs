@@ -22,6 +22,12 @@ namespace Libraries.QualityChecks
         private bool _isCheckInProgress;
         private readonly object _lock = new object();
 
+        protected QualityCheck()
+        {
+            CancellationTokenSource = new CancellationTokenSource();
+            ParallelOptions = new ParallelOptions { CancellationToken = CancellationTokenSource.Token };
+        }
+
         protected bool IsCheckInProgress
         {
             get
@@ -40,12 +46,6 @@ namespace Libraries.QualityChecks
             }
         }
 
-        protected QualityCheck()
-        {
-            CancellationTokenSource = new CancellationTokenSource();
-            ParallelOptions = new ParallelOptions { CancellationToken = CancellationTokenSource.Token };
-        }
-
         public abstract QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters);
         public abstract QualityCheckReport CheckData(IEnumerable<string> triples, IEnumerable<object> parameters);
 
@@ -56,16 +56,24 @@ namespace Libraries.QualityChecks
 
         protected virtual IEnumerable<T> ParseParameters<T> (IEnumerable<object> parameters)
         {
+            var paramsList = parameters.ToList();
+            Func<object, T> selector;
+            if (typeof(T).IsAssignableFrom(typeof(IConvertible)))
+            {
+                selector = StaticMethods.ConvertTo<T>;
+            }
+            else if (paramsList.All(p => p is T))
+            {
+                selector = parameter => (T)parameter;
+            }
+            else
+            {
+                selector = p => (T)Activator.CreateInstance(typeof(T), p);
+            }
+
             try
             {
-                if (typeof(T) == typeof(IEnumerable<Uri>)) //expected to be a typical parameter type
-                {
-                    parameters = parameters.Select(p => new Uri(p.ToString()));
-                }
-
-                return typeof(T).IsAssignableFrom(typeof(IConvertible)) 
-                    ? parameters.Select(StaticMethods.ConvertTo<T>).ToList() 
-                    : parameters.Select(parameter => (T) parameter).ToList();
+                return paramsList.Select(selector);
             }
             catch (Exception e)
             {

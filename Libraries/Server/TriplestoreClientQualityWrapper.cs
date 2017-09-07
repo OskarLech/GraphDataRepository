@@ -17,9 +17,9 @@ namespace Libraries.Server
     /// </summary>
     public class TriplestoreClientQualityWrapper : ITriplestoreClientQualityWrapper
     {
-        private readonly ITriplestoreClient _triplestoreClient;
+        private readonly ITriplestoreClientBasic _triplestoreClient;
 
-        public TriplestoreClientQualityWrapper(ITriplestoreClient triplestoreClient)
+        public TriplestoreClientQualityWrapper(ITriplestoreClientBasic triplestoreClient)
         {
             _triplestoreClient = triplestoreClient;
         }
@@ -123,6 +123,7 @@ namespace Libraries.Server
 
         public async Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query)
         {
+            //TODO validate queries or at least run checks before / after
             return await _triplestoreClient.RunSparqlQuery(dataset, graphs, query);
         }
 

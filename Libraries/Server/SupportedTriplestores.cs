@@ -7,7 +7,7 @@ namespace Libraries.Server
 {
     public static class SupportedTriplestores
     {
-        public static IEnumerable<(string name, Type clientType)> TriplestoreProviders = new List<(string Name, Type Type)>
+        private static readonly IEnumerable<(string name, Type clientType)> TriplestoreProviders = new List<(string Name, Type Type)>
         {
             ("BrightstarDb", typeof(BrightstarClient))
         };
@@ -45,14 +45,14 @@ namespace Libraries.Server
         {
             var supportedOperations = new List<SupportedOperation>();
 
-            if (typeof(ISparqlTriplestore).IsAssignableFrom(triplestoreType))
+            if (typeof(ITriplestoreSparql).IsAssignableFrom(triplestoreType))
             {
                 supportedOperations.Add(SupportedOperation.ReadGraphs);
                 supportedOperations.Add(SupportedOperation.ListGraphs);
                 supportedOperations.Add(SupportedOperation.RunSparqlQuery);
             }
 
-            if (typeof(ITriplestoreClient).IsAssignableFrom(triplestoreType))
+            if (typeof(ITriplestoreClientBasic).IsAssignableFrom(triplestoreType))
             {
                 supportedOperations.Add(SupportedOperation.CreateDataset);
                 supportedOperations.Add(SupportedOperation.DeleteDataset);

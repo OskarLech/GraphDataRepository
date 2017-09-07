@@ -16,7 +16,7 @@ namespace Libraries.Server
     /// <summary>
     /// Base class for all triplestores
     /// </summary>
-    public abstract class TriplestoreClient : Disposable, ITriplestoreClient
+    public abstract class TriplestoreClient : Disposable, ITriplestoreClientBasic
     {
         protected readonly string EndpointUri;
         protected readonly List<Task> CallTasks = new List<Task>();

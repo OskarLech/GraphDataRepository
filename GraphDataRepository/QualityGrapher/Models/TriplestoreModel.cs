@@ -10,7 +10,6 @@ namespace QualityGrapher.Models
         public string Name { get; set; }
         public Type Type { get; set; }
         public IEnumerable<SupportedOperation> SupportedOperations { get; set; }
-
         public ITriplestoreClientQualityWrapper TriplestoreClientQualityWrapper { get; set; }
     }
 }

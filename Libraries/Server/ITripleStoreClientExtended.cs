@@ -7,7 +7,7 @@ namespace Libraries.Server
     /// <summary>
     /// Extends ITriplestoreClient by additional functionalities
     /// </summary>
-    public interface ITriplestoreClientExtended : ITriplestoreClient
+    public interface ITriplestoreClientExtended : ITriplestoreClientBasic
     {
         Task<bool> RevertLastTransaction(string storename);
         Task<IEnumerable<(ulong id, DateTime commitDate)>> ListCommitPoints(string storename, int limit = 100);
