@@ -30,9 +30,7 @@ namespace QualityGrapher.Converters
         {
             ResourceDictionary = new ResourceDictionary
             {
-                Source = language == SupportedLanguages.Polish
-                    ? new Uri(@"..\Globalization\Resources\pl-PL.xaml", UriKind.RelativeOrAbsolute)
-                    : new Uri(@"..\Globalization\Resources\en-GB.xaml", UriKind.RelativeOrAbsolute)
+                Source = SupportedLanguages.GetResourceDictionary(language)
             };
         }
     }

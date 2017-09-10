@@ -76,20 +76,12 @@ namespace QualityGrapher.Views
 
         private void SetLanguageDictionary(string language)
         {
-            var dict = new ResourceDictionary();
-            switch (language)
+            if (!SupportedLanguages.IsLanguageSupported(language))
             {
-                case SupportedLanguages.English:
-                    dict.Source = new Uri(@"..\Globalization\Resources\en-GB.xaml", UriKind.Relative);
-                    break;
-                case SupportedLanguages.Polish:
-                    dict.Source = new Uri(@"..\Globalization\Resources\pl-PL.xaml", UriKind.Relative);
-                    break;
-                default:
-                    language = SupportedLanguages.English;
-                    dict.Source = new Uri(@"..\Globalization\Resources\en-GB.xaml", UriKind.Relative);
-                    break;
+                language = SupportedLanguages.Default;
             }
+
+            var dict = new ResourceDictionary {Source = SupportedLanguages.GetResourceDictionary(language)};
 
             Resources.MergedDictionaries.Clear();
             Resources.MergedDictionaries.Add(dict);
