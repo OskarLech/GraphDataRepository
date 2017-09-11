@@ -90,6 +90,23 @@ namespace Libraries.Server
             return false;
         }
 
+        public  async Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query)
+        {
+            var operationResult = await ClientCall(Task.Run(() =>
+            {
+                var endpoint = new SparqlRemoteEndpoint(new Uri($"{EndpointUri}/{dataset}/SPARQL"), graphs);
+                using (var connector = new SparqlConnector(endpoint))
+                {
+                    using (var store = new PersistentTripleStore(connector))
+                    {
+                        return store.ExecuteQuery(query) as SparqlResultSet;
+                    }
+                }
+            }, CancellationTokenSource.Token));
+
+            return operationResult;
+        }
+
         public async Task<IEnumerable<Uri>> ListGraphs(string dataset)
         {
             return await ClientCall(Task.Run(() =>
@@ -121,30 +138,6 @@ namespace Libraries.Server
 
                 return resultGraphs;
             }, CancellationTokenSource.Token));
-        }
-
-        //TODO commit point not necessary for select queries, make some filtering
-        public async Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query)
-        {
-            var operationResult = await ClientCall(Task.Run(() =>
-            {
-                var endpoint = new SparqlRemoteEndpoint(new Uri($"{EndpointUri}/{dataset}/SPARQL"), graphs);
-                using (var connector = new SparqlConnector(endpoint))
-                {
-                    using (var store = new PersistentTripleStore(connector))
-                    {
-                        return store.ExecuteQuery(query) as SparqlResultSet;
-                    }
-                }
-            }, CancellationTokenSource.Token));
-
-            if (operationResult != null)
-            {
-                await CreateCommitPoint(dataset);
-                return operationResult;
-            }
-
-            return null;
         }
 
         public void CancelOperation()

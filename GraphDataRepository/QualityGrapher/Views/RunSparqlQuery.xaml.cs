@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,7 +32,11 @@ namespace QualityGrapher.Views
                 return;
             }
 
-            var graphs = _listGraphsUserControl.ListGraphsListBox.SelectedItems.Cast<Uri>();
+            var selectedGraphs = _listGraphsUserControl.ListGraphsListBox.SelectedItems;
+            var graphs = (from object graph in selectedGraphs
+                          select new Uri(graph.ToString()))
+                          .ToList();
+
             var queryResultSet = await triplestoreClientQualityWrapper.RunSparqlQuery(dataset, graphs, QueryBox.Text);
 
             if (queryResultSet == null)

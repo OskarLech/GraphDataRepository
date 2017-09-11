@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using BrightstarDB;
 using BrightstarDB.Client;
 using Common;
+using VDS.RDF;
+using VDS.RDF.Query;
+using VDS.RDF.Storage;
 using static Serilog.Log;
 
 namespace Libraries.Server.BrightstarDb
@@ -94,7 +99,7 @@ namespace Libraries.Server.BrightstarDb
                 {
                     if (triples.Value.TriplesToRemove != null)
                     {
-                        foreach (var triple in triples.Value.TriplesToRemove)
+                        foreach (var triple in triples.Value.TriplesToRemove.Where(t => !string.IsNullOrWhiteSpace(t.ToString())))
                         {
                             deletePatterns.AppendLine($"{ConvertToBrightstarCompatibleTriple(triple)}<{triples.Key}> .");
                         }
@@ -102,7 +107,7 @@ namespace Libraries.Server.BrightstarDb
 
                     if (triples.Value.TriplesToAdd != null)
                     {
-                        foreach (var triple in triples.Value.TriplesToAdd)
+                        foreach (var triple in triples.Value.TriplesToAdd.Where(t => !string.IsNullOrWhiteSpace(t.ToString())))
                         {
                             insertData.AppendLine($"{ConvertToBrightstarCompatibleTriple(triple)}<{triples.Key}> .");
                         }

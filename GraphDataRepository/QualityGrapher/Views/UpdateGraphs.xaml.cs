@@ -67,8 +67,10 @@ namespace QualityGrapher.Views
             if (await ModifyQualityChecks(OperationToPerform.AddQualityChecks))
             {
                 _mainWindow.OnOperationSucceeded();
-                _mainWindow.OnOperationFailed();
+                return;
             }
+
+            _mainWindow.OnOperationFailed();
         }
 
         private async void RemoveQualityCheckButton_OnClick(object sender, RoutedEventArgs e)
@@ -76,8 +78,10 @@ namespace QualityGrapher.Views
             if (await ModifyQualityChecks(OperationToPerform.RemoveQualityChecks))
             {
                 _mainWindow.OnOperationSucceeded();
-                _mainWindow.OnOperationFailed();
+                return;
             }
+
+            _mainWindow.OnOperationFailed();
         }
 
         private async Task<bool> ModifyQualityChecks(OperationToPerform operationToPerform)

@@ -85,9 +85,10 @@ namespace Libraries.Server
             var qualityChecksPassed = true;
             foreach (var graphUri in relatedGraphs)
             {
-                var graphQualityChecks = GetQualityChecksFromTriples(metadataTriples.Where(t => 
-                    t.Subject() == graphUri.ToString() ||
-                    t.Subject() == WholeDatasetSubjectUri.ToString()));
+                var graphQualityChecks = GetQualityChecksFromTriples(metadataTriples.Where(t =>
+                    !string.IsNullOrWhiteSpace(t) &&
+                    (t.Subject() == graphUri.ToString() ||
+                    t.Subject() == WholeDatasetSubjectUri.ToString())));
 
                 var triplesToAddInGraph = triplesByGraphUri.Where(t => t.Key == graphUri).
                     SelectMany(t => t.Value.TriplesToAdd)
@@ -200,7 +201,7 @@ namespace Libraries.Server
             var qualityChecks = new Dictionary<IQualityCheck, List<string>>();
             foreach (var triple in triples)
             {
-                var qualityCheck = QualityCheckInstances.FirstOrDefault(qc => qc.GetPredicate() == triple.Predicate());
+                var qualityCheck = QualityCheckInstances.FirstOrDefault(qc => string.Equals(qc.GetPredicate(), triple.Predicate(), StringComparison.CurrentCultureIgnoreCase));
                 if (qualityCheck != null)
                 {
                     if (!qualityChecks.ContainsKey(qualityCheck))
@@ -250,9 +251,10 @@ namespace Libraries.Server
                 }
 
                 //metadata triples after changes
-                metadataTriples = (List<string>)metadataTriples
+                metadataTriples = metadataTriples
                     .Except(datasetTriplesToRemove)
-                    .Union(datasetTriplesToAdd);
+                    .Union(datasetTriplesToAdd)
+                    .ToList();
             }
             else //if quality checks are not edited just add every modified graph
             {
@@ -273,7 +275,8 @@ namespace Libraries.Server
 
             if (triplesToModify.TriplesToRemove != null)
             {
-                graphTriples = (List<string>) graphTriples.Except(triplesToModify.TriplesToRemove);
+                graphTriples = graphTriples.Except(triplesToModify.TriplesToRemove)
+                    .ToList();
             }
 
             if (triplesToModify.TriplesToAdd != null)
