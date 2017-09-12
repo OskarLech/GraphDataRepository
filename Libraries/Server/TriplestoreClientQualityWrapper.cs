@@ -124,7 +124,6 @@ namespace Libraries.Server
 
         public async Task<SparqlResultSet> RunSparqlQuery(string dataset, IEnumerable<Uri> graphs, string query)
         {
-            //TODO validate queries or at least run checks before / after
             return await _triplestoreClient.RunSparqlQuery(dataset, graphs, query);
         }
 
