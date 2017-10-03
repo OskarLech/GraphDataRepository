@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
@@ -18,7 +19,8 @@ namespace Libraries.QualityChecks.VocabularyCheck
         public override QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters)
         {
             IsCheckInProgress = true;
-            var parameterList = parameters.ToList(); //multiple enumeration
+
+            var parameterList = ProcessParameters(parameters);
             if (!AreParametersValid(parameterList))
             {
                 return null;
@@ -53,7 +55,7 @@ namespace Libraries.QualityChecks.VocabularyCheck
         {
             IsCheckInProgress = true;
 
-            var parameterList = parameters.ToList(); //multiple enumeration
+            var parameterList = ProcessParameters(parameters);
             if (!AreParametersValid(parameterList))
             {
                 return null;
@@ -64,6 +66,15 @@ namespace Libraries.QualityChecks.VocabularyCheck
 
             var wrongTriples = CheckTriples(triples, predicateList);
             return GenerateQualityCheckReport(wrongTriples.Select(t => new ValueTuple<Uri, string>(null, t)).ToList());
+        }
+
+        private static List<string> ProcessParameters(IEnumerable<object> parameters)
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+
+            return parameters.Select(
+                            p => Path.Combine(baseDir, $"..\\..\\..\\..\\Common\\Data\\Schemas\\{p.ToString()}"))//TODO tmp solution
+                            .ToList();
         }
 
         private IEnumerable<string> CheckTriples(IEnumerable<string> triples, IEnumerable<string> predicateList)
@@ -133,7 +144,7 @@ namespace Libraries.QualityChecks.VocabularyCheck
         {
             var vocabularyFilePath = !vocabularyUri.IsFile 
                 ? DownloadVocabulary(vocabularyUri) 
-                : vocabularyUri.AbsolutePath;
+                : vocabularyUri.LocalPath;
 
             var schemaGraph = new Graph();
             FileLoader.Load(schemaGraph, vocabularyFilePath);
