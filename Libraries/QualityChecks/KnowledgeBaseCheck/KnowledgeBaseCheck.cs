@@ -16,7 +16,7 @@ namespace Libraries.QualityChecks.KnowledgeBaseCheck
     /// </summary>
     public class KnowledgeBaseCheck : QualityCheck
     {
-        private const string BaseQuery = "SELECT DISTINCT ?concept WHERE { \"{subject}\" a ?concept {filter} } LIMIT 1";
+        private const string BaseQuery = "SELECT DISTINCT ?concept WHERE { <{subject}> a ?concept {filter} } LIMIT 1";
         private const string Filter = "FILTER ( strstarts(str(?concept), \"{filter}\") )";
 
         public override QualityCheckReport CheckGraphs(IEnumerable<IGraph> graphs, IEnumerable<object> parameters)

@@ -239,7 +239,10 @@ namespace Libraries.Server
                 if (datasetTriplesToAdd.Any(t => t.Subject() == WholeDatasetSubjectUri.ToString()) ||
                     datasetTriplesToRemove.Any(t => t.Subject() == WholeDatasetSubjectUri.ToString()))
                 {
-                    relatedGraphs = (await ListGraphs(dataset))?.ToList();
+                    relatedGraphs = (await ListGraphs(dataset))?
+                        .Where(g => g.AbsoluteUri != MetadataGraphUri.ToString())
+                        .ToList();
+
                     if (relatedGraphs == null) return default((List<Uri>, List<string>));
                 }
                 else //otherwise just add each graph separately
