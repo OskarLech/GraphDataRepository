@@ -73,7 +73,7 @@ namespace Libraries.QualityChecks.VocabularyCheck
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
             return parameters.Select(
-                            p => Path.Combine(baseDir, $"..\\..\\..\\..\\Common\\Data\\Schemas\\{p.ToString()}"))//TODO tmp solution
+                            p => Path.Combine(baseDir, $"..\\..\\..\\..\\Common\\Data\\Schemas\\{p.ToString()}")) //TODO tmp solution
                             .ToList();
         }
 

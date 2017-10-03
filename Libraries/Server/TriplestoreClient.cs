@@ -146,6 +146,9 @@ namespace Libraries.Server
             CancellationTokenSource = new CancellationTokenSource();
         }
 
+        protected static bool DoTriplesNeedProcessing(ICollection<string> triples) => 
+            triples != null && triples.Count != 0 && !triples.All(string.IsNullOrWhiteSpace);
+
         protected async Task<T> ClientCall<T>(Task<T> call)
         {
             lock (CallTasks)

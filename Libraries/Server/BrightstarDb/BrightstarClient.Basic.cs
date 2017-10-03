@@ -97,7 +97,7 @@ namespace Libraries.Server.BrightstarDb
                 var insertData = new StringBuilder();
                 foreach (var triples in triplesByGraphUri)
                 {
-                    if (triples.Value.TriplesToRemove != null)
+                    if (DoTriplesNeedProcessing(triples.Value.TriplesToRemove))
                     {
                         foreach (var triple in triples.Value.TriplesToRemove.Where(t => !string.IsNullOrWhiteSpace(t.ToString())))
                         {
@@ -105,7 +105,7 @@ namespace Libraries.Server.BrightstarDb
                         }
                     }
 
-                    if (triples.Value.TriplesToAdd != null)
+                    if (DoTriplesNeedProcessing(triples.Value.TriplesToAdd))
                     {
                         foreach (var triple in triples.Value.TriplesToAdd.Where(t => !string.IsNullOrWhiteSpace(t.ToString())))
                         {
@@ -130,6 +130,7 @@ namespace Libraries.Server.BrightstarDb
                 return true;
             }, CancellationTokenSource.Token));
         }
+
 
         public override async Task<bool> CreateCommitPoint(string dataset)
         {
